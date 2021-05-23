@@ -123,13 +123,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-""" STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
- """
 
+""" 
 #Digital Ocean:
 AWS_ACCESS_KEY_ID = "YTBXYE6YKZGKAGUUSSJW"
 AWS_SECRET_ACCESS_KEY = "CZKaBPgtpQh7CH887YZ+8o/Hq7eGzoqHtjN3XkL9L08"
@@ -142,7 +142,7 @@ AWS_LOCATION = "onlineweb-static"
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-]
+] """
 
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
