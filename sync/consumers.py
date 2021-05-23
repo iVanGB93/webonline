@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio
+from users.models import Profile
 
 class SyncWSConsumer(WebsocketConsumer):
     def connect(self):
@@ -34,10 +35,14 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def check_usuario(self, data):
         respuesta = {'estado': False}
-        if User.objects.filter(username=data['data']['usuario']).exists():
+        data = data['data']
+        usuario = data['usuario']
+        if User.objects.filter(username=usuario).exists():
             respuesta['estado'] = True
+            respuesta['mensaje'] = f'El usuario { usuario } esta registrado.'
             self.responder(respuesta)
         else:
+            respuesta['mensaje'] = f'El usuario { usuario } no existe.'
             self.responder(respuesta)
 
     def nuevo_usuario(self, data):
@@ -49,26 +54,71 @@ class SyncWSConsumer(WebsocketConsumer):
         new_user = User(username=usuario, email=email)
         new_user.set_password(password)
         new_user.save()
+        respuesta['mensaje'] = f'Usuario { usuario } creado con éxito.'
         respuesta['estado'] = True
         self.responder(respuesta)
 
     def cambio_usuario(self, data):
         respuesta = {'estado': False}
         data = data['data']
-        if User.objects.filter(username=data['usuario']).exists(): 
-            usuario_local = User.objects.get(username=data['usuario'])
+        usuario = data['usuario']
+        if User.objects.filter(username=usuario).exists(): 
+            usuario_local = User.objects.get(username=usuario)
             usuario_local.email = data['email']
             usuario_local.first_name = data['first_name']
             usuario_local.last_name = data['last_name']
             usuario_local.save()
             respuesta['estado'] = True
+            respuesta['mensaje'] = f'Usuario { usuario } creado con éxito.'
             self.responder(respuesta)
         else:
             respuesta['mensaje'] = f'El usuario no existe.'
             self.responder(respuesta)
-    
+
+    def check_perfil(self, data):
+        respuesta = {'estado': False, 'mensaje': 'OK'}
+        data = data['data']
+        usuario = data['usuario']
+        if User.objects.filter(username=usuario).exists():
+            usuario_local = User.objects.get(username=data['usuario'])
+            if Profile.objects.filter(usuario=usuario_local).exists:
+                perfil = Profile.objects.filter(usuario=usuario_local)
+                for p in perfil:
+                    if p.coins != data['coins']:
+                        locales = data['coins']
+                        respuesta['mensaje'] = f'No coinciden los coins, locales { locales } y remotos { p.coins }'
+                        self.responder(respuesta)
+                    else:
+                        respuesta['estado'] = True
+                        self.responder(respuesta)
+            else:
+                respuesta['mensaje'] = f'El perfil del usuario no existe.'
+                self.responder(respuesta)
+        else:
+            respuesta['mensaje'] = f'El usuario no existe.'
+            self.responder(respuesta)
+
+    def cambio_perfil(self, data):
+        respuesta = {'estado': False, 'mensaje': 'OK'}
+        data = data['data']
+        usuario = data['usuario']
+        if User.objects.filter(username=usuario).exists():
+            usuario_local = User.objects.get(username=data['usuario'])
+            if Profile.objects.filter(usuario=usuario_local).exists:
+                perfil = Profile.objects.get(usuario=usuario_local)
+                perfil.coins = data['coins']
+                perfil.save()
+                respuesta['estado'] = True
+                self.responder(respuesta)
+            else:
+                respuesta['mensaje'] = f'El perfil del usuario no existe.'
+                self.responder(respuesta)
+        else:
+            respuesta['mensaje'] = f'El usuario no existe.'
+            self.responder(respuesta)
+
     def check_servicio(self, data):
-        respuesta = {'estado': False}
+        respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         servicio_chequeo = data['servicio']
         if User.objects.filter(username=data['usuario']).exists():
@@ -125,7 +175,7 @@ class SyncWSConsumer(WebsocketConsumer):
             self.responder(respuesta)
 
     def guardar_servicio(self, data):
-        respuesta = {'estado': False}
+        respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']    
         if User.objects.filter(username=data['usuario']).exists():    
             usuario_local = User.objects.get(username=data['usuario'])
@@ -159,7 +209,7 @@ class SyncWSConsumer(WebsocketConsumer):
             self.responder(respuesta)
 
     def cambio_servicio(self, data):
-        respuesta = {'estado': False}
+        respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         servicio_cambio = data['servicio']
         if User.objects.filter(username=data['usuario']).exists():
@@ -213,6 +263,8 @@ class SyncWSConsumer(WebsocketConsumer):
         'check_usuario': check_usuario,
         'nuevo_usuario': nuevo_usuario,
         'cambio_usuario': cambio_usuario,
+        'check_perfil': check_perfil,
+        'cambio_perfil': cambio_perfil,
         'check_servicio': check_servicio,
         'guardar_servicio': guardar_servicio,
         'cambio_servicio': cambio_servicio,
