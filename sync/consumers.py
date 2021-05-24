@@ -1,4 +1,3 @@
-from re import T
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
@@ -24,6 +23,15 @@ class SyncWSConsumer(WebsocketConsumer):
         print("CLIENTE DESCONECTADO", close_code)
         pass
 
+    def usuario_existe(self, data):
+        respuesta = {'estado': False}
+        usuario = data['usuario']
+        if User.objects.filter(username=usuario).exists():
+            return True
+        else:
+            respuesta['mensaje'] = f'El usuario { usuario } no existe.'
+            self.responder(respuesta)
+
     def saludo(self, data):
         data = data['data']
         celula = data['identidad']
@@ -37,13 +45,11 @@ class SyncWSConsumer(WebsocketConsumer):
         respuesta = {'estado': False}
         data = data['data']
         usuario = data['usuario']
-        if User.objects.filter(username=usuario).exists():
+        if self.usuario_existe(data):
             respuesta['estado'] = True
             respuesta['mensaje'] = f'El usuario { usuario } esta registrado.'
             self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario { usuario } no existe.'
-            self.responder(respuesta)
+        
 
     def nuevo_usuario(self, data):
         respuesta = {'estado': False}
@@ -62,25 +68,35 @@ class SyncWSConsumer(WebsocketConsumer):
         respuesta = {'estado': False}
         data = data['data']
         usuario = data['usuario']
-        if User.objects.filter(username=usuario).exists(): 
+        if self.usuario_existe(data):
             usuario_local = User.objects.get(username=usuario)
             usuario_local.email = data['email']
             usuario_local.first_name = data['first_name']
             usuario_local.last_name = data['last_name']
             usuario_local.save()
             respuesta['estado'] = True
-            respuesta['mensaje'] = f'Usuario { usuario } creado con éxito.'
+            respuesta['mensaje'] = f'Usuario { usuario } modificado con éxito.'
             self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
+
+    def nueva_contraseña(self, data):
+        respuesta = {'estado': False}
+        data = data['data']
+        if self.usuario_existe(data):
+            usuario = data['usuario']
+            usuario_local = User.objects.get(username=usuario)
+            nueva = data['contraseña']
+            usuario_local.set_password(nueva)
+            usuario_local.save()
+            respuesta['estado'] = True
+            respuesta['mensaje'] = 'Contraseña cambiada con éxito'
             self.responder(respuesta)
 
     def check_perfil(self, data):
         respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         usuario = data['usuario']
-        if User.objects.filter(username=usuario).exists():
-            usuario_local = User.objects.get(username=data['usuario'])
+        if self.usuario_existe(data):
+            usuario_local = User.objects.get(username=usuario)
             if Profile.objects.filter(usuario=usuario_local).exists:
                 perfil = Profile.objects.filter(usuario=usuario_local)
                 for p in perfil:
@@ -94,15 +110,12 @@ class SyncWSConsumer(WebsocketConsumer):
             else:
                 respuesta['mensaje'] = f'El perfil del usuario no existe.'
                 self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
-            self.responder(respuesta)
 
     def cambio_perfil(self, data):
         respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         usuario = data['usuario']
-        if User.objects.filter(username=usuario).exists():
+        if self.usuario_existe(data):
             usuario_local = User.objects.get(username=data['usuario'])
             if Profile.objects.filter(usuario=usuario_local).exists:
                 perfil = Profile.objects.get(usuario=usuario_local)
@@ -113,15 +126,12 @@ class SyncWSConsumer(WebsocketConsumer):
             else:
                 respuesta['mensaje'] = f'El perfil del usuario no existe.'
                 self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
-            self.responder(respuesta)
 
     def check_servicio(self, data):
         respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         servicio_chequeo = data['servicio']
-        if User.objects.filter(username=data['usuario']).exists():
+        if self.usuario_existe(data):
             usuario_local = User.objects.get(username=data['usuario'])
             if EstadoServicio.objects.filter(usuario=usuario_local).exists():
                 servicio = EstadoServicio.objects.filter(usuario=usuario_local)
@@ -170,14 +180,11 @@ class SyncWSConsumer(WebsocketConsumer):
             else:
                 respuesta['mensaje'] = f'El servicio del usuario no existe.'
                 self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
-            self.responder(respuesta)
 
     def guardar_servicio(self, data):
         respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']    
-        if User.objects.filter(username=data['usuario']).exists():    
+        if self.usuario_existe(data):    
             usuario_local = User.objects.get(username=data['usuario'])
             if EstadoServicio.objects.filter(usuario=usuario_local).exists():
                 servicio = EstadoServicio.objects.filter(usuario=usuario_local)
@@ -204,15 +211,12 @@ class SyncWSConsumer(WebsocketConsumer):
             else:
                 respuesta['mensaje'] = f'El servicio del usuario no existe.'
                 self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
-            self.responder(respuesta)
-
+       
     def cambio_servicio(self, data):
         respuesta = {'estado': False, 'mensaje': 'OK'}
         data = data['data']
         servicio_cambio = data['servicio']
-        if User.objects.filter(username=data['usuario']).exists():
+        if self.usuario_existe(data):
             usuario_local = User.objects.get(username=data['usuario'])
             if EstadoServicio.objects.filter(usuario=usuario_local).exists():
                 servicio = EstadoServicio.objects.filter(usuario=usuario_local)
@@ -254,15 +258,13 @@ class SyncWSConsumer(WebsocketConsumer):
             else:
                 respuesta['mensaje'] = f'El servicio del usuario no existe.'
                 self.responder(respuesta)
-        else:
-            respuesta['mensaje'] = f'El usuario no existe.'
-            self.responder(respuesta)
-
+       
     commands = {
         'saludo': saludo,
         'check_usuario': check_usuario,
         'nuevo_usuario': nuevo_usuario,
         'cambio_usuario': cambio_usuario,
+        'nueva_contraseña': nueva_contraseña,
         'check_perfil': check_perfil,
         'cambio_perfil': cambio_perfil,
         'check_servicio': check_servicio,

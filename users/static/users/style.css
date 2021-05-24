@@ -70,18 +70,11 @@ input:focus{
     margin-top: 8px;
 }
 
-#id_username {
+#id_username, #id_password {
     color: white;
     background: transparent;
 }
-#id_username::placeholder {
-    color: white;
-}
-#id_password {
-    color: white;
-    background: transparent;
-}
-#id_password::placeholder {
+#id_username, #id_password {
     color: white;
 }
 
@@ -103,7 +96,7 @@ input:focus{
 
 /* registro */
 
-#id_email {
+#id_email, #id_email2, #id_new_password1, #id_new_password2 {
     display: block;
     width: 100%;
     padding: .375rem .75rem;
@@ -116,23 +109,6 @@ input:focus{
     color: white;
     border: solid 1px white;
 }
-#id_email::placeholder {
-    color: white;
-}
-
-#id_email2 {
-    display: block;
-    width: 100%;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    border-radius: .25rem;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    background: transparent;
-    color: white;
-    border: solid 1px white;
-}
-#id_email2::placeholder {
+#id_email::placeholder, #id_email2::placeholder, #id_new_password1::placeholder, #id_new_password2::placeholder {
     color: white;
 }

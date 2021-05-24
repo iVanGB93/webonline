@@ -11,15 +11,18 @@
             <h5>Entrar</h5>           
         </div>
         <div class="card-body">
-            <form action="{% url 'users:login' %}"  method="post">
+            <form id="myform" action="{% url 'users:login' %}"  method="post">
                 {% if error %}
                 <div class="alert alert-danger text-center" role="alert">
                     {{ error }}
                 </div>                
                 {% endif %}                             
                 {% csrf_token %}
-                {{ form }}                        
-                <button class="form-control btn btn-outline-warning" type="submit">Entrar</button>                
+                {{ form }}                
+                <button id="boton" class="form-control btn btn-outline-warning" type="submit">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+                    Entrar
+                </button>
             </form>
         </div>
         <div class="card-footer links">
@@ -28,7 +31,7 @@
                     ¿No tiene cuenta? --> Registrarme
                 </button>
             </a>
-            <a href="#">
+            <a href="{% url 'reset_password' %}">
                 <button class="form-control btn btn-outline-danger" type="submit">
                     ¿Olvidó la contraseña?
                 </button>
@@ -36,4 +39,11 @@
         </div>
     </div>
 </div>
+<script>
+    const myform = document.getElementById("myform");
+    myform.addEventListener("submit", (e) => {       
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('boton').disabled=true;
+    });
+</script>
 {% endblock content %}
