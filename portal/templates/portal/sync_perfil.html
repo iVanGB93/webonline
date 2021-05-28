@@ -8,9 +8,9 @@
                 Sincronizar - {{ user }}
             </div>
             <div class="card-body">
-                <h5>Su cuenta local y la de internet no coinciden. Revise bien todos los servicios y su saldo.</h5>
+                <h5>Su cuenta local y la de internet no coinciden. Revise bien su saldo.</h5>
                 <h5>¿Todos los datos que ve son los correctos? Si continua serán los valores que se le guardarán permanente. ¿Desea continuar?</h5>
-                <form class="d-flex justify-content-end" id="myform_sync" action="{% url 'portal:guardar_servicio' %}" method="POST">
+                <form class="d-flex justify-content-end" id="myform_sync" action="{% url 'portal:guardar_perfil' %}" method="POST">
                     {% csrf_token %}
                     <button id="boton_sync" type="submit" class="btn btn-outline-info">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>

@@ -112,10 +112,12 @@ def chequeoInternet():
                         if profile.coins >= 300:
                             profile.coins = profile.coins - 300
                             i.int_time = timezone.now() + timedelta(days=7)
+                            profile.sync = False
                             profile.save()
+                            i.sync = False
                             i.save()
                             code = crearOper(usuario.username, "internetSemanal", 300)
-                            send_mail('Pago confirmado', f'Se ha reanudado su servicio { i.int_tipo }, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                            send_mail('QbaRed - Pago confirmado', f'Se ha reanudado su servicio { i.int_tipo }, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                         else:
                             comando = f'/ip hotspot user set { usuario.username } disable=yes'
                             if quitarMk(config('MK1_IP'), comando):                            
@@ -124,16 +126,19 @@ def chequeoInternet():
                                 crearLog(usuario.username, "DesactivacionLOG.txt", f'No se encontro al usuario: { usuario.username } para desactivarle el internet.')
                             i.internet = False
                             i.int_auto = False
+                            i.sync = False
                             i.save()
-                            send_mail('Rechazo de pago', f'No se pudo reanudar su servicio { i.int_tipo }, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                            send_mail('QbaRed - Rechazo de pago', f'No se pudo reanudar su servicio { i.int_tipo }, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                     if i.int_tipo == "internetMensual":
                         if profile.coins >= 200:
                             profile.coins = profile.coins - 200
                             i.int_time = timezone.now() + timedelta(days=30)
+                            profile.sync = False
                             profile.save()
+                            i.sync = False
                             i.save()
                             code = crearOper(usuario.username, "internetMensual", 200)
-                            send_mail('Pago confirmado', f'Se ha reanudado su servicio { i.int_tipo }, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                            send_mail('QbaRed - Pago confirmado', f'Se ha reanudado su servicio { i.int_tipo }, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                         else:
                             comando = f'/ip hotspot user set { usuario.username } disable=yes'
                             if quitarMk(config('MK1_IP'), comando):
@@ -142,8 +147,9 @@ def chequeoInternet():
                                 crearLog(usuario.username, "DesactivacionLOG.txt", f'No se encontro al usuario: { usuario.username } para desactivarle el internet.')
                             i.internet = False
                             i.int_auto = False
+                            i.sync = False
                             i.save()
-                            send_mail('Rechazo de pago', f'No se pudo reanudar su servicio { i.int_tipo }, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                            send_mail('QbaRed - Rechazo de pago', f'No se pudo reanudar su servicio { i.int_tipo }, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                 else:                    
                     comando = f'/ip hotspot user set { usuario.username } disable=yes'
                     if quitarMk(config('MK1_IP'), comando):
@@ -151,8 +157,9 @@ def chequeoInternet():
                     else:
                         crearLog(usuario.username, "DesactivacionLOG.txt", f'No se encontro al usuario: { usuario.username } para desactivarle el internet.')                
                     i.internet = False
+                    i.sync = False
                     i.save()
-                    send_mail('Tiempo agotado', f'Se termino el tiempo del { i.int_tipo }, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])    
+                    send_mail('QbaRed - Tiempo agotado', f'Se termino el tiempo del { i.int_tipo }, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])    
 
 def chequeo():    
     emb = EstadoServicio.objects.filter(emby=True)
@@ -170,28 +177,32 @@ def chequeo():
                 if e.emby_auto:                    
                     if profile.coins >= 100:
                         profile.coins = profile.coins - 100
+                        profile.sync = False
                         profile.save()
                         e.emby_time = timezone.now() + timedelta(days=30)
+                        e.sync = False
                         e.save()
                         code = crearOper(usuario.username, "Emby", 100)
-                        send_mail('Pago confirmado', f'Se ha reanudado su servicio emby, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                        send_mail('QbaRed - Pago confirmado', f'Se ha reanudado su servicio emby, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                     else:
-                        send_mail('Rechazo de pago', 'No se pudo reanudar su servicio emby, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])                       
+                        send_mail('QbaRed - Rechazo de pago', 'No se pudo reanudar su servicio emby, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])                       
                         connect = requests.delete(url=url)
                         if connect.status_code == 200:
                             crearLog(usuario.username, "DesactivacionLOG.txt", f'Se eliminó correctamente al usuario: { usuario.username } del Emby.')
                             e.emby = False
                             e.emby_auto = False
+                            e.sync = False
                             e.save()
                         else:           
                             crearLog(usuario.username, "DesactivacionLOG.txt", f'Problema en la desactivacion del Emby.')
                             send_mail(f'Quitar Emby a { usuario.username }', f'Tiempo acabado y no se desactiva su cuenta.', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
                 else:
-                    send_mail('Tiempo agotado', 'Se terminó el tiempo de su servicio emby, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                    send_mail('QbaRed - Tiempo agotado', 'Se terminó el tiempo de su servicio emby, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                     connect = requests.delete(url=url)
                     if connect.status_code == 200:
                         crearLog(usuario.username, "DesactivacionLOG.txt", f'Se eliminó correctamente al usuario: { usuario.username } del Emby.')
                         e.emby = False
+                        e.sync = False
                         e.save()
                     else:                                 
                         crearLog(usuario.username, "DesactivacionLOG.txt", f'Problema en la desactivacion del Emby.')
@@ -205,11 +216,13 @@ def chequeo():
                 if j.jc_auto:                    
                     if profile.coins >= 100:
                         profile.coins = profile.coins - 100
+                        profile.sync = False
                         profile.save()
                         j.jc_time = timezone.now() + timedelta(days=30)
+                        j.sync = False
                         j.save()
                         code = crearOper(usuario.username, "Joven Club", 100)
-                        send_mail('Pago confirmado', f'Se ha reanudado su servicio JovenClub, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                        send_mail('QbaRed - Pago confirmado', f'Se ha reanudado su servicio JovenClub, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                     else:
                         comando = f'/ip firewall address-list set [find comment={usuario.username}] disable=yes'
                         if quitarMk(config('MK2_IP'), comando):
@@ -218,8 +231,9 @@ def chequeo():
                             crearLog(usuario.username, "DesactivacionLOG.txt", f'No se encontro al usuario: { usuario.username } para desactivarle el Joven-Club.')
                         j.jc = False
                         j.jc_auto = False
+                        j.sync = False
                         j.save()
-                        send_mail('Rechazo de pago', 'No se pudo reanudar su servicio JovenClub, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                        send_mail('QbaRed - Rechazo de pago', 'No se pudo reanudar su servicio JovenClub, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                 else:
                     comando = f'/ip firewall address-list set [find comment={usuario.username}] disable=yes'
                     if quitarMk(config('MK2_IP'), comando):
@@ -228,8 +242,9 @@ def chequeo():
                         crearLog(usuario.username, "DesactivacionLOG.txt", f'No se encontro al usuario: { usuario.username } para desactivarle el Joven-Club.')
                     j.jc = False
                     j.jc_auto = False
+                    j.sync = False
                     j.save()
-                    send_mail('Tiempo agotado', 'Se termino el tiempo de su servicio Joven Club, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                    send_mail('QbaRed - Tiempo agotado', 'Se termino el tiempo de su servicio Joven Club, para volver a usarlo vaya a nuestro portal del usuario. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
     for f in filezilla:   
         exp = f.ftp_time       
         if exp:
@@ -239,21 +254,25 @@ def chequeo():
                 if f.ftp_auto:
                     if profile.coins >= 50:
                         profile.coins = profile.coins - 50
+                        profile.sync = False
                         profile.save()
                         f.ftp_time = timezone.now() + timedelta(days=30)
+                        f.sync = False
                         f.save()
                         code = crearOper(usuario.username, "FileZilla", 50)
-                        send_mail('Pago confirmado', f'Se ha reanudado su servicio FileZilla, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                        send_mail('QbaRed - Pago confirmado', f'Se ha reanudado su servicio FileZilla, esperamos que disfrute su tiempo y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                     else:
                         quitarFTP(usuario.username)                          
                         f.ftp = False
                         f.ftp_auto = False
+                        f.sync = False
                         f.save() 
-                        send_mail('Rechazo de pago', 'No se pudo reanudar su servicio FileZilla, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
+                        send_mail('QbaRed - Rechazo de pago', 'No se pudo reanudar su servicio FileZilla, no tiene suficientes coins, por favor recargue. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
                         crearLog(usuario.username, "DesActivacionLOG.txt", f'Se elimino de FileZilla a: { usuario.username }.')               
                 else:
                     quitarFTP(usuario.username)                          
                     f.ftp = False
+                    f.sync = False
                     f.save()               
                     crearLog(usuario.username, "DesActivacionLOG.txt", f'Se elimino de FileZilla a: { usuario.username }.')               
 

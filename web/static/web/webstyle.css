@@ -24,6 +24,27 @@
     height: 20rem;
 }
 
+.fondo {
+    top: 0;
+    left: 0;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    z-index: -1;
+}
+
+.info {
+    background-color:rgba(255, 255, 255, 0.5);
+    border: solid 1px;
+    border-radius: 6px;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    font-style: italic;
+    margin: auto;
+}
+
+
 /* Servicios */
 .servicios .col-lg-3 {
     margin-bottom: 1.5rem;

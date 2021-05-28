@@ -1,0 +1,82 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-8 col-md-6 m-auto my-5">
+    {% if mensaje %}
+        <div class="alert alert-warning text-center my-2" role="alert">                   
+            {{ mensaje }}                   
+        </div>               
+    {% endif %}
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Especifique número de recargas y cantidad de coins:</h5>
+        </div>
+        <div class="col-10 col-md-8 card-body m-auto my-3">
+            <form id="form_crear" action="{% url 'sync:control_recargas' %}" method="POST">
+                {% csrf_token%}
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="floatingNumero" required name="numero" placeholder="número de recargas">
+                    <label for="floatingNumero">Número de recargas:</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="floatingCantidad" required name="cantidad" placeholder="cantidad de coins">
+                    <label for="floatingCantidad">Cantidad de coins:</label>
+                </div>
+                <button id="boton_crear" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_crear" style='display: none;'></span>
+                    Crear
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-8 col-md-6 m-auto my-5">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Escriba el código de la recarga para ver los detalles:</h5>
+        </div>
+        <div class="col-10 col-md-8 m-auto my-3">
+            <form id="form_buscar" action="{% url 'sync:control_recargas' %}" method="POST">
+                {% csrf_token%}
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="floatingCodigo" required name="code" placeholder="00000000">
+                    <label for="floatingCodigo">Código:</label>
+                </div>                
+                <button id="boton_buscar" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_buscar" style='display: none;'></span>
+                    Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-8 col-md-6 m-auto my-5">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Resultado:</h5>
+        </div>
+        <div class="p-3">
+            {% if code %}
+                <p>Recarga {{ code }} por {{ cantidad }} coins. Actica --> {{ activa }}, Usuario {{ usuario }}, Fecha: {{ fecha }}</p>
+            {% endif %}
+            {% for r in recargas %}
+                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. Activa --> {{ r.activa }}, Usuario: {{ r.usuario }}, Fecha: {{ r.FechaUso }}</p></br>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    const form_crear = document.getElementById("form_crear");
+    form_crear.addEventListener("submit", (e) => {       
+        document.getElementById('spinner_crear').style.display = 'inline-block';
+        document.getElementById('boton_crear').disabled=true;
+        document.getElementById('boton_buscar').disabled=true;
+    });
+    const form_buscar = document.getElementById("form_buscar");
+    form_buscar.addEventListener("submit", (e) => {       
+        document.getElementById('spinner_buscar').style.display = 'inline-block';
+        document.getElementById('boton_crear').disabled=true;
+        document.getElementById('boton_buscar').disabled=true;
+    });
+</script>
+{% endblock contenido %}

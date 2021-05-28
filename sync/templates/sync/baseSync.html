@@ -1,0 +1,11 @@
+{% extends 'web/base.html' %}
+{% load static %}
+{% block title %} - Control{% endblock title %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'sync/style.css' %}">
+<div style="background-color: rgba(20, 126, 187, 0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+<div class="contenido">
+    {% block contenido %}
+    {% endblock contenido %}
+</div>
+{% endblock content %}

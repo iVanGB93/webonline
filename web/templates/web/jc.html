@@ -3,43 +3,43 @@
 {% block title %} - Joven Club{% endblock %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'web/webstyle.css' %}">
+<div class="fondo" style="background-color: rgba(6, 14, 136, 0.5);"></div>
 <div class="container marketing">
   <hr class="featurette-divider">
-    <div class="row featurette">
+    <div class="row info">
       <div class="col-md-8 order-md-2">
         <h2>Joven Club.</h2>
-        <p class="lead">Para acceder a la red Joven Club debe tener una cuenta activada en el JC de la Habana Vieja y tener activo el servicio en la red local. Para mas información escribir al Yanky.</p>
+        <p>
+          Para acceder a la red Joven Club debe tener una cuenta activada en el JC de la Habana Vieja y tener activo 
+          el servicio en la red local. Para mas información escribir al Yanky.
+        </p>
       </div>
       <div class="col-md-4 order-md-1">
         <img src="{% static 'web/jc/jovenclub.jpg' %}" class="img-fluid" alt="Responsive image" width="300" height="300"> 
       </div>
     </div>  
     <hr class="featurette-divider">
-    <div class="row featurette">
+    <div class="row info">
         <div class="col-md-8">
-            <h2>Para activar el servicio local entre al Portal del Usuario:</h2>           
+            <h2>Active el servicio local en el Portal del Usuario:</h2>           
         </div>        
-        <div class="col-md-4">
-          <p>Click para entrar -->
-            <a href="https://qbared.com/portal/" style="float: right;"><button class="btn btn-primary">Portal</button></a>
-          </p>  
+        <div class="col-md-4 text-center">         
+            <a href="{% url 'portal:jovenclub' %}"><button class="btn btn-primary">Portal</button></a>          
         </div>
     </div>
     <hr class="featurette-divider">
-    <div class="row featurette">
+    <div class="row info">
         <div class="col-md-8">
             <h2>Servidor de TS de Habana Vieja: 10.89.199.25</h2>           
         </div>        
-        <div class="col-md-4">
-            <p>Click para entrar -->
-              <a style="float: right;" href="ts3server://10.89.199.25">
-                  <button class="btn btn-primary">Vikingos</button>
-              </a>
-          </p>
+        <div class="col-md-4 text-center">            
+          <a href="ts3server://10.89.199.25">
+              <button class="btn btn-primary">Vikingos</button>
+          </a>          
         </div>
     </div>
     <hr class="featurette-divider">
-    <div class="row featurette">
+    <div class="row info">
       <div class="col-md-8 order-md-1">
         <h4 >Ayuda!!!</h4>
         <p class="lead">En el video se explica como utilizarlo.</p>

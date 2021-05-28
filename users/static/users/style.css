@@ -74,24 +74,10 @@ input:focus{
     color: white;
     background: transparent;
 }
-#id_username, #id_password {
-    color: white;
-}
 
 .links button {
     color: white;
     margin-top: 8px;
-}
-
-.social_icon span{
-    font-size: 60px;
-    margin-left: 10px;
-    color: #FFC312;
-}
-    
-.social_icon span:hover{
-    color: white;
-    cursor: pointer;
 }
 
 /* registro */

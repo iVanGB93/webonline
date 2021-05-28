@@ -1,92 +1,110 @@
-{% extends 'web/base.html' %}
+{% extends 'sync/baseSync.html' %}
 {% load static %}
-{% block title %}
-- Control
-{% endblock title %}
-{% block content %}
-<div style="background-color: rgba(20, 126, 187, 0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
-<div class="col-10 col-md-8 m-auto py-3">
-    {% if mensaje %}
-        <div class="alert alert-warning text-center my-2" role="alert">                   
-            {{ mensaje }}                   
-        </div>               
-    {% endif %}
-    <h4 class="text-center text-white">Usuarios:</h4>
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">username</th>
-                <th scope="col">email</th>
-                <th scope="col">Sincronizado</th>
-            </tr>
-        </thead>
-        <tbody>           
-            {% for u in usuarios %}
-            <tr>
-                <th scope="row">{{ u.id }}</th>
-                <td>{{ u.username }}</td>
-                <td>{{ u.email }}</td>
-                <td><form action="{% url 'sync:control_usuario' u.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td>>
-            </tr>  
-            {% endfor %}         
-        </tbody>
-    </table>
-    <h4 class="text-center text-white">Perfiles:</h4>
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">Coins</th>
-                <th scope="col">Sincronizado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in perfiles %}
-            <tr>
-                <th scope="row">{{ p.id }}</th>
-                <td>{{ p.usuario.username }}</td>
-                <td>{{ p.coins }}</td>
-                {% if p.sync %}
-                <td scope="col"><form action="{% url 'sync:control_usuario' p.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
-                {% else %}
-                <td scope="col"><form action="{% url 'sync:control_usuario' p.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h4 class="text-center text-white">Servicios:</h4>
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">Internet</th>
-                <th scope="col">Joven Club</th>
-                <th scope="col">Emby</th>
-                <th scope="col">FileZilla</th>
-                <th scope="col">Sincronizado</th>
-            </tr>
-        </thead>
-        <tbody>  
-        {% for s in servicios %}
-        <tr>
-            <th scope="row">{{ s.id }}</th>
-            <td>{{ s.usuario.username }}</td>
-            <td>{{ s.internet }}</td>
-            <td>{{ s.jc }}</td>
-            <td>{{ s.emby }}</td>
-            <td>{{ s.ftp }}</td>
-            {% if s.sync %}
-            <td><form action="{% url 'sync:control_servicio' s.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info" name="action" value="check">Chequear sync</button></form></td>
-            {% else %}
-            <td><form action="{% url 'sync:control_servicio' s.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info" name="action" value="cambiar">Sync</button></form></td>
+{% block contenido %}
+<div class="row">
+    <div class="col-10 col-md-8 order-2 order-md-1 m-auto">
+        <div class="col-12 col-md-10 m-auto py-3">
+            {% if mensaje %}
+                <div class="alert alert-warning text-center my-2" role="alert">                   
+                    {{ mensaje }}                
+                </div> 
             {% endif %}
-           
-            {% endfor %}
-        </tbody>
-    </table>           
+            <h4 class="text-center text-white">Usuarios:</h4>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">username</th>
+                        <th scope="col">email</th>
+                        <th scope="col">Sincronizado</th>
+                    </tr>
+                </thead>
+                <tbody>           
+                    {% for u in usuarios %}
+                    <tr>
+                        <th scope="row">{{ u.id }}</th>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                        <td><form action="{% url 'sync:control_usuario' u.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td>
+                    </tr>  
+                    {% endfor %}         
+                </tbody>
+            </table>
+            <h4 class="text-center text-white">Perfiles:</h4>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <td scope="col">Usuario</td>
+                        <td scope="col">Coins</td>
+                        <td scope="col">Sincronizado</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in perfiles %}
+                    <tr>
+                        <th scope="row">{{ p.id }}</th>
+                        <td>{{ p.usuario.username }}</td>
+                        <td>{{ p.coins }}</td>
+                        {% if p.sync %}
+                        <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
+                        {% else %}
+                        <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4 class="text-center text-white">Servicios:</h4>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Internet</th>
+                        <th scope="col">Joven Club</th>
+                        <th scope="col">Emby</th>
+                        <th scope="col">FileZilla</th>
+                        <th scope="col">Sincronizado</th>
+                    </tr>
+                </thead>
+                <tbody>  
+                {% for s in servicios %}
+                <tr>
+                    <th scope="row">{{ s.id }}</th>
+                    <td>{{ s.usuario.username }}</td>
+                    <td>{{ s.internet }}</td>
+                    <td>{{ s.jc }}</td>
+                    <td>{{ s.emby }}</td>
+                    <td>{{ s.ftp }}</td>
+                    {% if s.sync %}
+                    <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Chequear sync</button></form></td>
+                    {% else %}
+                    <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Sync</button></form></td>
+                    {% endif %}
+                
+                    {% endfor %}
+                </tbody>
+            </table>           
+        </div>
+    </div>
+    <div class="col-12 col-md-4 order-1 order-md-2 my-3">
+        <div class="col-10 col-md-8 m-auto card bg-dark text-white">
+            <div class="card-header">
+                <h5>Herramientas</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>
+                        <a href="{% url 'sync:control_recargas' %}">
+                            <button class="form-control btn btn-info">
+                                Recargas
+                            </button>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock content %}
+{% endblock contenido %}

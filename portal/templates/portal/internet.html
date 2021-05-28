@@ -78,10 +78,10 @@
                         </form>
                         {% else %}
                         <span class="badge rounded-pill bg-danger">OFF</span>
-                        <form action="{% url 'portal:auto' 'internet' %}" method="POST">
+                        <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
                             {% csrf_token %}
-                            <button id="boton" type="submit" class="btn btn-outline-success">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                            <button id="boton_auto" type="submit" class="btn btn-outline-success">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
                                 Activar
                             </button>
                         </form>
@@ -133,7 +133,7 @@
             </select>
             <div class="input-group mb-3">
                 <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Horas:</span>
-                <input type="text" name="cantidad_horas" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                <input type="number" name="cantidad_horas" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div> 
             <div class="input-group mb-3">
                 <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Contraseña</span>
@@ -163,20 +163,26 @@
         </div>
     </div>
 </div>
-<script>
-    const myform = document.getElementById("myform");
-    myform.addEventListener("submit", (e) => {       
-        document.getElementById('spinner').style.display = 'inline-block';
-        document.getElementById('boton').disabled=true;
-    });
+<script>    
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';
         document.getElementById('boton_sync').disabled=true;
+        document.getElementById('boton_auto').disabled=true;
+        document.getElementById('boton').disabled=true;
     });
     const myform_auto = document.getElementById("myform_auto");
     myform_auto.addEventListener("submit", (e) => {       
         document.getElementById('spinner_auto').style.display = 'inline-block';
+        document.getElementById('boton_sync').disabled=true;
+        document.getElementById('boton_auto').disabled=true;
+        document.getElementById('boton').disabled=true;
+    });
+    const myform = document.getElementById("myform");
+    myform.addEventListener("submit", (e) => {       
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('boton').disabled=true;
+        document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
 </script>

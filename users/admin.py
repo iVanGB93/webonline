@@ -8,9 +8,9 @@ class ProfileAdminConfig(admin.ModelAdmin):
     search_fields = ['usuario__username']
     #list_filter = ('is_active', 'is_staff')
     ordering = ('-coins',)
-    list_display = ('usuario', 'id', 'coins')
+    list_display = ('usuario', 'id', 'coins', 'sync')
     fieldsets = (
-        (None, {'fields': ('usuario', 'coins', 'imagen')}),
+        (None, {'fields': ('usuario', 'coins', 'sync', 'imagen')}),
     )   
     """ add_fieldsets = (
         (None, {

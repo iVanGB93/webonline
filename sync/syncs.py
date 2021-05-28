@@ -5,7 +5,7 @@ import json
 
 
 #medula = config('MEDULA')
-medula = 'ws://172.16.0.11:8000/ws/sync/'
+medula = 'ws://127.0.0.1:8080/ws/sync/'
 
 def get_or_create_eventloop():
     try:
@@ -16,61 +16,29 @@ def get_or_create_eventloop():
             asyncio.set_event_loop(loop)
             return asyncio.get_event_loop()
 
-def actualizacion_usuario(method, usuario, email=None, password=None, data=None):
-    if method == 'check':
-        print("CHECKING")
-        data = {'usuario': usuario}
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'check_usuario', data))
-        return recibe
-    elif method == 'nuevo':
-        print("AGREGANDO")
-        data = {'usuario': usuario, 'email': email, 'password': password}
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'nuevo_usuario', data))
-        return recibe
-    elif method == 'cambio':
-        print("MODIFICANDO")
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'cambio_usuario', data))
-        return recibe
-    else:
-        print("ALGO MAS")
+def actualizacion_remota(accion, data):
+    recibe = get_or_create_eventloop().run_until_complete(conectar(medula, accion, data))
+    return recibe
 
-def actualizacion_servicio(method, usuario, servicio, data):
-    if method == 'check':
-        print("CHECKING")
-        usuario = str(usuario)
-        data['usuario'] = usuario
-        data['servicio'] = servicio
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'check_servicio', data))
-        return recibe
-    if method == 'cambio':
-        print("MODIFICANDO")
-        usuario = str(usuario)
-        data['usuario'] = usuario
-        data['servicio'] = servicio
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'cambio_servicio', data))
-        return recibe
-    if method == 'guardar':
-        print("GUARDANDO")
-        usuario = str(usuario)
-        data['usuario'] = usuario
-        recibe = get_or_create_eventloop().run_until_complete(conectar(medula, 'guardar_servicio', data))
-        return recibe
-    
-async def conectar(url, command, data):
-    recibe = False
+async def conectar(url, accion, data):
+    respuesta = {'conexion': False, 'estado': False}
     try:
         async with websockets.connect(url) as ws:
-            envia = json.dumps({'command': command, 'data': data})
-            await ws.send(envia)
-            recibe = await ws.recv()
-            recibe = json.loads(recibe)
-            return recibe
+            while True:
+                envia = json.dumps({'accion': accion, 'data': data})
+                await ws.send(envia)
+                recibe = await ws.recv()
+                respuesta = json.loads(recibe)
+                respuesta['conexion'] = True
+                return respuesta
     except ConnectionRefusedError:
-        print("EL SERVIDOR DENEGO LA CONEXION")
-        return recibe
+        respuesta['mensaje'] = 'EL SERVIDOR DENEGO LA CONEXION'
+        return respuesta
     except OSError:
-        print("IP INALCANZABLE", OSError)
-        return recibe
+        respuesta['mensaje'] = f'IP INALCANZABLE { OSError }'
+        return respuesta
+    except TypeError:
+        respuesta['mensaje'] = f'ERROR {TypeError}'
     except:
-        print("NADA QUE DECIR, SOLO PROBLEMAS")
-        return recibe
+        respuesta['mensaje'] = 'NADA QUE DECIR, SOLO PROBLEMAS'
+        return respuesta

@@ -137,20 +137,26 @@
         </div>
     </div>
 </div>
-<script>
-    const myform = document.getElementById("myform");
-    myform.addEventListener("submit", (e) => {       
-        document.getElementById('spinner').style.display = 'inline-block';
-        document.getElementById('boton').disabled=true;
-    });
+<script>    
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';
         document.getElementById('boton_sync').disabled=true;
+        document.getElementById('boton_auto').disabled=true;
+        document.getElementById('boton').disabled=true;
     });
     const myform_auto = document.getElementById("myform_auto");
     myform_auto.addEventListener("submit", (e) => {       
         document.getElementById('spinner_auto').style.display = 'inline-block';
+        document.getElementById('boton_sync').disabled=true;
+        document.getElementById('boton_auto').disabled=true;
+        document.getElementById('boton').disabled=true;
+    });
+    const myform = document.getElementById("myform");
+    myform.addEventListener("submit", (e) => {       
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('boton').disabled=true;
+        document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
 </script>

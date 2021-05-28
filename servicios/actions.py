@@ -4,6 +4,7 @@ from .models import Recarga, Oper, EstadoServicio
 from django.contrib.auth.models import User
 from users.models import Profile
 from django.core.mail import send_mail
+from sync.syncs import actualizacion_remota
 from decouple import config
 import xml.etree.ElementTree
 import subprocess
@@ -88,7 +89,7 @@ def activarFTP(username, pwd, group):
     subprocess.run([exe_path, '/reload-config'], shell=True)
 #Fin FILEZILLA
 
-def compra_internet(usuario, tipo, contra, horas):
+def comprar_internet(usuario, tipo, contra, horas):
     result = {'correcto': False, 'mensaje': ''}
     profile = Profile.objects.get(usuario=usuario)
     usuario = User.objects.get(username=usuario)
@@ -114,6 +115,7 @@ def compra_internet(usuario, tipo, contra, horas):
                 servicio.internet = True  
                 servicio.int_time = timezone.now() + timedelta(days=30)
                 servicio.int_tipo = 'internetMensual'
+                servicio.sync = False
                 servicio.save()
                 profile.save()
                 code = crearOper(usuario.username, 'internetMensual', 200)
@@ -146,6 +148,7 @@ def compra_internet(usuario, tipo, contra, horas):
                 servicio.internet = True  
                 servicio.int_time = timezone.now() + timedelta(days=7)
                 servicio.int_tipo = 'internetSemanal'
+                servicio.sync = False
                 servicio.save()
                 profile.save()
                 code = crearOper(usuario.username, 'internetSemanal', 300)
@@ -188,6 +191,7 @@ def compra_internet(usuario, tipo, contra, horas):
                     servicio.int_horas = horas
                     servicio.int_tipo = 'internetHoras'
                     servicio.int_time = None
+                    servicio.sync = False
                     servicio.save()
                     profile.save() 
                     send_mail('QbaRed - Pago confirmado', f'Gracias por utilizar nuestro internet por horas, esperamos que disfrute sus { horas} horas y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
@@ -227,6 +231,7 @@ def comprar_jc(usuario):
             profile.save()
             servicio.jc = True
             servicio.jc_time = timezone.now() + timedelta(days=30)
+            servicio.sync = False
             servicio.save()
             code = crearOper(usuario.username, "Joven-Club", 100)
             send_mail('QbaRed - Pago confirmado', f'Gracias por utilizar nuestro servicio de Joven Club, esperamos que disfrute sus 30 dias y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])
@@ -263,6 +268,7 @@ def comprar_emby(usuario):
             servicio.emby = True
             servicio.emby_id = usuarioID
             servicio.emby_time = timezone.now() + timedelta(days=30)
+            servicio.sync = False
             servicio.save()
             url = f'{ emby_ip }/Users/{ usuarioID}/Configuration?api_key={ emby_api_key }'
             json = {
@@ -352,6 +358,7 @@ def comprar_filezilla(usuario, contraseña):
         code = crearOper(usuario.username, 'FileZilla', 50)
         #crearLog(usuario, "ActivacionLOG.txt", f'El usuario: { usuario.username } pago por FTP.')
         send_mail('QbaRed - Pago confirmado', f'Gracias por utilizar nuestro servicio de FileZilla, esperamos que disfrute sus 30 dias y que no tenga mucho tufe la red ;-) Utilice este código para el sorteo mensual: "{ code }". Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])            
+        servicio.sync = False
         servicio.save()
         result['mensaje'] = 'Servicio activado con éxito.'
         result['correcto'] = True
@@ -367,18 +374,23 @@ def recargar(code, usuario):
         if recarga.activa:
                 usuario = User.objects.get(username=usuario)
                 profile = Profile.objects.get(usuario=usuario.id)
-                cantidad = recarga.cantidad                
+                cantidad = recarga.cantidad                   
                 profile.coins = profile.coins + cantidad
-                profile.save()
-                recarga.activa = False
-                recarga.fechaUso = timezone.now()
-                recarga.usuario = usuario
-                recarga.save()
-                oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
-                oper.save()
-                result['correcto'] = True
-                result['mensaje'] = 'Cuenta Recargada con éxito'
-                return result
+                respuesta = actualizacion_remota('usar_recarga', {'usuario': usuario.username, 'code': code})
+                if respuesta['estado']:                    
+                    profile.save()
+                    recarga.activa = False
+                    recarga.fechaUso = timezone.now()
+                    recarga.usuario = usuario
+                    recarga.save()
+                    oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
+                    oper.save()
+                    result['correcto'] = True
+                    result['mensaje'] = 'Cuenta Recargada con éxito'
+                    return result
+                else:
+                    result['mensaje'] = respuesta['mensaje']
+                    return result
         else:
             result['mensaje'] = 'Recarga usada'
             return result
@@ -397,8 +409,10 @@ def transferir(desde, hacia, cantidad):
                 recibe = User.objects.get(username=hacia)
                 recibeProfile = Profile.objects.get(usuario=recibe.id)
                 recibeProfile.coins = recibeProfile.coins + cantidad
-                enviaProfile.coins = enviaProfile.coins - cantidad
+                enviaProfile.coins = enviaProfile.coins - cantidad 
+                enviaProfile.sync = False     
                 enviaProfile.save()
+                recibeProfile.sync = False
                 recibeProfile.save()
                 cantidad = str(cantidad)
                 oper = Oper(usuario=recibe, tipo="RECIBO", cantidad=cantidad, haciaDesde=desde)

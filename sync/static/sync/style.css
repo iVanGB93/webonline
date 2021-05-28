@@ -1,0 +1,10 @@
+.contenido {
+    min-height: 70vh;
+    width: 100%;
+    padding: 10px;
+}
+
+table {
+    max-height: calc(100vh/2);
+    overflow: scroll;
+}

@@ -9,7 +9,7 @@
     {% endif %}
     <div class="card align-middle">
         <div class="card-header bg-dark text-white">
-            <h5>Desea eliminar el usuario de la local o crearlo en internet?</h5>
+            <h5>Los servicios de internet no coincide con el local, desea guardar este o el de internet?</h5>
         </div>
         <div class="card-body">
             <div class="row">        
@@ -17,15 +17,15 @@
             </div>
             <div class="row">
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:crear_eliminar_usuario' id %}" method="POST">
+                    <form action="{% url 'sync:actualizar_servicio' id %}" method="POST">
                         {% csrf_token%}
-                        <button class="form-control btn btn-success" name="respuesta" value="crear" type="submit">Crear</button>
+                        <button class="form-control btn btn-success" name="respuesta" value="local" type="submit">Locales</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:crear_eliminar_usuario' id %}" method="POST">
+                    <form action="{% url 'sync:actualizar_servicio' id %}" method="POST">
                         {% csrf_token%}
-                        <button class="form-control btn btn-danger" name="respuesta" value="eliminar" type="submit">Eliminar</button>
+                        <button class="form-control btn btn-danger" name="respuesta" value="remoto" type="submit">Internet</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
