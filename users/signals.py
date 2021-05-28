@@ -16,9 +16,9 @@ def crearProfile(sender, instance, **kwargs):
         profile = Profile(usuario=usuario)
         profile.sync = True
         profile.save()
-        send_mail('Usuario nuevo', f'El usuario { usuario.username } se ha registardo.', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
-        send_mail(f'Bienvenido { usuario.username } a QbaRed', f'Hola { usuario.username }, usted se ha registrado en QbaRed, le damos todos la bienvenida y esperamos que sea de su agrado nuestra red. Puede informarse en --> https://www.qbared.com/  Saludos', 'RedCentroHabanaCuba@gmail.com', [usuario.email,])
-
+        #send_mail('Usuario nuevo', f'El usuario { usuario.username } se ha registardo.', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
+        #send_mail(f'Bienvenido { usuario.username } a QbaRed', f'Hola { usuario.username }, usted se ha registrado en QbaRed, le damos todos la bienvenida y esperamos que sea de su agrado nuestra red. Puede informarse en --> https://www.qbared.com/  Saludos', 'RedCentroHabanaCuba@gmail.com', [usuario.email,])
+""" 
 @receiver(post_save, sender=Profile)
 def actualizar_profile(sender, instance, **kwargs):
     if instance.sync == False:
@@ -30,3 +30,4 @@ def actualizar_profile(sender, instance, **kwargs):
         else:
             mensaje = respuesta['mensaje']
             send_mail(f'Falló al subir el perfil', f'El perfil del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: { mensaje }', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])    
+ """

@@ -17,7 +17,7 @@ def crearServicios(sender, instance, **kwargs):
         servicios.sync = True
         servicios.save()
 
-@receiver(post_save, sender=Oper)
+""" @receiver(post_save, sender=Oper)
 def correoOper(sender, instance, **kwargs):
     usuario = str(instance.usuario)
     if instance.servicio != None:
@@ -46,9 +46,9 @@ def correoOper(sender, instance, **kwargs):
         send_mail(f'{ usuario } realizó un envio', f'El usuario { usuario } envió { cantidad } a { instance.haciaDesde }. Fecha: { fecha}', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
     elif instance == 'RECIBO':
         send_mail(f'{ usuario } ha recibido', f'El usuario { usuario } recibió { cantidad } de { instance.haciaDesde }. Fecha: { fecha}', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
+ """
 
-
-@receiver(post_save, sender=EstadoServicio)
+""" @receiver(post_save, sender=EstadoServicio)
 def actualizar_servicios(sender, instance, **kwargs):
     if instance.sync == False:
         serializer = ServiciosSerializer(instance)
@@ -61,3 +61,4 @@ def actualizar_servicios(sender, instance, **kwargs):
         else:
             mensaje = respuesta['mensaje']
             send_mail(f'Falló al subir el servicio', f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: { mensaje }', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])    
+ """
