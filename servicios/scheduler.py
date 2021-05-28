@@ -6,11 +6,6 @@ from users.models import Profile
 from django.contrib.auth.models import User
 from decouple import config
 from datetime import datetime, timedelta
-import paramiko
-import requests
-import xml.etree.ElementTree
-import subprocess
-import hashlib
 import os
 
 def crearLog(usuario, nombre, texto):
@@ -28,78 +23,7 @@ def crearOper(usuario, servicio, cantidad):
     code = nuevaOper.code
     return code
 
-def quitarMk(ip, comando):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    try:
-        client.connect(ip, username=config('MK1_USER'), password=config('MK1_PASSWORD'))
-        stdin, stdout, stderr = client.exec_command(comando)
-        for line in stdout:            
-            if "no such item" in line:
-                return False
-        client.close()
-        return True
-    except:
-        crearLog("ERROR CON MIKROTIK", "DesActivacionLOG.txt", f'Problema en la conexion con el mikrotik para desactivar un usuario.')
-        return False
-
-#FILEZILLA
-user_xml_fmt = '''
-        <User Name="{username}">
-            <Option Name="Pass">{md5_pwd}</Option>
-            <Option Name="Group">{group}</Option>
-            <Option Name="Bypass server userlimit">2</Option>
-            <Option Name="User Limit">0</Option>
-            <Option Name="IP Limit">0</Option>
-            <Option Name="Enabled">2</Option>
-            <Option Name="Comments" />
-            <Option Name="ForceSsl">2</Option>
-            <IpFilter>
-                <Disallowed />
-                <Allowed />
-            </IpFilter>
-            <Permissions />
-            <SpeedLimits DlType="0" DlLimit="10" ServerDlLimitBypass="2" UlType="0" UlLimit="10" ServerUlLimitBypass="2">
-                <Download />
-                <Upload />
-            </SpeedLimits>
-        </User>
-'''
-
-folder = 'C:/Program Files (x86)/FileZilla Server'
-xml_path = os.path.join(folder, 'FileZilla Server.xml')
-exe_path = os.path.join(folder, 'FileZilla Server.exe')
-
-class DDDManager():
-
-    def __init__(self, filename):
-        self.filename = filename
-
-    def setup(self):
-        self.tree = xml.etree.ElementTree.parse(self.filename)
-        self.root = self.tree.getroot()
-        self.user_tree = self.root.findall('Users')[0]
-        return self
-
-    def remove_user(self, username):
-        for user in self.user_tree:
-            if user.get('Name') == username:
-                self.user_tree.remove(user)
-
-    def dump(self):
-        self.tree.write(self.filename)
-
-def quitarFTP(username):
-
-    manager = DDDManager(xml_path).setup()   
-   
-    manager.remove_user(username)
-
-    manager.dump()
-    subprocess.run([exe_path, '/reload-config'], shell=True)
-#Fin FileZilla
-
-def chequeoInternet():    
+""" def chequeoInternet():    
     inter = EstadoServicio.objects.filter(internet=True)
     for i in inter:   
         exp = i.int_time
@@ -280,4 +204,4 @@ def tiempoAcabado():
     scheduler = BackgroundScheduler()
     scheduler.add_job(chequeoInternet, 'interval', minutes=5)
     scheduler.add_job(chequeo, 'interval', minutes=30)
-    scheduler.start()
+    scheduler.start() """
