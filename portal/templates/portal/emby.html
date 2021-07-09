@@ -2,21 +2,16 @@
 {% load static %}
 {% block contenido %}
 <div class="row my-1">    
-    <div class="col-10 col-md-8 m-auto">
+    <div class="col-10 col-md-5 mt-0 mb-2 m-auto">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header text-white bg-dark">
                 EMBY - {{ user }}
             </div>
-            <div class="card-body">
-                <div class="row my-1">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Mis coins</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">{{ perfil.coins }} coins</h5>
-                </div> 
-                <hr class="dropdown-divider" />
-                <div class="row my-1">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Mi cuenta</h5>
+            <div class="card-body">                
+                <div class="row m-auto">
+                    <h5 class="col-6 card-title d-flex justify-content-start">Mi cuenta:</h5>
                     <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if servicio.emby %}
+                        {% if user.estadoservicio.emby %}
                         <span class="badge rounded-pill bg-success">Activa</span>
                         {% else %}
                         <span class="badge rounded-pill bg-danger">No activa</span>
@@ -24,11 +19,11 @@
                     </h5>
                 </div>
                 <hr class="dropdown-divider" />
-                <div class="row my-1">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Sincronizada:</h5>
+                <div class="row m-auto">
+                    <h5 class="col-6 card-title d-flex justify-content-start">Sincronización:</h5>
                     <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if servicio.sync %}
-                        <span class="badge rounded-pill bg-success">OK</span>
+                        {% if user.estadoservicio.sync %}
+                        <span class="badge rounded-pill bg-success mx-2">OK</span>
                         <form id="myform_sync" action="{% url 'portal:sync_servicio' 'emby' %}" method="POST">
                             {% csrf_token %}
                             <button id="boton_sync" type="submit" class="btn btn-outline-info">
@@ -37,7 +32,7 @@
                             </button>
                         </form>
                         {% else %}
-                        <span class="badge rounded-pill bg-danger">OFF</span>
+                        <span class="badge rounded-pill bg-danger mx-2">OFF</span>
                         <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
                             {% csrf_token %}
                             <button id="boton_sync" type="submit" class="btn btn-outline-info">
@@ -49,22 +44,22 @@
                     </h5>
                 </div>
                 <hr class="dropdown-divider" />
-                <div class="row my-1">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Restante</h5>
+                <div class="row m-auto">
+                    <h5 class="col-6 card-title d-flex justify-content-start">Restante:</h5>
                     <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if servicio.emby_time %}
-                            {{ servicio.emby_time}}
+                        {% if user.estadoservicio.emby_time %}
+                            {{ user.estadoservicio.emby_time}}
                         {% else %}
                             -
                         {% endif %}
                     </h5>
                 </div>  
                 <hr class="dropdown-divider" /> 
-                <div class="row my-1">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Activación automática</h5>
+                <div class="row m-auto">
+                    <h5 class="col-6 card-title d-flex justify-content-start">Autopago:</h5>
                     <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if servicio.emby_auto %}
-                        <span class="badge rounded-pill bg-success">ON</span>
+                        {% if user.estadoservicio.emby_auto %}
+                        <span class="badge rounded-pill bg-success mx-2">ON</span>
                         <form id="myform_auto" action="{% url 'portal:auto' 'emby' %}" method="POST">
                             {% csrf_token %}
                             <button id="boton_auto" type="submit" class="btn btn-outline-danger">
@@ -73,7 +68,7 @@
                             </button>
                         </form>
                         {% else %}
-                        <span class="badge rounded-pill bg-danger">OFF</span>
+                        <span class="badge rounded-pill bg-danger mx-2">OFF</span>
                         <form action="{% url 'portal:auto' 'emby' %}" method="POST">
                             {% csrf_token %}
                             <button id="boton" type="submit" class="btn btn-outline-success">
@@ -87,45 +82,43 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row my-1">
-    <div class="col-10 col-md-8 m-auto text-center">
-        {% if mensaje %}
-        <div class="alert alert-warning text-center my-2" role="alert">                   
-            {{ mensaje }}                   
-        </div>               
-        {% endif %}
-        <div class="card my-3">
-            <div class="card-header">
-                Costo:
-            </div>
+    <div class="col-10 col-md-5 mt-0 m-auto text-center">       
+        <div class="card">
+            <div class="card-header text-white bg-dark">Costo:</div>
             <div class="card-body">
-                <div class="row">
+                <div class="row m-auto">
                     <h5 class="col-6 card-title d-flex justify-content-start">Mensual</h5>
                     <h5 class="col-6 card-title d-flex justify-content-end">100 coins</h5>
                 </div>      
             </div>
         </div>        
-        {% if not servicio.emby %}
-        <h4>Activar el servicio Emby:</h4>
-        <form id="myform" action="{% url 'portal:emby' %}" method="post">            
-            {% csrf_token %}   
-            <div class="input-group mb-3">
-                <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Contraseña</span>
-                <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>                      
-            <button id="boton" type="submit" class="form-control btn btn-primary">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
-                Activar
-            </button>            
-        </form>
+        {% if not user.estadoservicio.emby %}
+        <div class="my-3">
+            <h4 class="fw-bold">Activar el servicio Emby:</h4>
+            <form id="myform" action="{% url 'portal:emby' %}" method="post">            
+                {% csrf_token %}   
+                <div class="input-group mb-3">
+                    <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Contraseña</span>
+                    <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>                      
+                <button id="boton" type="submit" class="form-control btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                    Activar
+                </button>            
+            </form>
+        </div>
         {% endif %}
     </div>
 </div>
+{% if mensaje %}
+    <div class="alert alert-{{ color_msg }} text-center m-auto my-2 col-8 col-md-4" role="alert">                   
+        {{ mensaje }}                   
+    </div>               
+{% endif %}
 <div class="row py-5">
     <div class="col-10 col-md-8 m-auto text-center">
         <div class="card">
-            <div class="card-header">Información:</div>
+            <div class="card-header text-white bg-dark">Información:</div>
             <div class="card-body">
                 <ul class="list-group">
                     <li class="list-group-item">Las instrucciones para usarlo están <a href="{% url 'web:emby' %}">-->aquí<--</a></li>

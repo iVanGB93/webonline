@@ -19,25 +19,50 @@ class WSConsumer(WebsocketConsumer):
             self.channel_name
         )        
         self.accept()
-    
-    # Receive message from WebSocket
+
     def receive(self, text_data):
-        data = json.loads(text_data) 
-        self.commands[data['command']](self, data)
+        data = json.loads(text_data)
+        accion = data['accion']
+        data = data['data']
+        self.acciones[accion](self, data)
+    
+    def saludo(self, data):
+        respuesta = {'estado': False, 'finalizado': False}
+        celula = data['identidad']
+        print(f'{ celula } se ha conectado')
+        respuesta['estado'] = True
+        respuesta['mensaje'] = f'Bienvenido {celula}, está conectado!!!'
+        self.responder(respuesta)
 
-    def start(self, data):
+    def empezar(self, data):
+        respuesta = {'estado': True, 'finalizado': False}
         mesActual = timezone.now().month
-        sorteo = SorteoDetalle.objects.get(mes=mesActual)
-        sorteo.activo = True
-        sorteo.save()
+        if SorteoDetalle.objects.filter(mes=mesActual).exists():
+            sorteo = SorteoDetalle.objects.get(mes=mesActual)
+        else:
+            sorteo = SorteoDetalle(mes=mesActual)
+        if sorteo.activo:
+            respuesta['mensaje'] = 'Ya estaba activo el sorteo.'
+            self.responder(respuesta)
+        else:
+            sorteo.activo = True
+            sorteo.save()
+            respuesta['mensaje'] = 'Comienza el sorteo!!!'
+            self.responder(respuesta)
 
-    def participants(self, data):
-        participants = Sorteo.objects.all()
-        content = {
-            'command': 'participants',
-            'participants': self.participants_to_json(participants),
-        }
-        self.send_chat_message(content)
+    def participantes(self, data):
+        respuesta = {'estado': True, 'finalizado': False}
+        mesActual = timezone.now().month
+        if Sorteo.objects.filter(mes=mesActual).exists():
+            participants = Sorteo.objects.filter(mes=mesActual)
+            respuesta['mensaje'] = 'participantes'
+            respuesta['participantes'] = self.participants_to_json(participants)        
+        else:
+            respuesta['mensaje'] = 'Ningún participante registrado aún!!!'
+        if data.get('individual'):
+            self.responder(respuesta)
+        else:
+            self.responder_grupo(respuesta)
     
     def participants_to_json(self, participants):
         result = []
@@ -56,68 +81,73 @@ class WSConsumer(WebsocketConsumer):
         }
         return result
 
-    def roll(self, data):
+    def sortear(self, data):
+        respuesta = {'estado': False, 'finalizado': False}
         mesActual = timezone.now().month
-        participants = Sorteo.objects.filter(eliminado=False, mes=mesActual)
-        codes = []
-        for p in participants:
-            codes.append(p.code)
-        if len(codes) > 1:
-            if len(codes) == 2:
-                code = random.choice(codes)
-                selected = Sorteo.objects.get(code=code)
-                selected.eliminado = True
-                selected.save()
-                ganador = Sorteo.objects.get(eliminado=False)
-                content = {
-                    'command': 'code',
-                    'code': "El ganador es " + ganador.usuario.username + ", servicio: " + ganador.servicio
-                }
-                recarga = Recarga(cantidad=200)
-                recarga.save()
-                sorteo = SorteoDetalle.objects.get(mes=mesActual)
-                sorteo.ganador = ganador.usuario.username
-                sorteo.recarga = recarga.code
-                sorteo.save()               
-                send_mail('FELICIDADES desde QbaRed', f'Usted ha sido el ganador del sorteo del mes {sorteo.mes}, este es su código de recarga {sorteo.recarga}. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [ganador.usuario.email,])
-                self.send_chat_message(content)
-            else:
-                code = random.choice(codes)
-                selected = Sorteo.objects.get(code=code)
-                selected.eliminado = True
-                selected.save()
-                content = {
-                    'command': 'code',
-                    'code': "El eliminado es " + selected.usuario.username + ", servicio: " + selected.servicio
-                }
-                self.send_chat_message(content)
-        else:
-            content = {
-                'command': 'code',
-                'code': 'Ya ha terminado el sorteo'
-            }
-            mesActual = timezone.now().month
+        if SorteoDetalle.objects.filter(mes=mesActual).exists():
             sorteo = SorteoDetalle.objects.get(mes=mesActual)
-            sorteo.finalizado = True
-            sorteo.save()
-            self.send_chat_message(content)
+            participants = Sorteo.objects.filter(eliminado=False, mes=mesActual)
+            codes = []
+            for p in participants:
+                codes.append(p.code)
+            if len(codes) > 1:
+                if len(codes) == 2:
+                    code = random.choice(codes)
+                    selected = Sorteo.objects.get(code=code)
+                    selected.eliminado = True
+                    selected.save()
+                    codes.remove(code)                
+                    ganador = Sorteo.objects.get(code=codes[0])
+                    respuesta['estado'] = True
+                    respuesta['mensaje'] = f'El ganador es { ganador.usuario.username }, por el servicios { ganador.servicio }. Felicidades!!!'
+                    respuesta['finalizado'] = True
+                    recarga = Recarga(cantidad=200)
+                    recarga.save()
+                    sorteo.ganador = ganador.usuario.username
+                    sorteo.recarga = recarga.code
+                    sorteo.finalizado = True
+                    sorteo.activo = False
+                    sorteo.save()          
+                    send_mail('FELICIDADES desde QbaRed', f'Usted ha sido el ganador del sorteo del mes {sorteo.mes}, este es su código de recarga {sorteo.recarga}. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [ganador.usuario.email,])
+                    self.responder_grupo(respuesta)                    
+                else:
+                    code = random.choice(codes)
+                    selected = Sorteo.objects.get(code=code)
+                    selected.eliminado = True
+                    selected.save()
+                    respuesta['estado'] = True
+                    respuesta['mensaje'] = f'El eliminado es {selected.usuario.username}, por el servicio: {selected.servicio}  :-('
+                    self.responder_grupo(respuesta)
+            else:
+                respuesta['estado'] = True
+                sorteo.finalizado = True
+                sorteo.activo = False
+                sorteo.save()
+                ganador = sorteo.ganador
+                respuesta['mensaje'] = f'Ya ha terminado el sorteo, ganador { ganador }.'
+                self.responder_grupo(respuesta)
+        else:
+            respuesta['estado'] = True
+            respuesta['mensaje'] = 'Por favor empiece el sorteo primero'
+            self.responder(respuesta)
 
-    commands = {
-        'start': start,
-        'participants': participants,        
-        'roll': roll,
+    acciones = {
+        'saludo': saludo,
+        'empezar': empezar,
+        'participantes': participantes,
+        'sortear': sortear,
     }
 
     def send_message(self, message):
         self.send(text_data=json.dumps(message))
     
-    def send_chat_message(self, message): 
+    def responder_grupo(self, data): 
         # Send message to room group  
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message,                
+                'message': data,                
             }
         )
     
@@ -126,6 +156,10 @@ class WSConsumer(WebsocketConsumer):
         message = event['message']        
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
+
+    def responder(self, data):
+        data = json.dumps(data)
+        self.send(data)
     
     def disconnect(self, close_code):
         # Leave room group

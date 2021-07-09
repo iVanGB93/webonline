@@ -5,57 +5,32 @@
     height: 100vh;
     width: 100%;
     z-index: -1;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .contenedor {
-    top: 60px;
-    position: relative;
-    padding-bottom: 150px;    
-    bottom: -100px;
+    margin-top: 40px;
+    margin-bottom: 150px;    
 }
 
-.blog-header-logo {
+.logo {
     font-family: "Playfair Display", Georgia, "Times New Roman", serif/*rtl:Amiri, Georgia, "Times New Roman", serif*/;
-    font-size: 2.25rem;
+    font-size: 3rem;
 }
 
 .box {
-    border: solid 1px rgba(90, 85, 32, 0.4);    
+    border: solid 1px rgba(90, 85, 32, 0.4);
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(187, 180, 156, 0.3);
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 15px 5px rgba(25, 25, 25, 0.4);
-    margin: 10px;
     font-style: italic;
     color:rgb(0, 0, 0)
 }
 
-.box h1:hover {
-    cursor: default;
-    color: white;
-    transform: scale(1.1)
-}
-
-.box .fecha {
-    cursor: default;
-    text-align: right;
-    padding-right: 30px;
-}
-
-.box p {
-    padding: 30px;
-}
-.box p:hover {
-    cursor: default;
-    color: white;
-}
 .contenido {
     min-height: 300px;
-}
-
-.imagenes {    
-    margin: 30px;
-    text-align: center;
 }
 
 .imagenes img {
@@ -65,4 +40,12 @@
 }
 .imagenes img:hover {
     transform: scale(1.1)
+}
+
+.seccion {
+    background-color: rgb(50, 50, 50);
+    border-radius: 6px;
+    border: solid 1px;
+    margin: 15px;
+    padding: 10px;
 }

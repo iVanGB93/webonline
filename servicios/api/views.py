@@ -9,11 +9,6 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from datetime import datetime, timedelta
 from decouple import config
-import xml.etree.ElementTree
-import paramiko
-import subprocess
-import hashlib
-import requests
 import os
 
 def crearLog(usuario, nombre, texto):
@@ -30,67 +25,6 @@ def crearOper(usuario, servicio, cantidad):
     nuevaOper.save()
     code = nuevaOper.code
     return code
-
-#FILEZILLA
-user_xml_fmt = '''
-        <User Name="{username}">
-            <Option Name="Pass">{md5_pwd}</Option>
-            <Option Name="Group">{group}</Option>
-            <Option Name="Bypass server userlimit">2</Option>
-            <Option Name="User Limit">0</Option>
-            <Option Name="IP Limit">0</Option>
-            <Option Name="Enabled">2</Option>
-            <Option Name="Comments" />
-            <Option Name="ForceSsl">2</Option>
-            <IpFilter>
-                <Disallowed />
-                <Allowed />
-            </IpFilter>
-            <Permissions />
-            <SpeedLimits DlType="0" DlLimit="10" ServerDlLimitBypass="2" UlType="0" UlLimit="10" ServerUlLimitBypass="2">
-                <Download />
-                <Upload />
-            </SpeedLimits>
-        </User>
-'''
-
-folder = 'C:/Program Files (x86)/FileZilla Server'
-xml_path = os.path.join(folder, 'FileZilla Server.xml')
-exe_path = os.path.join(folder, 'FileZilla Server.exe')
-
-class DDDManager():
-
-    def __init__(self, filename):
-        self.filename = filename
-
-    def setup(self):
-        self.tree = xml.etree.ElementTree.parse(self.filename)
-        self.root = self.tree.getroot()
-        self.user_tree = self.root.findall('Users')[0]
-        return self
-
-    def new_user(self, username, pwd, group):
-        pwd = pwd
-        md5_pwd = hashlib.md5(pwd.encode('utf-8')).hexdigest()
-        xml_str = user_xml_fmt.format(username=username, md5_pwd=md5_pwd, group=group)
-        return xml.etree.ElementTree.fromstring(xml_str)
-
-    def add_user(self, *arg):
-        user = self.new_user(*arg)        
-        self.user_tree.append(user)
-
-    def dump(self):
-        self.tree.write(self.filename)
-
-def activarFTP(username, pwd, group):
-
-    manager = DDDManager(xml_path).setup() 
-
-    manager.add_user(username, pwd, group)
-    
-    manager.dump()
-    subprocess.run([exe_path, '/reload-config'], shell=True)
-#Fin FILEZILLA
 
 class ServiciosView(APIView):    
 
@@ -115,7 +49,7 @@ class InternetView(APIView):
         servicio.save()
         return Response(status=status.HTTP_200_OK)
 
-    def put(self, request, **kwargs):
+    """ def put(self, request, **kwargs):
         user = self.kwargs.get('pk')
         usuario = User.objects.get(username=user)
         profile = Profile.objects.get(usuario=usuario.id)
@@ -201,11 +135,11 @@ class InternetView(APIView):
             servicio.internet = datos['internet']
             send_mail('Internet desactivado', 'Se ha desactivado su acceso a Internet, terminaro su tiempo y no se ha renovado su suscripcion. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])        
             servicio.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK) """
 
 class JovenClubView(APIView):
 
-    def put(self, request, **kwargs):
+    """ def put(self, request, **kwargs):
         user = self.kwargs.get('pk')
         usuario = User.objects.get(username=user)
         profile = Profile.objects.get(usuario=usuario.id)
@@ -241,11 +175,11 @@ class JovenClubView(APIView):
             servicio.jc = datos['jc']
             send_mail('Joven Club desactivado', 'Se ha desactivado su acceso a Joven Club, terminaron sus 30 dias y no se ha renovado su suscripcion. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])        
             servicio.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK) """
 
 class EmbyView(APIView):
 
-    def put(self, request, **kwargs):
+    """ def put(self, request, **kwargs):
         user = self.kwargs.get('pk')
         usuario = User.objects.get(username=user)
         profile = Profile.objects.get(usuario=usuario.id)
@@ -341,11 +275,11 @@ class EmbyView(APIView):
             servicio.emby = datos['emby']
             servicio.save()
             send_mail('Emby desactivado', 'Se ha desactivado su cuenta del Emby, terminaron sus 30 dias y no se ha renovado su suscripcion. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])            
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK) """
 
 class FileZillaView(APIView):
 
-    def put(self, request, **kwargs):
+    """ def put(self, request, **kwargs):
         user = self.kwargs.get('pk')
         usuario = User.objects.get(username=user)
         profile = Profile.objects.get(usuario=usuario.id)
@@ -373,7 +307,7 @@ class FileZillaView(APIView):
             servicio.ftp = datos['ftp']
             send_mail('FileZilla desactivado', 'Se ha desactivado su cuenta de FileZilla, terminaron sus 30 dias y no se ha renovado su suscripcion. Saludos QbaRed.', 'RedCentroHabanaCuba@gmail.com', [usuario.email])        
             servicio.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK) """
 
 class OperView(APIView):  
 

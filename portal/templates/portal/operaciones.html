@@ -2,25 +2,10 @@
 {% load static %}
 {% block contenido %}
 <div>
-    <div class="row py-5">
-        <div class="col-8 offset-2 col-md-6 offset-md-3 text-center">
-            <div class="card">
-                <div class="card-header">
-                    Ultimas 10 operaciones:
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <h5 class="col-6 card-title d-flex justify-content-start">Usuario</h5>
-                        <h5 class="col-6 card-title d-flex justify-content-end">{{ user }}</h5>
-                    </div>      
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
+    <div class="row my-3">
         <div class="col-12 col-lg-10 m-auto overflow-scroll">    
             <table class="table table-light table-hover text-center">
-                <thead>
+                <thead class="table-dark text-white">
                     <tr>
                     <th scope="col">Código</th>
                     <th scope="col">Tipo</th>

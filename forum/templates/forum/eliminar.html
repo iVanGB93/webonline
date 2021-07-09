@@ -1,0 +1,31 @@
+{% extends "forum/baseForum.html" %}
+{% load static %}
+{% block contenido %}    
+<div class="col-10 col-lg-8 m-auto box overflow-hidden p-3">
+    <div class="text-center">
+        <form id="myform" action="{% url 'forum:eliminar' tema p.id %}" method="POST">
+            <h4 class="p-3">¿Seguro desea eliminar la publicación?</h4>
+            {% csrf_token %}
+            <div class="col-12 text-end">
+                <button id="boton" class="btn btn-danger" type="submit">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                    Eliminar
+                </button>
+            </div>
+        </form>        
+        <div class="col-12 text-end py-2">
+            <a href="{% url 'forum:detalles' tema p.id %}">
+                <button id="boton2" class="btn btn-secondary mx-2">Atrás</button>
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    const myform = document.getElementById("myform");
+    myform.addEventListener("submit", (e) => {       
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('boton').disabled=true;
+        document.getElementById('boton2').disabled=true;
+    });
+</script>
+{% endblock contenido %}

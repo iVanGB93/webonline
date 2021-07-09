@@ -33,18 +33,11 @@
                     <h1 class="letras">Suerte!!!</h1>
                     <h3 class="letras">Los verdes están activos</h3>                    
                     <img class="img-fluid" src="{% static 'sorteo/middle.gif' %}" alt="mmmm"/>
-                    <h3 class="letras">Los rojos están eliminados</h3>        
-                    <div id="botones">
-                        {% if usuario.is_staff %}
-                        <button id="roll-button" class="btn btn-success" style="float: right;">
-                            Empezar
-                        </button>                        
-                        {% endif %}
-                    </div>
+                    <h3 class="letras">Los rojos están eliminados</h3>
                 </div>
             </div> 
             <div class="row result">
-                <h1 id="resultado">Sorteo Finalizado{{ text }}</h1>
+                <h1 id="resultado">Sorteo Finalizado, suerte el siguiente mes!!!{{ text }}</h1>
             </div>
         </div>
         <div class="col-2 d-none d-md-block">
@@ -70,13 +63,16 @@
     const eliminados = [];
     var activo = JSON.parse(document.getElementById('activo').textContent);
     var finalizado = JSON.parse(document.getElementById('finalizado').textContent);
-    var socket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/sync/');
+    var socket = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
     socket.onopen = function(e) {
         console.log('socket conectado');
         if (activo === false) {
             socket.send(JSON.stringify({
-                'command': 'participants'
-            })) 
+                'accion': 'participantes',
+                'data': {
+                    'individual': true
+                }
+            }))
         };
         if (finalizado === true) {
             resultado.classList.add("letras")
@@ -86,14 +82,7 @@
     }
     socket.onmessage = function(e){
         var data = JSON.parse(e.data);
-        if (data['code'] === 'Ya ha terminado el sorteo') {
-            var resultado = document.querySelector('#resultado');
-            resultado.innerText = data.code;
-            resultado.classList.add("letras")
-            document.querySelector('.frame').classList.add("playframe");
-            document.querySelector('.result').classList.add("playresult"); 
-            activo = false;          
-        } else if (data['command'] === 'participants') {            
+        if (data['mensaje'] === 'participantes') {
             var list = document.querySelector('.participants-list');
             while (list.firstChild) {
                 list.removeChild(list.firstChild);
@@ -101,7 +90,7 @@
             document.getElementById('spinner').style.display = 'none';
             document.querySelector('.frame').classList.remove("playframe");
             document.querySelector('.result').classList.remove("playresult");
-            var participants = data['participants']
+            var participants = data['participantes']
             var participants = participants.map(participants => {                   
                 var parListTag = document.createElement('li');
                 if (participants['eliminado']) {
@@ -120,40 +109,17 @@
                     activos.push(participants.id);
                 }                        
                 document.querySelector('.participants-list').appendChild(parListTag);
-            });
-            if (activo === true) {
-                setTimeout(roll, 3000);
-                function roll() {
-                    socket.send(JSON.stringify({
-                        'command': 'roll'
-                    }))
-                };
-            }            
+            })
         } else {
             var resultado = document.querySelector('#resultado');
-            resultado.innerText = data.code;
+            resultado.innerText = data.mensaje;
             resultado.classList.add("letras")
             document.querySelector('.frame').classList.add("playframe");
             document.querySelector('.result').classList.add("playresult");
-            setTimeout(enviar, 3000);
-            function enviar() {
-                socket.send(JSON.stringify({
-                    'command': 'participants'
-                }))
-            };
         }
     }
     socket.onclose = function(e) {
         console.error('socket cerrado');
     }
-    document.querySelector('#roll-button').onclick = function(e) {
-        activo = true;
-        socket.send(JSON.stringify({
-            'command': 'start'
-        }));
-        socket.send(JSON.stringify({
-            'command': 'roll'
-        }))
-    }    
 </script>
 {% endblock content %}

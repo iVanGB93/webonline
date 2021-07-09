@@ -7,15 +7,56 @@ def upload_to(instance, filename):
     return 'forum/{filename}'.format(filename=filename)
 
 class Publicacion(models.Model):
+    opcionesTema = (
+        ('Noticia', 'Noticia'),
+        ('Internet', 'Internet'),
+        ('JovenClub', 'JovenClub'),
+        ('Emby', 'Emby'),
+        ('FileZilla', 'FileZilla'),
+        ('QbaRed', 'QbaRed'),
+    )
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
-    tema = models.CharField(max_length=40)
+    tema = models.CharField(max_length=15, choices=opcionesTema)
     titulo = models.CharField(max_length=60)
     contenido = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
-    imagen1 = models.ImageField(_("Image1"), upload_to=upload_to, default='forum/image1.png')
-    imagen2 = models.ImageField(_("Image2"), upload_to=upload_to, default='forum/image1.png')
-    imagen3 = models.ImageField(_("Image3"), upload_to=upload_to, default='forum/image1.png')
+    online= models.BooleanField(default=False)
+    visitas = models.PositiveIntegerField(default=0)
+    imagen1 = models.ImageField(_("Imagen1"), upload_to=upload_to, default='defaultForum.png')
+    imagen2 = models.ImageField(_("Imagen2"), upload_to=upload_to, default='defaultForum.png')
+    imagen3 = models.ImageField(_("Imagen3"), upload_to=upload_to, default='defaultForum.png')
 
     def __str__(self):
-        return self.autor.username + " --- " + self.titulo
+        return "Usuario: " + self.autor.username + " tema: " + self.tema +  " título: " + self.titulo
+
+class Comentario(models.Model):
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(default=timezone.now)
+    contenido = models.TextField()
+
+    def __str__(self):
+        return "Comentario de " + self.autor.username + " en " + self.publicacion.titulo
+
+class RespuestaComentario(models.Model):
+    comentario = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(default=timezone.now)
+    contenido = models.TextField()
+
+class Encuesta(models.Model):
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    opcion1 = models.CharField(max_length=60)
+    opcion2 = models.CharField(max_length=60)
+    opcion3 = models.CharField(max_length=60)
+    opcion4 = models.CharField(max_length=60)
+    opcion5 = models.CharField(max_length=60)
+    voto1 = models.ManyToManyField(User, related_name='Opcion1')
+    voto2 = models.ManyToManyField(User, related_name='Opcion2')
+    voto3 = models.ManyToManyField(User, related_name='Opcion3')
+    voto4 = models.ManyToManyField(User, related_name='Opcion4')
+    voto5 = models.ManyToManyField(User, related_name='Opcion5')
+
+    def __str__(self):
+        return "Encuesta de " + self.publicacion.titulo + " del usuario " + self.publicacion.autor.username
     

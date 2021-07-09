@@ -4,11 +4,11 @@
 <div class="row my-1">    
     <div class="col-10 col-md-8 m-auto">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-dark text-white">
                 Sincronizar - {{ user }}
             </div>
             <div class="card-body">
-                <h5>Su cuenta local y la de internet no coinciden. Revise bien todos los servicios y su saldo.</h5>
+                <h5>Su cuenta de internet y la local no coinciden. Revise bien todos sus servicios.</h5>
                 <h5>¿Todos los datos que ve son los correctos? Si continua serán los valores que se le guardarán permanente. ¿Desea continuar?</h5>
                 <form class="d-flex justify-content-end" id="myform_sync" action="{% url 'portal:guardar_servicio' %}" method="POST">
                     {% csrf_token %}
@@ -17,7 +17,7 @@
                         Si estoy seguro
                     </button>
                 </form>
-                <div class="d-flex justify-content-end"> 
+                <div class="d-flex justify-content-end">                    
                     <a  href="{% url 'portal:dashboard' %}"><button class="btn btn-danger m-3">Cancelar</button></a>
                 </div>
             </div>

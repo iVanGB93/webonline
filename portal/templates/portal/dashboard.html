@@ -4,7 +4,7 @@
 <div class="row p-3">
     <div class="col-6 col-md-5 m-auto">
         <div class="card">
-            <h5 class="card-header">Internet</h5>
+            <h5 class="card-header text-white bg-dark">Internet</h5>
             <div class="card-body">
                 <div class="row p-1">
                     <h6 class="card-title col-12 col-md-8">
@@ -20,7 +20,7 @@
                 <hr class="dropdown-divider" />
                 <div class="row p-1">
                     <p class="card-text col-12 col-md-6">Ultimo chequeo:</p>
-                    <p class="card-text col-12 col-md-6 text-center">{{ tiempo }}</p>
+                    <p class="card-text col-12 col-md-6 text-center">{{ tiempo|date:"d/m/Y-H:m:s" }}</p>
                 </div> 
                 <hr class="dropdown-divider" />
                 <div class="row p-1">
@@ -30,7 +30,7 @@
                 <hr class="dropdown-divider" />
                 <div class="row p-1">             
                     <p class="card-text col-12 col-md-6">Mi cuenta:</p>                        
-                    {% if servicio.internet %}
+                    {% if user.estadoservicio.internet %}
                         <span class="badge rounded-pill bg-success col-auto col-md-3 m-auto text-center">Activa</span>
                         <a class="col-auto col-md-3 m-auto text-center" href="{% url 'portal:internet' %}">Detalles</a>
                         {% else %}
@@ -43,7 +43,7 @@
     </div>
     <div class="col-6 col-md-5 m-auto">
         <div class="card">
-            <h5 class="card-header">Joven Club</h5>
+            <h5 class="card-header text-white bg-dark">Joven Club</h5>
             <div class="card-body">
                 <div class="row p-1">
                     <h6 class="card-title col-12 col-md-8">
@@ -69,7 +69,7 @@
                 <hr class="dropdown-divider" />
                 <div class="row p-1">             
                     <p class="card-text col-12 col-md-6">Mi cuenta:</p>                        
-                    {% if servicio.jc %}
+                    {% if user.estadoservicio.jc %}
                         <span class="badge rounded-pill bg-success col-auto col-md-3 m-auto text-center">Activa</span>
                         <a class="col-auto col-md-3 m-auto text-center" href="{% url 'portal:jovenclub' %}">Detalles</a>
                         {% else %}
@@ -84,7 +84,7 @@
 <div class="row p-3">
     <div class="col-6 col-md-5 m-auto">
         <div class="card">
-            <h5 class="card-header">Emby</h5>
+            <h5 class="card-header text-white bg-dark">Emby</h5>
             <div class="card-body">
                 <div class="row p-1">
                     <h6 class="card-title col-12 col-md-8">
@@ -110,7 +110,7 @@
                 <hr class="dropdown-divider" />
                 <div class="row p-1">             
                     <p class="card-text col-12 col-md-6">Mi cuenta:</p>                        
-                    {% if servicio.emby %}
+                    {% if user.estadoservicio.emby %}
                         <span class="badge rounded-pill bg-success col-auto col-md-3 m-auto text-center">Activa</span>
                         <a class="col-auto col-md-3 m-auto text-center" href="{% url 'portal:emby' %}">Detalles</a>
                         {% else %}
@@ -123,7 +123,7 @@
     </div>
     <div class="col-6 col-md-5 m-auto">
         <div class="card">
-            <h5 class="card-header">FileZilla</h5>
+            <h5 class="card-header text-white bg-dark">FileZilla</h5>
             <div class="card-body">
                 <div class="row p-1">
                     <h6 class="card-title col-12 col-md-8">
@@ -149,7 +149,7 @@
                 <hr class="dropdown-divider" />
                 <div class="row p-1">             
                     <p class="card-text col-12 col-md-6">Mi cuenta:</p>                        
-                    {% if servicio.ftp %}
+                    {% if user.estadoservicio.ftp %}
                         <span class="badge rounded-pill bg-success col-auto col-md-3 m-auto text-center">Activa</span>
                         <a class="col-auto col-md-3 m-auto text-center" href="{% url 'portal:filezilla' %}">Detalles</a>
                         {% else %}
@@ -163,12 +163,12 @@
 </div>
 <div class="container col-11 m-auto p-3">
     {% if mensaje %}
-    <div class="alert alert-warning text-center" role="alert">                   
+    <div class="alert alert-success text-center" role="alert">                   
         {{ mensaje }}                   
     </div>               
     {% endif %}
     <div class="card">
-        <h5 class="card-header">Mis datos:</h5>        
+        <h5 class="card-header text-white bg-dark">Mis datos:</h5>        
         <div class="card-body">
             <div class="row">
                 <div class="col-7 col-md-8 col-lg-9">
@@ -176,7 +176,7 @@
                 </div>
                 <div class="col-5 col-md-4 col-lg-3">
                     <p class="card-text d-flex justify-content-end">
-                        {% if perfil.sync %}
+                        {% if user.profile.sync %}
                         Sincronizado
                         <form id="myform" action="{% url 'portal:sync_perfil' %}" method="POST">
                             {% csrf_token%}
@@ -197,32 +197,31 @@
                         {% endif %}
                     </p>
                 </div>
-                
-            </div>            
-            <h5 class="card-title">Mis coins:</h5>
-            <p class="card-text d-flex justify-content-end">{{ perfil.coins }}</p>
+            </div>          
             <h5 class="card-title">Nombre de usuario:</h5>
-            <p class="card-text d-flex justify-content-end">{{ usuario.username }}</p>
+            <p class="card-text d-flex justify-content-end">{{ user.username }}</p>
             <h5 class="card-title">Correo:</h5>
-            <p class="card-text d-flex justify-content-end">{{ usuario.email }}</p>
-            {% if usuario.first_name %}
+            <p class="card-text d-flex justify-content-end">{{ user.email }}</p>
+            {% if user.first_name %}
             <h5 class="card-title">Nombre y apellidos:</h5>
-            <p class="card-text d-flex justify-content-end">{{ usuario.first_name }} {{ usuario.last_name }}</p>
+            <p class="card-text d-flex justify-content-end">{{ user.first_name }} {{ user.last_name }}</p>
             {% endif %}
             <h5 class="card-title">Ultima sesión:</h5>
-            <p class="card-text d-flex justify-content-end">{{ usuario.last_login }}</p>
+            <p class="card-text d-flex justify-content-end">{{ user.last_login }}</p>
             <h5 class="card-title">Fecha de registro:</h5>
-            <p class="card-text d-flex justify-content-end">{{ usuario.date_joined }}</p>            
+            <p class="card-text d-flex justify-content-end">{{ user.date_joined }}</p>            
             <a class="d-flex justify-content-end" href="{% url 'portal:perfil' %}">Editar</a>
         </div>
     </div>
 </div>
 <div class="container col-11 m-auto p-3">
     <div class="card">
-        <h5 class="card-header">Sorteos:</h5>
+        <h5 class="card-header text-white bg-dark">Sorteos:</h5>
         <div class="card-body">
-            <h5 class="card-title">Ganador mes abril:</h5>
-            <p class="card-text d-flex justify-content-end">Erick.Roche</p>
+            {% for s in sorteos %}
+                <h5 class="card-title">Ganador mes: {{ s.mes }}</h5>
+                <p class="card-text d-flex justify-content-end">{% if s.ganador == none %}Por determinar...{% else %}{{ s.ganador }}{% endif %}</p>
+            {% endfor %}
         </div>
     </div>
 </div>

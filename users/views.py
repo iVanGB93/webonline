@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from decouple import config
 from .forms import LoginForm, RegisterForm
 from sync.syncs import actualizacion_remota
-from django.core.mail import send_mail
 
 
 def entrar(request):
@@ -91,8 +90,6 @@ def register(request):
             respuesta =  actualizacion_remota('nuevo_usuario', {'usuario':user.username, 'email': user.email, 'password': password})
             if respuesta['estado']:
                 login(request, new_user)
-                send_mail('Usuario nuevo', f'El usuario { user.username } se ha registardo.', 'RedCentroHabanaCuba@gmail.com', ['ivanguachbeltran@gmail.com'])
-                send_mail(f'Bienvenido { user.username } a QbaRed', f'Hola { user.username }, usted se ha registrado en QbaRed, le damos todos la bienvenida y esperamos que sea de su agrado nuestra red. Puede informarse en --> https://www.qbared.com/  Saludos', 'RedCentroHabanaCuba@gmail.com', [user.email,])
                 return redirect('web:index')
             else:
                 form = LoginForm()

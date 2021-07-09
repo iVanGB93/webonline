@@ -4,8 +4,8 @@ import websockets
 import json
 
 
-#medula = config('MEDULA')
-medula = 'ws://127.0.0.1:8080/ws/sync/'
+medula = config('MEDULA')
+medula = 'ws://127.0.0.1:8000/ws/sync/'
 
 def get_or_create_eventloop():
     try:

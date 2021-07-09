@@ -1,9 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
-from asgiref.sync import async_to_sync
 import json
 from django.utils import timezone
-from datetime import datetime
-from django.core.mail import send_mail
 
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
@@ -34,12 +31,12 @@ class SyncWSConsumer(WebsocketConsumer):
             self.responder(respuesta)
 
     def saludo(self, data):
+        respuesta = {'estado': False}
         celula = data['identidad']
         print(f'{ celula } se ha conectado')
-        command = 'saludo'
-        data = {'mensaje': f'bienvenido {celula}, ya esta conectado'}
-        envia = {'command': command, 'data': data}
-        self.responder(envia)
+        respuesta['estado'] = True
+        respuesta['mensaje'] = f'Bienvenido {celula}, está conectado!!!'
+        self.responder(respuesta)
 
     def check_usuario(self, data):
         respuesta = {'estado': False}
@@ -105,14 +102,14 @@ class SyncWSConsumer(WebsocketConsumer):
                 for p in perfil:
                     if p.coins != data['coins']:
                         locales = data['coins']
-                        respuesta['mensaje'] = f'No coinciden los coins, locales { locales } y remotos { p.coins }'
+                        respuesta['mensaje'] = f'No coinciden los coins de { usuario }, locales { locales } y remotos { p.coins }'
                         self.responder(respuesta)
                     else:
                         respuesta['mensaje'] = 'Perfiles sincronizados correctamente'
                         respuesta['estado'] = True
                         self.responder(respuesta)
             else:
-                respuesta['mensaje'] = f'El perfil del usuario no existe.'
+                respuesta['mensaje'] = f'El perfil del usuario { usuario } no existe.'
                 self.responder(respuesta)
 
     def cambio_perfil(self, data):
@@ -126,10 +123,10 @@ class SyncWSConsumer(WebsocketConsumer):
                 perfil.sync = True
                 perfil.save()
                 respuesta['estado'] = True
-                respuesta['mensaje'] = 'Perfil actualizado con éxito'
+                respuesta['mensaje'] = f'Perfil de { usuario } actualizado con éxito'
                 self.responder(respuesta)
             else:
-                respuesta['mensaje'] = f'El perfil del usuario no existe.'
+                respuesta['mensaje'] = f'El perfil de { usuario } no existe.'
                 self.responder(respuesta)
     
     def coger_perfil(self, data):
@@ -141,10 +138,10 @@ class SyncWSConsumer(WebsocketConsumer):
                 perfil = Profile.objects.get(usuario=usuario_local)
                 respuesta['coins'] = perfil.coins
                 respuesta['estado'] = True
-                respuesta['mensaje'] = 'Perfil actualizado con éxito'
+                respuesta['mensaje'] = f'Perfil de { usuario } actualizado con éxito'
                 self.responder(respuesta)
             else:
-                respuesta['mensaje'] = f'El perfil del usuario no existe.'
+                respuesta['mensaje'] = f'El perfil del usuario { usuario } no existe.'
                 self.responder(respuesta)
 
     def check_servicio(self, data):
@@ -181,16 +178,17 @@ class SyncWSConsumer(WebsocketConsumer):
                         s.sync = True
                         s.save()
                         respuesta['estado'] = True
-                        respuesta['mensaje'] = 'Servicios sincronizados'
+                        respuesta['mensaje'] = f'Servicios de { usuario } sincronizados'
                         self.responder(respuesta)
             else:
-                respuesta['mensaje'] = f'El servicio del usuario no existe.'
+                respuesta['mensaje'] = f'El servicio del usuario { usuario } no existe.'
                 self.responder(respuesta)
 
     def cambio_servicio(self, data):
         respuesta = {'estado': False}
+        usuario = data['usuario']
         if self.usuario_existe(data):    
-            usuario_local = User.objects.get(username=data['usuario'])
+            usuario_local = User.objects.get(username=usuario)
             if EstadoServicio.objects.filter(usuario=usuario_local).exists():
                 servicio = EstadoServicio.objects.filter(usuario=usuario_local)
                 for s in servicio:
@@ -212,10 +210,10 @@ class SyncWSConsumer(WebsocketConsumer):
                     s.sync = True
                     s.save()
                 respuesta['estado'] = True
-                respuesta['mensaje'] = 'Servicio sincronizado con éxito'
+                respuesta['mensaje'] = f'Servicio de { usuario } sincronizado con éxito'
                 self.responder(respuesta)
             else:
-                respuesta['mensaje'] = f'El servicio del usuario no existe.'
+                respuesta['mensaje'] = f'El servicio del usuario { usuario } no existe.'
                 self.responder(respuesta)
     
     def coger_servicios(self, data):
@@ -256,27 +254,31 @@ class SyncWSConsumer(WebsocketConsumer):
         usuario = data['usuario']
         if Recarga.objects.filter(code=code).exists():
             recarga = Recarga.objects.get(code=code)
-            if data.get('check') != None:          
+            if data.get('check') != None:
                 respuesta['mensaje'] = 'La recarga existe'
                 respuesta['estado'] = True
                 respuesta['code'] = recarga.code
                 respuesta['cantidad'] = recarga.cantidad
                 respuesta['activa'] = recarga.activa
-                respuesta['usuario'] = recarga.usuario
-                respuesta['fecha'] = recarga.fechaUso
+                respuesta['usuario'] = recarga.usuario.username
+                respuesta['fecha'] = str(recarga.fechaUso)
                 self.responder(respuesta)
             else:
-                recarga.activa = False
-                usuario = User.objects.get(username=usuario)
-                perfil = Profile.objects.get(usuario=usuario)
-                perfil.coins = perfil.coins + recarga.cantidad
-                perfil.save()
-                recarga.save()
-                respuesta['mensaje'] = 'Recarga realizada con éxito'
-                respuesta['estado'] = True
-                self.responder(respuesta)
+                if recarga.activa:
+                    recarga.activa = False
+                    usuario = User.objects.get(username=usuario)
+                    recarga.usuario = usuario
+                    recarga.fechaUso = timezone.now()
+                    recarga.sync = True  
+                    recarga.save()
+                    respuesta['mensaje'] = 'Recarga realizada con éxito'
+                    respuesta['estado'] = True
+                    self.responder(respuesta)
+                else:
+                    respuesta['mensaje'] = 'Esta recarga ya fue usada.'
+                    self.responder(respuesta)
         else:
-            respuesta['mensaje'] = 'La recarga no existe'
+            respuesta['mensaje'] = 'Esta recarga no existe.'
             self.responder(respuesta)
 
     def crear_recarga(self, data):

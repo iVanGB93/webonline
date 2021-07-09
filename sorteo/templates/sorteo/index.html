@@ -7,7 +7,14 @@
 <div class="contenedor text-center">
     <h1 class="letras">Bienvenidos al Sorteo de QbaRed</h1>
     <div class="row align-items-center" style="margin-bottom: 35px;">
-        <div class="col-10 offset-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">            
+        <div class="col-1 col-md-2 col-lg-3 d-none d-md-block">
+            <a href="{% url 'sorteo:running' %}">
+                <button type="submit" class="btn btn-success mb-3">               
+                    Vamos al sorteo!!!
+                </button>
+            </a>
+        </div>
+        <div class="col-10 col-md-8 col-lg-6 m-auto">            
             <div class="cartel">            
                 <h5>¿Como funciona?</h5>
                 <p>Hey!!! vamos a probar tu suerte y ponerle un poco de emoción a la red. Aquí te dejo la explicación de como participar
@@ -32,6 +39,13 @@
                     internacional. Usted puede editar su correo en el <a href="{% url 'portal:index' %}">Portal del Usuario</a> en la sección de perfil.
                 </p>
             </div>
+        </div>
+        <div class="col-1 col-md-2 col-lg-3 d-none d-md-block">
+            <a href="{% url 'sorteo:running' %}">
+                <button type="submit" class="btn btn-success mb-3">               
+                    Vamos al sorteo!!!
+                </button>
+            </a>
         </div>
     </div>
     <div class="cartel" style="margin: auto; width: 250px;">
@@ -67,7 +81,7 @@
         <button type="submit" class="btn btn-success mb-3">               
             Vamos al sorteo!!!
         </button>
-    </a> 
+    </a>
 </div>
 <script>
     const myform = document.getElementById("myform");
