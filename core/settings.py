@@ -89,8 +89,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         "CLIENT": {
-           "name": 'testing',
-           
+           "name": config('DB_NAME'),
+           "host": config('DB_HOST'),
+           "username": config('DB_USER'),
+           "password": config('DB_PASSWORD'),
+           "authMechanism": "SCRAM-SHA-1",
         },     
     }
 }
