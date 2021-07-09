@@ -12,4 +12,6 @@ urlpatterns = [
     path('control/servicio/<str:id>/', views.control_servicio, name='control_servicio'),
     path('control/servicio/actualizar-servicio/<str:id>/', views.actualizar_servicio, name='actualizar_servicio'),
     path('control/recargas/', views.control_recargas, name='control_recargas'),
+    path('control/sorteos/', views.control_sorteos, name='control_sorteos'),
+    path('control/avanzado/', views.control_avanzado, name='control_avanzado'),
 ]

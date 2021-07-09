@@ -28,6 +28,7 @@
                 </button>
             </form>
         </div>
+        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
     </div>
 </div>
 <div class="col-8 col-md-6 m-auto my-5">
@@ -48,6 +49,7 @@
                 </button>
             </form>
         </div>
+        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
     </div>
 </div>
 <div class="col-8 col-md-6 m-auto my-5">
@@ -57,10 +59,18 @@
         </div>
         <div class="p-3">
             {% if code %}
-                <p>Recarga {{ code }} por {{ cantidad }} coins. Actica --> {{ activa }}, Usuario {{ usuario }}, Fecha: {{ fecha }}</p>
+                <p>Recarga {{ code }} por {{ cantidad }} coins. {% if activa %}
+                    <button class="btn btn-success">Activa</button>
+                    {% else %}
+                    <buton class="btn btn-danger">No activa</buton>
+                    {% endif %}, Usuario {{ usuario }}, Fecha: {{ fecha }}</p>
             {% endif %}
             {% for r in recargas %}
-                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. Activa --> {{ r.activa }}, Usuario: {{ r.usuario }}, Fecha: {{ r.FechaUso }}</p></br>
+                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. {% if r.activa %}
+                    <button class="btn btn-success">Activa</button>
+                    {% else %}
+                    <buton class="btn btn-danger">No activa</buton>
+                    {% endif %}, Usuario: {{ r.usuario }}, Fecha: {{ r.FechaUso }}</p></br>
             {% endfor %}
         </div>
     </div>

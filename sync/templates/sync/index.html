@@ -95,10 +95,24 @@
             </div>
             <div class="card-body">
                 <ul>
-                    <li>
+                    <li class="my-1">
                         <a href="{% url 'sync:control_recargas' %}">
                             <button class="form-control btn btn-info">
                                 Recargas
+                            </button>
+                        </a>
+                    </li>
+                    <li class="my-1">
+                        <a href="{% url 'sync:control_sorteos' %}">
+                            <button class="form-control btn btn-info">
+                                Sorteos
+                            </button>
+                        </a>
+                    </li>
+                    <li class="my-1">
+                        <a href="{% url 'sync:control_avanzado' %}">
+                            <button class="form-control btn btn-info">
+                                Avanzado
                             </button>
                         </a>
                     </li>

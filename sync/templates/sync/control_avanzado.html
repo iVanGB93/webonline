@@ -1,0 +1,70 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-8 col-md-6 m-auto my-5">
+    {% if mensaje %}
+        <div class="alert alert-warning text-center my-2" role="alert">                   
+            {{ mensaje }}
+        </div>               
+    {% endif %}
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Chequeos:</h5>
+        </div>
+        <div class="col-10 col-md-8 card-body m-auto my-3">
+            <form id="form_chequeos" action="{% url 'sync:control_avanzado' %}" method="POST">
+                {% csrf_token%}                
+                <select class="form-select my-3" name="chequeo" aria-label="Default select example">
+                    <option selected>Seleccione...</option>
+                    <option value="medula">Médula</option>
+                    <option value="usuarios">Usuarios</option>
+                    <option value="perfiles">Perfiles</option>
+                    <option value="servicios">Servicios</option>
+                </select>
+                <button id="boton_chequeos" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_chequeos" style='display: none;'></span>
+                    Chequear
+                </button>
+            </form>
+        </div>
+        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
+    </div>
+</div>
+<div class="col-8 col-md-6 m-auto my-5">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Acciones:</h5>
+        </div>
+        <div class="col-10 col-md-8 m-auto my-3">
+            <form id="form_acciones" action="{% url 'sync:control_avanzado' %}" method="POST">
+                {% csrf_token%}  
+                <select class="form-select my-3" name="accion" aria-label="Default select example">
+                    <option selected>Seleccione...</option>
+                    <option value="subir_usuarios">Subir Usuarios</option>
+                    <option value="subir_perfiles">Subir Perfiles</option>
+                    <option value="subir_servicios">Subir Servicios</option>
+                </select>                     
+                <button id="boton_acciones" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_acciones" style='display: none;'></span>
+                    Go!!!
+                </button>
+            </form>
+        </div>
+        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
+    </div>
+</div>
+<script>
+    const form_chequeos = document.getElementById("form_chequeos");
+    form_chequeos.addEventListener("submit", (e) => {       
+        document.getElementById('spinner_chequeos').style.display = 'inline-block';
+        document.getElementById('boton_chequeos').disabled=true;
+        document.getElementById('boton_acciones').disabled=true;
+    });
+    const form_acciones = document.getElementById("form_acciones");
+    form_acciones.addEventListener("submit", (e) => {       
+        document.getElementById('spinner_acciones').style.display = 'inline-block';
+        document.getElementById('boton_chequeos').disabled=true;
+        document.getElementById('boton_acciones').disabled=true;
+    });
+</script>
+{% endblock contenido %}

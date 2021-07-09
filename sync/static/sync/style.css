@@ -4,7 +4,7 @@
     padding: 10px;
 }
 
-table {
+.table {
     max-height: calc(100vh/2);
     overflow: scroll;
 }

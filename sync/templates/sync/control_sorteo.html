@@ -1,0 +1,181 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-8 col-md-6 m-auto my-5">
+    {% if mensaje %}
+        <div class="alert alert-warning text-center my-2" role="alert">                   
+            {{ mensaje }}                   
+        </div>               
+    {% endif %}
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Control del sorteo:</h5>
+        </div>
+        <div class="text-center p-1 mt-2 border">
+            {% if sorteo == 'nada' %}
+                No esta creado el sorteo
+            {% else %}
+                Mes: {{ sorteo.mes }}
+                {% if sorteo.activo %}<button class="btn btn-success">Activo</button>{% else %}<button class="btn btn-danger">No activo</button>{% endif %} 
+                {% if sorteo.finalizado %}<button class="btn btn-danger">Finalizado</button>{% endif %}
+                {% if sorteo.ganador %}Ganador: {{ sorteo.ganador }},{% endif %} 
+                {% if sorteo.recarga %}Recarga: {{ sorteo.recarga }}{% endif %}
+            {% endif %}
+            <button class="btn btn-info" onclick=location.assign("{% url 'sync:control_sorteos' %}")>Actualizar</button>
+        </div>
+        <div class="col-10 col-md-8 card-body m-auto my-3">
+            <button id="boton_saludo" class="form-control btn btn-info mb-3">
+                Saludo
+            </button>
+            <button id="boton_empezar" class="form-control btn btn-info mb-3">
+                Empezar
+            </button>
+            <form action="{% url 'sync:control_sorteos' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="accion" value="reiniciar" class="d-none">
+                <button type="submit" class="form-control btn btn-info mb-3">
+                    Reiniciar
+                </button>
+            </form>
+            <button id="boton_participantes" class="form-control btn btn-info mb-3">
+                Participantes
+            </button>
+            <button id="boton_sortear" class="form-control btn btn-info mb-3">
+                Sortear
+            </button>
+            <button id="boton_automatico" class="form-control btn btn-danger">
+                Automático
+            </button>
+        </div>
+        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
+    </div>
+</div>
+<div class="col-8 col-md-6 m-auto my-5">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Resultado:</h5>
+        </div>
+        <div class="p-3">
+            <p id="resultado"></p>
+            <ul id="lista">
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script>
+<script>
+    var socket = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
+    var resultado = document.querySelector('#resultado');
+    var activo = false
+    var finalizado = true
+
+    socket.onopen = function(e) {
+        console.log('socket conectado');
+        socket.send(JSON.stringify({
+            'accion': 'saludo',
+            'data': {
+                'identidad': 'primera'
+            }
+        })); 
+    }
+    socket.onmessage = function(e){
+        var data = JSON.parse(e.data);
+        if (data['estado'] === true) {
+            if (data['finalizado'] === true) {
+                console.log("FINALIZO")
+                activo = false
+            } else {
+                console.log("Continua")
+                finalizado = false
+            }
+            if (data['mensaje'] === 'participantes') {
+                var list = document.querySelector('#lista');
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
+                var participants = data['participantes']
+                var participants = participants.map(participants => {                   
+                    var parListTag = document.createElement('li');
+                    if (participants['eliminado']) {
+                        var delTag = document.createElement('del');
+                        delTag.textContent = participants['usuario'] + ", servicio: " + participants['servicio'] + " code: " + participants['code'];
+                        parListTag.appendChild(delTag);
+                        parListTag.id = participants.id
+                    } else {
+                        var pTag = document.createElement('p');
+                        pTag.textContent = participants['usuario'] + ", servicio: " + participants['servicio'] + " code: " + participants['code'];
+                        parListTag.appendChild(pTag);
+                        parListTag.id = participants.id
+                    }                        
+                    list.appendChild(parListTag);
+                })                
+                if (activo === true && finalizado === false) {
+                    setTimeout(roll, 3000);
+                    function roll() {
+                        socket.send(JSON.stringify({
+                            'accion': 'sortear',
+                            'data': 'nada'
+                        }))
+                    }
+                }
+            } else {
+                resultado.innerText = data['mensaje']                
+                if (activo === true && finalizado === false) {
+                    setTimeout(roll, 3000);
+                    function roll() {
+                        socket.send(JSON.stringify({
+                            'accion': 'participantes',
+                            'data': {
+                                'desde': 'control'
+                            }
+                        }))
+                    }
+                }
+            }
+        } else {
+            resultado.innerText = "Error de conexión!!!";
+        }
+    }
+    socket.onclose = function(e) {
+        console.error('socket cerrado');
+    }
+    document.querySelector('#boton_saludo').onclick = function(e) {
+        socket.send(JSON.stringify({
+            'accion': 'saludo',
+            'data': {
+                'identidad': 'primera'
+            }
+        }));
+    }
+    document.querySelector('#boton_empezar').onclick = function(e) {
+        socket.send(JSON.stringify({
+            'accion': 'empezar',
+            'data': 'nada'
+        }));
+    }
+    document.querySelector('#boton_sortear').onclick = function(e) {
+        socket.send(JSON.stringify({
+            'accion': 'sortear',
+            'data': 'nada'
+        }));
+    }
+    document.querySelector('#boton_participantes').onclick = function(e) {
+        socket.send(JSON.stringify({
+            'accion': 'participantes',
+            'data': {
+                'desde': 'control'
+            }
+        }));
+    }
+    auto = document.querySelector('#boton_automatico')
+    auto.onclick = function(e) {
+        if (activo === false) {
+            activo = true;
+            auto.className = 'form-control btn btn-success';
+        } else {
+            activo = false
+            auto.className = 'form-control btn btn-danger';
+        }
+    }
+</script>
+{% endblock contenido %}
