@@ -30,7 +30,7 @@ def actualizar_servicios(sender, instance, **kwargs):
             instance.save()
         else:
             mensaje = respuesta['mensaje']
-            send_mail(f'Falló al subir el servicio', f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: { mensaje }', ['ivanguachbeltran@gmail.com'])    
+            send_mail(f'Falló al subir el servicio', f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])    
 
 @receiver(post_save, sender=Recarga)
 def actualizar_recarga(sender, instance, **kwargs):
@@ -43,10 +43,10 @@ def actualizar_recarga(sender, instance, **kwargs):
                     instance.save()
                 else:
                     mensaje = respuesta['mensaje']
-                    send_mail(f'Falló sync recarga', f'Recarga del usuario {instance.usuario.username} código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', ['ivanguachbeltran@gmail.com'])
+                    send_mail(f'Falló sync recarga', f'Recarga del usuario {instance.usuario.username} código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])
             else:
                 data = {'code': instance.code, 'cantidad': instance.cantidad, 'fechaHecha': str(instance.fechaHecha)}
                 respuesta = actualizacion_remota('crear_recarga', data)
                 if not respuesta['estado']:                   
                     mensaje = respuesta['mensaje']
-                    send_mail(f'Falló sync recarga', f'Crear recarga, código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', ['ivanguachbeltran@gmail.com'])
+                    send_mail(f'Falló sync recarga', f'Crear recarga, código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])
