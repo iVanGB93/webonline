@@ -284,6 +284,7 @@ class SyncWSConsumer(WebsocketConsumer):
     def crear_recarga(self, data):
         respuesta = {'estado': False}
         recarga = Recarga(code=data['code'], cantidad=data['cantidad'], fechaHecha=data['fechaHecha'])
+        recarga.sync = True
         recarga.save()
         respuesta['estado'] = True
         self.responder(respuesta)
