@@ -1,7 +1,15 @@
 from django.contrib import admin
 from .models import Profile, Notificacion
 
-admin.site.register(Notificacion)
+
+class NotificacionAdminConfig(admin.ModelAdmin):
+    model = Notificacion
+    search_fields = ['usuario__username']
+    ordering = ('-fecha',)
+    list_display = ('usuario', 'tipo', 'vista', 'sync', 'fecha')
+    fieldsets = (
+        (None, {'fields': ('usuario', 'tipo', 'vista', 'sync', 'fecha', 'contenido')}),
+    )
 
 class ProfileAdminConfig(admin.ModelAdmin):
     model = Profile
@@ -17,5 +25,7 @@ class ProfileAdminConfig(admin.ModelAdmin):
             'classes': ('wide',),
             'fields': ('user_name', 'email', 'first_name', 'password1', 'password2', 'is_active', 'is_staff')}
          ), """
+
+admin.site.register(Notificacion, NotificacionAdminConfig)
 
 admin.site.register(Profile, ProfileAdminConfig)

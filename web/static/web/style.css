@@ -35,6 +35,20 @@
   text-shadow: 5px -5px 4px #ffff;
 }
 
+.notificaciones {
+  position: absolute;
+  z-index: 100;
+  top: 65px;
+  right: 10px;
+  width: 400px;
+}
+
+.lista_notificaciones {
+  max-height: 600px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
 footer {
   text-align: center;
   color:white;

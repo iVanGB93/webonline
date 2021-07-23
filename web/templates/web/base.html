@@ -37,18 +37,25 @@
                 <a class="navtop-link" href="{% url 'sync:control' %}">Control</a>
               </li> 
               {% endif %}
+              <li class="nav-item">
+                <a class="navtop-link mx-3" href="https://login.qbared.com">Internet</a>
+              </li>
             </ul>
-            <a class="btn btn-sm btn-outline-primary mx-2" href="https://login.qbared.com">Internet</a>
             {% if user.is_authenticated %}    
-              <a class="btn btn-sm btn-outline-success mx-2" href="{% url 'portal:dashboard' %}">
+              <a class="mx-2" style="text-decoration: none" href="{% url 'portal:dashboard' %}">
                 <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
-              </a>
+              </a>              
+              <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
+                <span class="bot-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ notificaciones_nuevas.count }}           
+                </span>
+              </img>                
               <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
             {% else %}
               <a class="btn btn-sm btn-outline-warning mx-2" href="{% url 'users:login' %}">Entrar</a>
               <a class="btn btn-sm btn-outline-info mx-2" href="{% url 'users:register' %}">Registrarse</a>
             {% endif %}
-          </div> 
+          </div>
         </div>
       </nav>
     </header>
@@ -73,6 +80,42 @@
     </div>
     </footer>
     </div>
+    <div id="caja_notificaciones" class="notificaciones" style="display: none;">
+      <div class="card">
+        <div class="card-header bg-dark text-white text-center">
+          <h5>Notificaciones:</h5>
+        </div>
+        <div class="lista_notificaciones">
+          {% if not notificaciones %}
+          <p class="text-center my-2">Nada por aqui, comienza a usar QbaRed!!!</p>
+          {% else %}
+          {% for n in notificaciones %}
+          <ul class="border p-1 m-0" style="list-style:none;">
+            <li>
+              <div class="row">
+                <p class="col-3">{{ n.tipo }}</p>
+                <p class="col-9 fs-6 text-start">{{ n.contenido}}</p>
+              </div>
+              <div class="row">
+                <p class="col-9 fs-10 text-muted text-end">{{ n.fecha }}</p>
+                <p class="col-3">
+                  {% if n.vista %}
+                  <span class="badge rounded-pill bg-secondary">Vista</span>
+                  {% else %}
+                  <a href="#"><span class="badge rounded-pill bg-success">Nueva</span></a>
+                  {% endif %}
+                </p>
+              </div>
+            </li>
+          </ul>
+          {% endfor %}
+          {% endif %}
+          <div class="row justify-content-end my-1">
+            <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
+          </div>
+        </div>
+      </div>                  
+    </div>
     </main>
     <!--Particles-->
     <script src="{% static 'web/root/particles.min.js' %}"></script>
@@ -81,5 +124,20 @@
     <script src="{% static 'web/myjs.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/popper.min.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/bootstrap.min.js' %}"></script>
+    <script>
+      const boton = document.getElementById('boton_notificaciones')
+      const notificaciones = document.getElementById('caja_notificaciones')
+      const cerrar_notificaciones = document.getElementById('caja_notificaciones')
+      boton.onclick = function(e) {
+        if (notificaciones.style.display === 'none') {
+          notificaciones.style.display = 'block'
+        } else {
+          notificaciones.style.display = 'none'
+        }
+      }        
+      cerrar_notificaciones.onclick = function(e) {
+        notificaciones.style.display = 'none'
+      }
+    </script>
   </body>
 </html>
