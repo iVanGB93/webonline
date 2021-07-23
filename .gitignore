@@ -9,10 +9,14 @@
 /static/sorteo/
 /static/web/
 
+media/forum/
+media/usuario/
+media/usuarios/
+
 /runserver.py
 
 *.ini
 *.pyc
 
 __pycache__
-migrations
+migrations/

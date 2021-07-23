@@ -37,16 +37,10 @@ def actualizar_recarga(sender, instance, **kwargs):
     if config('APP_MODE') == 'online':
         if instance.sync == False:
             if instance.usuario != None:
-                respuesta = actualizacion_remota('usar_recarga', {'usuario': instance.usuario.username, 'code': instance.code})
-                if respuesta['estado']:
+                respuesta = actualizacion_remota('usar_recarga', {'usuario': instance.usuario.username, 'code': instance.code})                
+                if respuesta['estado'] or respuesta['mensaje'] == 'Esta recarga no existe.':
                     instance.sync = True
-                    instance.save()
+                    instance.save()                    
                 else:
                     mensaje = respuesta['mensaje']
                     send_mail(f'Falló sync recarga', f'Recarga del usuario {instance.usuario.username} código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])
-            else:
-                data = {'code': instance.code, 'cantidad': instance.cantidad, 'fechaHecha': str(instance.fechaHecha)}
-                respuesta = actualizacion_remota('crear_recarga', data)
-                if not respuesta['estado']:                   
-                    mensaje = respuesta['mensaje']
-                    send_mail(f'Falló sync recarga', f'Crear recarga, código { instance.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])

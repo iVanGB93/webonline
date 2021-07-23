@@ -2,13 +2,13 @@
 {% load static %}
 {% block contenido %}
 <div class="row py-5">   
-    <div class="col-10 offset-1 col-md-8 offset-md-2 text-center">
+    <div class="col-8 col-md-6 m-auto text-center">
         <div class="card">            
             <div class="card-header text-white bg-dark">
                 Editar perfil:
             </div>            
             <div class="card-body">                
-                <form id="myform" action="{% url 'portal:perfil' %}"  method="post">
+                <form class="border p-1" id="myform" action="{% url 'portal:perfil' %}"  method="post">
                     {% if mensaje %}
                     <div class="alert alert-warning text-center" role="alert">                   
                         {{ mensaje }}                   
@@ -21,6 +21,17 @@
                         Cambiar
                     </button>
                 </form>      
+                <form class="border p-1 mt-2" id="fotoform" action="{% url 'portal:perfil' %}"  method="post" enctype="multipart/form-data">                    
+                    {% csrf_token %}
+                    <label for="imagen" class="form-label">Seleccione la imagen que desee:</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="imagen" name="imagen">
+                    </div>
+                    <button id="botonFoto" class="form-control btn btn-primary my-3" type="submit">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinnerFoto" style='display: none;'></span>
+                        Guardar
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -30,6 +41,13 @@
     myform.addEventListener("submit", (e) => {       
         document.getElementById('spinner').style.display = 'inline-block';
         document.getElementById('boton').disabled=true;
+        document.getElementById('botonFoto').disabled=true;
+    });
+    const fotoform = document.getElementById("fotoform");
+    fotoform.addEventListener("submit", (e) => {       
+        document.getElementById('spinnerFoto').style.display = 'inline-block';
+        document.getElementById('boton').disabled=true;
+        document.getElementById('botonFoto').disabled=true;
     });
 </script>
 {% endblock contenido %}
