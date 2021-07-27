@@ -1,0 +1,29 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %} 
+<h4 class="text-center text-white">Perfiles:</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">id</th>
+            <td scope="col">Usuario</td>
+            <td scope="col">Coins</td>
+            <td scope="col">Sincronizado</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in perfiles %}
+        <tr>
+            <th scope="row">{{ p.id }}</th>
+            <td>{{ p.usuario.username }}</td>
+            <td>{{ p.coins }}</td>
+            {% if p.sync %}
+            <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
+            {% else %}
+            <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>             
+{% endblock contenido %}

@@ -1,124 +1,85 @@
 {% extends 'sync/baseSync.html' %}
 {% load static %}
 {% block contenido %}
-<div class="row">
-    <div class="col-10 col-md-8 order-2 order-md-1 m-auto">
-        <div class="col-12 col-md-10 m-auto py-3">
-            {% if mensaje %}
-                <div class="alert alert-warning text-center my-2" role="alert">                   
-                    {{ mensaje }}                
-                </div> 
-            {% endif %}
-            <h4 class="text-center text-white">Usuarios:</h4>
-            <table class="table table-dark table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">username</th>
-                        <th scope="col">email</th>
-                        <th scope="col">Sincronizado</th>
-                    </tr>
-                </thead>
-                <tbody>           
-                    {% for u in usuarios %}
-                    <tr>
-                        <th scope="row">{{ u.id }}</th>
-                        <td>{{ u.username }}</td>
-                        <td>{{ u.email }}</td>
-                        <td><form action="{% url 'sync:control_usuario' u.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td>
-                    </tr>  
-                    {% endfor %}         
-                </tbody>
-            </table>
-            <h4 class="text-center text-white">Perfiles:</h4>
-            <table class="table table-dark table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">id</th>
-                        <td scope="col">Usuario</td>
-                        <td scope="col">Coins</td>
-                        <td scope="col">Sincronizado</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in perfiles %}
-                    <tr>
-                        <th scope="row">{{ p.id }}</th>
-                        <td>{{ p.usuario.username }}</td>
-                        <td>{{ p.coins }}</td>
-                        {% if p.sync %}
-                        <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
-                        {% else %}
-                        <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <h4 class="text-center text-white">Servicios:</h4>
-            <table class="table table-dark table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">Usuario</th>
-                        <th scope="col">Internet</th>
-                        <th scope="col">Joven Club</th>
-                        <th scope="col">Emby</th>
-                        <th scope="col">FileZilla</th>
-                        <th scope="col">Sincronizado</th>
-                    </tr>
-                </thead>
-                <tbody>  
-                {% for s in servicios %}
-                <tr>
-                    <th scope="row">{{ s.id }}</th>
-                    <td>{{ s.usuario.username }}</td>
-                    <td>{{ s.internet }}</td>
-                    <td>{{ s.jc }}</td>
-                    <td>{{ s.emby }}</td>
-                    <td>{{ s.ftp }}</td>
-                    {% if s.sync %}
-                    <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Chequear sync</button></form></td>
-                    {% else %}
-                    <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Sync</button></form></td>
-                    {% endif %}
-                
-                    {% endfor %}
-                </tbody>
-            </table>           
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Buscar usuario:</h5>
+        </div>
+        <div class="card-body m-auto my-3">
+            <form id="form_buscar" action="{% url 'sync:control' %}" method="POST" style="max-width: 300px;">
+                {% csrf_token%}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingUsuario" required name="usuario" placeholder="Nombre de usuario:">
+                    <label for="floatingUsuario">Nombre de usuario:</label>
+                </div>                
+                <button id="boton_buscar" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_buscar" style='display: none;'></span>
+                    Buscar
+                </button>
+            </form>
         </div>
     </div>
-    <div class="col-12 col-md-4 order-1 order-md-2 my-3">
-        <div class="col-10 col-md-8 m-auto card bg-dark text-white">
-            <div class="card-header">
-                <h5>Herramientas</h5>
+</div>
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Detalles:</h5>
+        </div>
+        <div class="card-body m-auto my-3">
+            <div class="row">
+                <strong>Usuario:</strong>{{ usuario.username }}, saldo: {{ usuario.profile.coins }}coins.
             </div>
-            <div class="card-body">
+            <div class="row">
+                <strong>Servicios:</strong>
                 <ul>
-                    <li class="my-1">
-                        <a href="{% url 'sync:control_recargas' %}">
-                            <button class="form-control btn btn-info">
-                                Recargas
-                            </button>
-                        </a>
-                    </li>
-                    <li class="my-1">
-                        <a href="{% url 'sync:control_sorteos' %}">
-                            <button class="form-control btn btn-info">
-                                Sorteos
-                            </button>
-                        </a>
-                    </li>
-                    <li class="my-1">
-                        <a href="{% url 'sync:control_avanzado' %}">
-                            <button class="form-control btn btn-info">
-                                Avanzado
-                            </button>
-                        </a>
-                    </li>
+                    <li>Internet ----> {% if usuario.estadoservicio.internet %} Activado, hasta {{ usuario.estadoservicio.int_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>Joven Club --> {% if usuario.estadoservicio.jc %} Activado, hasta {{ usuario.estadoservicio.jc_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>Emby --------> {% if usuario.estadoservicio.emby %} Activado, hasta {{ usuario.estadoservicio.emby_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>FTP ---------> {% if usuario.estadoservicio.ftp %} Activado, hasta {{ usuario.estadoservicio.ftp_time }} {% else %} Desactivado {% endif %}</li>
                 </ul>
-            </div>
+            </div>            
         </div>
     </div>
+</div>
+<div class="col-12 m-auto overflow-scroll">
+    <table class="table table-light table-hover text-center">
+        <thead class="table-dark text-white">
+            <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Servicio</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Código Recarga</th>
+            <th scope="col">Destino</th>
+            <th scope="col">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in opers %}
+            <tr>
+                <th scope="row">{{ o.code }}</th>
+                <td>{{ o.tipo }}</td>
+                {% if o.servicio %}
+                    <td>{{ o.servicio }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}            
+                <td>{{ o.cantidad }}</td>
+                {% if o.codRec %}
+                    <td>{{ o.codRec }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}    
+                {% if o.haciaDesde %}
+                    <td>{{ o.haciaDesde }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %} 
+                <td>{{ o.fecha }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>   
+    </table>
 </div>
 {% endblock contenido %}

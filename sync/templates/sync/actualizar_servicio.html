@@ -1,12 +1,7 @@
 {% extends 'sync/baseSync.html' %}
 {% load static %}
 {% block contenido %}
-<div class="col-8 col-md-6 m-auto my-5" style="height: 90%;">
-    {% if mensaje %}
-        <div class="alert alert-warning text-center my-2" role="alert">                   
-            {{ mensaje }}                   
-        </div>               
-    {% endif %}
+<div class="col-12 col-md-10 m-auto my-3" style="height: 90%;"> 
     <div class="card align-middle">
         <div class="card-header bg-dark text-white">
             <h5>Los servicios de internet no coincide con el local, desea guardar este o el de internet?</h5>
@@ -29,7 +24,7 @@
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <a href="{% url 'sync:control' %}"><button class="form-control btn btn-info">Cancelar</button></a>
+                    <a href="{% url 'sync:control_servicios' %}"><button class="form-control btn btn-info">Cancelar</button></a>
                 </div>
             </div> 
         </div>

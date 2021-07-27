@@ -31,7 +31,7 @@ def upload_to(instance, filename):
 class Profile(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     coins = models.IntegerField(default=0)    
-    imagen = models.ImageField(_("Image"), upload_to=upload_to, default='defaultUsuario.jpg')
+    imagen = models.ImageField(_("Image"), upload_to=upload_to, default='usuario/default.jpg')
     notificaciones = models.ManyToManyField(Notificacion)
     sync = models.BooleanField(default=False)
 

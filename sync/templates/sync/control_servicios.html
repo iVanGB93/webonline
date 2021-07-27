@@ -1,0 +1,34 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %}         
+<h4 class="text-center text-white">Servicios:</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Internet</th>
+            <th scope="col">Joven Club</th>
+            <th scope="col">Emby</th>
+            <th scope="col">FileZilla</th>
+            <th scope="col">Sincronizado</th>
+        </tr>
+    </thead>
+    <tbody>  
+    {% for s in servicios %}
+    <tr>
+        <th scope="row">{{ s.id }}</th>
+        <td>{{ s.usuario.username }}</td>
+        <td>{{ s.internet }}</td>
+        <td>{{ s.jc }}</td>
+        <td>{{ s.emby }}</td>
+        <td>{{ s.ftp }}</td>
+        {% if s.sync %}
+        <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Chequear sync</button></form></td>
+        {% else %}
+        <td><form action="{% url 'sync:control_servicio' s.usuario.id %}" method="POST">{% csrf_token%}<button type="submit" class="form-control btn btn-info">Sync</button></form></td>
+        {% endif %}                
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}

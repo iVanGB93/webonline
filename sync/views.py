@@ -5,71 +5,88 @@ from decouple import config
 from servicios.api.serializers import ServiciosSerializer
 from django.contrib.auth.models import User
 from django.utils import timezone
-from servicios.models import EstadoServicio, Recarga
-from users.models import Profile
+from servicios.models import EstadoServicio, Recarga, Oper
+from users.models import Profile, Notificacion
 from sorteo.models import Sorteo, SorteoDetalle
 
 @login_required(login_url='/users/login/')
 def control(request):
-    usuarios = User.objects.all()
-    perfiles = Profile.objects.all()
-    servicios = EstadoServicio.objects.all()
+    usuario = User.objects.get(username=request.user)
+    opers = Oper.objects.filter(usuario=usuario).order_by('-fecha')
+    content = {'notificaciones': False, 'usuario': usuario, 'opers': opers}
+    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
+    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
     if request.method == 'POST':
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios}
-        return render(request, 'sync/index.html', content)
-    else:
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios}
-        return render(request, 'sync/index.html', content)
+        username = request.POST['usuario']
+        if User.objects.filter(username=username).exists():
+            usuario = User.objects.get(username=username)
+            content['usuario'] = usuario
+            content['opers'] = Oper.objects.filter(usuario=usuario).order_by('-fecha')
+        else:
+            content['mensaje'] = f'El usuario { username } no existe.'
+    return render(request, 'sync/index.html', content)
+
+@login_required(login_url='/users/login/')
+def control_usuarios(request):
+    usuarios = User.objects.all()
+    content = {'usuarios': usuarios}
+    return render(request, 'sync/control_usuarios.html', content)
+
+@login_required(login_url='/users/login/')
+def control_perfiles(request):
+    perfiles = Profile.objects.all()
+    content = {'perfiles': perfiles}
+    return render(request, 'sync/control_perfiles.html', content)
+
+@login_required(login_url='/users/login/')
+def control_servicios(request):
+    servicios = EstadoServicio.objects.all()
+    content = {'servicios': servicios}
+    return render(request, 'sync/control_servicios.html', content)
 
 @login_required(login_url='/users/login/')
 def control_usuario(request, id):
     usuarios = User.objects.all()
-    perfiles = Profile.objects.all()
-    servicios = EstadoServicio.objects.all()
+    content = {'usuarios': usuarios}
     if request.method == 'POST':
         usuario = User.objects.get(id=id)       
         data = {'usuario': usuario.username} 
         respuesta = actualizacion_remota('check_usuario', data) 
         mensaje = respuesta['mensaje']       
         if respuesta['estado']:
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)
+            content['mensaje'] = respuesta['mensaje']
+            return render(request, 'sync/control_usuarios.html', content)
         else:
+            mensaje = respuesta['mensaje']
             content = {'usuario': usuario.username, 'mensaje': mensaje, 'id': id}
             return render(request, 'sync/crear_eliminar_usuario.html', content)       
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['mensaje'] = "Aqui no hay GET."
+        return render(request, 'sync/control_usuarios.html', content)
     
 @login_required(login_url='/users/login/')
 def crear_eliminar_usuario(request, id):
     usuario = User.objects.get(id=id)
     usuarios = User.objects.all()
-    perfiles = Profile.objects.all()
-    servicios = EstadoServicio.objects.all()
+    content = {'usuarios': usuarios}
     if request.method == 'POST':
         if request.POST['respuesta'] == 'crear':
             data = {'usuario': usuario.username, 'email': usuario.email, 'password': usuario.password}
             resultado = actualizacion_remota('nuevo_usuario', data)
-            mensaje = resultado['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)            
+            content['mensaje'] = resultado['mensaje']
+            return render(request, 'sync/control_usuarios.html', content)            
         elif request.POST['respuesta'] == 'eliminar':
             usuario.delete()
-            mensaje = "Se eliminó definitivamente el usuario."
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)
+            content['mensaje'] = "Se eliminó definitivamente el usuario."
+            return render(request, 'sync/control_usuarios.html', content)
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['mensaje'] = "Aqui no hay GET."
+        return render(request, 'sync/control_usuarios.html', content)
 
 @login_required(login_url='/users/login/')
 def control_perfil(request, id):
-    usuarios = User.objects.all()
     perfiles = Profile.objects.all()
-    servicios = EstadoServicio.objects.all()
+    content = {'perfiles': perfiles,}
     if request.method == 'POST':
         usuario = User.objects.get(id=id)   
         profile = Profile.objects.get(usuario=usuario)
@@ -78,36 +95,32 @@ def control_perfil(request, id):
         if respuesta['estado']: 
             profile.sync = True
             profile.save()
-            perfiles = Profile.objects.all()
-            mensaje = respuesta['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)
+            content['perfiles'] = Profile.objects.all()
+            content['mensaje'] = respuesta['mensaje']
+            return render(request, 'sync/control_perfiles.html', content)
         else:
             mensaje = respuesta['mensaje']
             content = {'usuario': usuario.username, 'mensaje': mensaje, 'id': id}
             return render(request, 'sync/actualizar_perfil.html', content)
         
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['mensaje'] = "Aqui no hay GET."
+        return render(request, 'sync/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def actualizar_perfil(request, id):
     usuario = User.objects.get(id=id)
-    usuarios = User.objects.all()
     perfiles = Profile.objects.all()
-    servicios = EstadoServicio.objects.all()
+    content = {'perfiles': perfiles}
     if request.method == 'POST':
         profile = Profile.objects.get(usuario=usuario)
         if request.POST['respuesta'] == 'local':
             data = {'usuario': usuario.username, 'coins': profile.coins}
             respuesta = actualizacion_remota('cambio_perfil', data)            
             if respuesta['estado']:
-                perfiles = Profile.objects.all()      
-            mensaje = respuesta['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)            
+                content['perfiles'] = Profile.objects.all()    
+            content['mensaje'] = respuesta['mensaje']
+            return render(request, 'sync/control_perfiles.html', content)            
         elif request.POST['respuesta'] == 'remoto':
             data = {'usuario': usuario.username}
             respuesta = actualizacion_remota('coger_perfil', data)
@@ -115,22 +128,19 @@ def actualizar_perfil(request, id):
                 profile.coins = respuesta['coins']
                 profile.sync = True
                 profile.save()
-                perfiles = Profile.objects.all()      
-            mensaje = respuesta['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)
+                content['perfiles'] = Profile.objects.all()      
+            content['mensaje'] = respuesta['mensaje']
+            return render(request, 'sync/control_perfiles.html', content)
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['mensaje'] = "Aqui no hay GET."
+        return render(request, 'sync/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def control_servicio(request, id):
     usuario = User.objects.get(id=id)
-    usuarios = User.objects.all()
-    perfiles = Profile.objects.all()
     servicios = EstadoServicio.objects.all()
     servicio = EstadoServicio.objects.get(usuario=usuario)
+    content = {'servicios': servicios}
     if request.method == 'POST':                   
         serializer = ServiciosSerializer(servicio)
         data=serializer.data
@@ -142,20 +152,18 @@ def control_servicio(request, id):
             return render(request, 'sync/actualizar_servicio.html', content)
         servicio.sync = True
         servicio.save()
-        servicios = EstadoServicio.objects.all()
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['servicios'] = EstadoServicio.objects.all()
+        content['mensaje'] = mensaje
+        return render(request, 'sync/control_servicios.html', content)
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-        return render(request, 'sync/index.html', content)
+        content['mensaje'] = "Aqui no hay GET."
+        return render(request, 'sync/control_servicios.html', content)
 
 @login_required(login_url='/users/login/')
 def actualizar_servicio(request, id):
     usuario = User.objects.get(id=id)
-    usuarios = User.objects.all()
-    perfiles = Profile.objects.all()
     servicios = EstadoServicio.objects.all()
+    content = {'servicios': servicios}
     if request.method == 'POST':
         servicio = EstadoServicio.objects.get(usuario=usuario)
         if request.POST['respuesta'] == 'local':
@@ -170,10 +178,9 @@ def actualizar_servicio(request, id):
             if respuesta['estado']:
                 servicio.sync = True
                 servicio.save()
-                servicios = EstadoServicio.objects.all()
-            mensaje = respuesta['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
-            return render(request, 'sync/index.html', content)
+                content['servicios'] = EstadoServicio.objects.all()
+            content['mensaje'] = respuesta['mensaje']
+            return render(request, 'sync/control_servicios.html', content)
         elif request.POST['respuesta'] == 'remoto':
             data = {'usuario': usuario.username}
             respuesta = actualizacion_remota('coger_servicios', data)
@@ -199,12 +206,10 @@ def actualizar_servicio(request, id):
                     servicio.ftp_time = None
                 servicio.sync = True
                 servicio.save()
-            mensaje = respuesta['mensaje']
-            content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
+            content['mensaje'] = respuesta['mensaje']
             return render(request, 'sync/index.html', content)
     else:
-        mensaje = "Aqui no hay GET."
-        content = {'usuarios': usuarios, 'perfiles': perfiles, 'servicios': servicios, 'mensaje': mensaje}
+        content['mensaje'] = "Aqui no hay GET."
         return render(request, 'sync/index.html', content)
 
 @login_required(login_url='/users/login/')

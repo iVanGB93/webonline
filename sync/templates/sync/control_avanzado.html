@@ -1,18 +1,13 @@
 {% extends 'sync/baseSync.html' %}
 {% load static %}
 {% block contenido %}
-<div class="col-8 col-md-6 m-auto my-5">
-    {% if mensaje %}
-        <div class="alert alert-warning text-center my-2" role="alert">                   
-            {{ mensaje }}
-        </div>               
-    {% endif %}
+<div class="col-12 col-md-10 m-auto my-3">
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h5>Chequeos:</h5>
         </div>
-        <div class="col-10 col-md-8 card-body m-auto my-3">
-            <form id="form_chequeos" action="{% url 'sync:control_avanzado' %}" method="POST">
+        <div class="card-body m-auto">
+            <form id="form_chequeos" action="{% url 'sync:control_avanzado' %}" method="POST" style="max-width: 300px;">
                 {% csrf_token%}                
                 <select class="form-select my-3" name="chequeo" aria-label="Default select example">
                     <option selected>Seleccione...</option>
@@ -27,16 +22,15 @@
                 </button>
             </form>
         </div>
-        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
     </div>
 </div>
-<div class="col-8 col-md-6 m-auto my-5">
+<div class="col-12 col-md-10 m-auto my-3">
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h5>Acciones:</h5>
         </div>
-        <div class="col-10 col-md-8 m-auto my-3">
-            <form id="form_acciones" action="{% url 'sync:control_avanzado' %}" method="POST">
+        <div class="card-body m-auto">
+            <form id="form_acciones" action="{% url 'sync:control_avanzado' %}" method="POST" style="max-width: 300px;">
                 {% csrf_token%}  
                 <select class="form-select my-3" name="accion" aria-label="Default select example">
                     <option selected>Seleccione...</option>
@@ -50,7 +44,6 @@
                 </button>
             </form>
         </div>
-        <a class="col-3 m-auto text-end mb-3" href="{% url 'sync:control' %}"><button class="form-control btn btn-secondary">Atras</button></a>
     </div>
 </div>
 <script>

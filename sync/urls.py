@@ -5,6 +5,9 @@ app_name = 'sync'
 
 urlpatterns = [
     path('control/', views.control, name='control'),
+    path('control/usuarios/', views.control_usuarios, name='control_usuarios'),
+    path('control/perfiles/', views.control_perfiles, name='control_perfiles'),
+    path('control/servicios/', views.control_servicios, name='control_servicios'),
     path('control/usuario/<str:id>/', views.control_usuario, name='control_usuario'),
     path('control/usuario/crear-eliminar-usuario/<str:id>/', views.crear_eliminar_usuario, name='crear_eliminar_usuario'),
     path('control/perfil/<str:id>/', views.control_perfil, name='control_perfil'),
