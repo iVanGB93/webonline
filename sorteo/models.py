@@ -9,6 +9,7 @@ class Sorteo(models.Model):
     eliminado = models.BooleanField(default=False)
     mes = models.CharField(max_length=10, default=timezone.now().month)
     fecha = models.DateTimeField(default=timezone.now)
+    sync = models.BooleanField(default=False)
 
     def __str__(self):
         return self.usuario.username +  ", servicio: " + self.servicio + ", mes: " + self.mes + ", eliminado: " + str(self.eliminado)

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
 from users.models import Profile
+from sorteo.actions import crear_participacion
 
 class SyncWSConsumer(WebsocketConsumer):
     def connect(self):
@@ -311,6 +312,15 @@ class SyncWSConsumer(WebsocketConsumer):
         respuesta['mensaje'] = 'Operación creada con éxito'
         respuesta['estado'] = True
         self.responder(respuesta)
+    
+    def crear_sorteo(self, data):
+        respuesta = {'estado': False}
+        usuario = User.objects.get(username=data['usuario'])
+        resultado = crear_participacion(usuario, code=data['code'], servicio=data['servicio'], sync=True)
+        respuesta['mensaje'] = resultado['mensaje']
+        if resultado['estado']:
+            respuesta['estado'] = True
+        self.responder(respuesta)
 
     acciones = {
         'saludo': saludo,
@@ -328,6 +338,7 @@ class SyncWSConsumer(WebsocketConsumer):
         'usar_recarga': usar_recarga,
         'crear_recarga': crear_recarga,
         'nueva_operacion': nueva_operacion,
+        'crear_sorteo': crear_sorteo,
     }  
 
     def receive(self, text_data):

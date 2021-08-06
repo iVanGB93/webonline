@@ -9,9 +9,9 @@ class SorteoAdminConfig(admin.ModelAdmin):
     search_fields = ['usuario__username', 'code', 'mes']
     list_filter = ('eliminado', 'mes', 'servicio', 'fecha')
     ordering = ('-mes',)
-    list_display = ('usuario', 'servicio', 'mes', 'eliminado', 'fecha')
+    list_display = ('usuario', 'servicio', 'mes', 'eliminado', 'sync', 'fecha')
     fieldsets = (
-        ('ID', {'fields': ('usuario', 'code', 'servicio', 'eliminado')}),
+        ('ID', {'fields': ('usuario', 'code', 'servicio', 'eliminado', 'sync')}),
         ('Fecha', {'fields': ('mes', 'fecha')}),
     )
 
