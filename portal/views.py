@@ -8,6 +8,7 @@ from servicios.models import EstadoServicio, Oper
 from sorteo.models import SorteoDetalle
 from servicios.actions import *
 from sync.syncs import actualizacion_remota
+from sync.models import EstadoConexion
 
 from servicios.api.serializers import ServiciosSerializer
 
@@ -17,8 +18,7 @@ def index(request):
 @login_required(login_url='/users/login/')
 def dashboard(request):
     sorteos = SorteoDetalle.objects.all()
-    #conexion = EstadoConexion.objects.get(id=1)
-    conexion = "PRUEBA"
+    conexion = EstadoConexion.objects.get(id=1)
     content = {'notificaciones': False, 'conexion': conexion, 'sorteos': sorteos}
     content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
     content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')

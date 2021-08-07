@@ -3,11 +3,18 @@ from .models import Recarga, Oper, EstadoServicio
 from django.contrib.auth.models import User
 from users.models import Profile
 from sync.syncs import actualizacion_remota
+from sync.models import EstadoConexion
 from decouple import config
 
 
 def comprar_internet(usuario, tipo, contra, horas):
     result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
     if servicio.internet == True:
@@ -67,6 +74,12 @@ def comprar_internet(usuario, tipo, contra, horas):
 
 def comprar_jc(usuario):
     result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
     if servicio.jc == True:
@@ -89,6 +102,12 @@ def comprar_jc(usuario):
 
 def comprar_emby(usuario):
     result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
     if servicio.jc == True:
@@ -111,6 +130,12 @@ def comprar_emby(usuario):
 
 def comprar_filezilla(usuario, contraseña):
     result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario)
     if servicio.jc == True:
@@ -132,7 +157,13 @@ def comprar_filezilla(usuario, contraseña):
         return result
 
 def recargar(code, usuario):
-    result = {'correcto': False}    
+    result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Recarga deshabilitada, intente más tarde."
+            return result
     if Recarga.objects.filter(code=code).exists():
         recarga = Recarga.objects.get(code=code)        
         if recarga.activa:
@@ -165,6 +196,12 @@ def recargar(code, usuario):
 
 def transferir(desde, hacia, cantidad):
     result = {'correcto': False}
+    online = config('APP_MODE')
+    if online == 'online':
+        conexion = EstadoConexion.objects.get(id=1)
+        if not conexion.online:
+            result['mensaje'] = "Transferencias deshabilitado, intente más tarde."
+            return result
     if User.objects.filter(username=hacia).exists():
         envia = User.objects.get(username=desde)        
         enviaProfile = Profile.objects.get(usuario=envia.id)        

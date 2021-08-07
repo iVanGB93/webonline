@@ -4,8 +4,7 @@ import websockets
 import json
 
 
-medula = config('MEDULA')
-#medula = 'ws://127.0.0.1:8000/ws/sync/'
+client = config('CLIENT')
 
 def get_or_create_eventloop():
     try:
@@ -17,7 +16,7 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
 
 def actualizacion_remota(accion, data):
-    recibe = get_or_create_eventloop().run_until_complete(conectar(medula, accion, data))
+    recibe = get_or_create_eventloop().run_until_complete(conectar(client, accion, data))
     return recibe
 
 async def conectar(url, accion, data):
