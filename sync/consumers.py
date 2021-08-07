@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
-from users.models import Profile
+from users.models import Profile, Notificacion
 from sorteo.actions import crear_participacion
 
 class SyncWSConsumer(WebsocketConsumer):
@@ -322,6 +322,15 @@ class SyncWSConsumer(WebsocketConsumer):
             respuesta['estado'] = True
         self.responder(respuesta)
 
+    def crear_notificacion(self, data):
+        respuesta = {'estado': False}
+        usuario = User.objects.get(username=data['usuario'])
+        notificacion = Notificacion(usuario=usuario, tipo=data['tipo'], fecha=timezone.now(), contenido=data['contenido'], sync=True)
+        notificacion.save()
+        respuesta['mensaje'] = 'Notificación guardada con éxito.'
+        respuesta['estado'] = True
+        self.responder(respuesta)
+
     acciones = {
         'saludo': saludo,
         'check_usuario': check_usuario,
@@ -339,6 +348,7 @@ class SyncWSConsumer(WebsocketConsumer):
         'crear_recarga': crear_recarga,
         'nueva_operacion': nueva_operacion,
         'crear_sorteo': crear_sorteo,
+        'crear_notificacion': crear_notificacion,
     }  
 
     def receive(self, text_data):
