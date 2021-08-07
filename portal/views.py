@@ -19,17 +19,13 @@ def index(request):
 def dashboard(request):
     sorteos = SorteoDetalle.objects.all()
     conexion = EstadoConexion.objects.get(id=1)
-    content = {'notificaciones': False, 'conexion': conexion, 'sorteos': sorteos}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'conexion': conexion, 'sorteos': sorteos}
     return render(request, 'portal/dashboard.html', content)
 
 @login_required(login_url='/users/login/')
 def perfil(request):
     form = EditUserForm()
-    content = {'notificaciones': False, 'form': form}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'form': form}
     usuario = User.objects.get(username=request.user)
     if request.method == 'POST':
         if request.FILES.get('imagen'):
@@ -68,9 +64,7 @@ def perfil(request):
 
 @login_required(login_url='/users/login/')
 def contra(request):
-    content = {'notificaciones': False}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {}
     if request.method == 'POST':        
         usuario = User.objects.get(username=request.user)
         contra = request.POST['actual']
@@ -110,9 +104,7 @@ def contra(request):
 @login_required(login_url='/users/login/')
 def internet(request):
     usuario = request.user
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         tipo = request.POST['tipo']
         horas = request.POST['cantidad_horas']
@@ -136,9 +128,7 @@ def internet(request):
 @login_required(login_url='/users/login/')
 def jovenclub(request):
     usuario = request.user
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         contra = request.POST['contra']
         if usuario.check_password(contra):
@@ -156,9 +146,7 @@ def jovenclub(request):
 @login_required(login_url='/users/login/')
 def emby(request):
     usuario = request.user
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         contra = request.POST['contra']
         if usuario.check_password(contra):
@@ -176,9 +164,7 @@ def emby(request):
 @login_required(login_url='/users/login/')
 def filezilla(request):
     usuario = request.user
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         contra = request.POST['contra']        
         if usuario.check_password(contra):                    
@@ -197,9 +183,7 @@ def filezilla(request):
 def recarga(request):
     usuario = request.user
     perfil = Profile.objects.get(usuario=usuario)
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         code = request.POST['code']
         if len(code) != 8:
@@ -223,9 +207,7 @@ def recarga(request):
 def transferencia(request):
     usuario = request.user
     perfil = Profile.objects.get(usuario=usuario)
-    content = {'notificaciones': False, 'color_msg': 'danger'} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'color_msg': 'danger'} 
     if request.method == 'POST':
         if not perfil.sync:
             content['mensaje'] = "Sincronice su perfil en dashboard para poder transferir"
@@ -243,9 +225,6 @@ def transferencia(request):
 @login_required(login_url='/users/login/')
 def operaciones(request):
     usuario = request.user
-    content = {'notificaciones': False} 
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
     if User.objects.filter(username=usuario).exists():
         opers = Oper.objects.filter(usuario=usuario).order_by('-fecha')[:10]
         content = {'opers': opers}
@@ -259,9 +238,7 @@ def operaciones(request):
 def cambiar_auto(request, id):
     usuario = request.user
     servicio = EstadoServicio.objects.get(usuario=usuario)
-    content = {'notificaciones': False, 'servicio': servicio, 'color_msg': 'success'}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'servicio': servicio, 'color_msg': 'success'}
     if servicio.sync:
         if id == 'internet':
             if servicio.int_auto:
@@ -315,11 +292,9 @@ def sync_servicio(request, id):
     servicio = EstadoServicio.objects.get(usuario=usuario)
     serializer = ServiciosSerializer(servicio)
     data=serializer.data
-    data['usuario'] = str(usuario)    
+    data['usuario'] = str(usuario)
+    content = {}
     respuesta = actualizacion_remota('check_servicio', data)
-    content = {'notificaciones': False}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
     if respuesta['estado']:
         servicio.sync = True
         servicio.save()
@@ -342,20 +317,15 @@ def guardar_servicio(request):
         servicio.sync = True
         servicio.save()
     mensaje = respuesta['mensaje']
-    content = {'notificaciones': False, 'mensaje': mensaje}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'mensaje': mensaje}
     return render(request, f'portal/dashboard.html', content)
 
 @login_required(login_url='/users/login/')
 def sync_perfil(request):    
     usuario = User.objects.get(username=request.user)
-    #conexion = EstadoConexion.objects.get(id=1)
-    conexion = "PRUEBA"
+    conexion = EstadoConexion.objects.get(id=1)
     sorteos = SorteoDetalle.objects.all()
-    content = {'notificaciones': False, 'sorteos': sorteos, 'conexion': conexion}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'sorteos': sorteos, 'conexion': conexion}
     if request.method == 'POST':
         profile = Profile.objects.get(usuario=usuario)        
         data = {'usuario': usuario.username, 'coins': profile.coins}
@@ -375,9 +345,7 @@ def sync_perfil(request):
 def guardar_perfil(request):
     usuario = User.objects.get(username=request.user)
     perfil = Profile.objects.get(usuario=usuario)
-    content = {'notificaciones': False}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {}
     if request.method == 'POST':
         data = {'usuario': usuario.username, 'coins': perfil.coins}
         respuesta = actualizacion_remota('cambio_perfil', data)            

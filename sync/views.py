@@ -1,21 +1,18 @@
 from django.shortcuts import render
 from .syncs import actualizacion_remota
 from django.contrib.auth.decorators import login_required
-from decouple import config
 from servicios.api.serializers import ServiciosSerializer
 from django.contrib.auth.models import User
 from django.utils import timezone
 from servicios.models import EstadoServicio, Recarga, Oper
-from users.models import Profile, Notificacion
+from users.models import Profile
 from sorteo.models import Sorteo, SorteoDetalle
 
 @login_required(login_url='/users/login/')
 def control(request):
     usuario = User.objects.get(username=request.user)
     opers = Oper.objects.filter(usuario=usuario).order_by('-fecha')
-    content = {'notificaciones': False, 'usuario': usuario, 'opers': opers}
-    content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-    content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'usuario': usuario, 'opers': opers}
     if request.method == 'POST':
         username = request.POST['usuario']
         if User.objects.filter(username=username).exists():

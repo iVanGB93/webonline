@@ -63,11 +63,11 @@
     const eliminados = [];
     var activo = JSON.parse(document.getElementById('activo').textContent);
     var finalizado = JSON.parse(document.getElementById('finalizado').textContent);
-    var socket = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
-    socket.onopen = function(e) {
-        console.log('socket conectado');
+    var socketSorteo = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
+    socketSorteo.onopen = function(e) {
+        console.log('socketSorteo conectado');
         if (activo === false) {
-            socket.send(JSON.stringify({
+            socketSorteo.send(JSON.stringify({
                 'accion': 'participantes',
                 'data': {
                     'individual': true
@@ -80,7 +80,7 @@
             document.querySelector('.result').classList.add("playresult");
         }   
     }
-    socket.onmessage = function(e){
+    socketSorteo.onmessage = function(e){
         var data = JSON.parse(e.data);
         if (data['mensaje'] === 'participantes') {
             var list = document.querySelector('.participants-list');
@@ -118,8 +118,8 @@
             document.querySelector('.result').classList.add("playresult");
         }
     }
-    socket.onclose = function(e) {
-        console.error('socket cerrado');
+    socketSorteo.onclose = function(e) {
+        console.error('socketSorteo cerrado');
     }
 </script>
 {% endblock content %}

@@ -1,38 +1,17 @@
 from django.shortcuts import render
-from users.models import Notificacion
 
 
 def index(request):
-    content = {'notificaciones': False}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
-    return render(request, 'web/index.html', content)
+    return render(request, 'web/index.html')
 
 def ts(request):
-    content = {'notificaciones': False}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
-    return render(request, 'web/ts.html', content)
+    return render(request, 'web/ts.html')
 
 def ftp(request):
-    content = {'notificaciones': False}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
-    return render(request, 'web/ftp.html', content)
+    return render(request, 'web/ftp.html')
 
 def emby(request):
-    content = {'notificaciones': False}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
-    return render(request, 'web/emby.html', content)
+    return render(request, 'web/emby.html')
 
 def jc(request):
-    content = {'notificaciones': False}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
-    return render(request, 'web/jc.html', content)
+    return render(request, 'web/jc.html')

@@ -4,15 +4,11 @@ from .models import SorteoDetalle
 from django.utils import timezone
 from .forms import CodeForm
 from django.shortcuts import render
-from users.models import Notificacion
 
 
 def index(request):
     form = CodeForm()
-    content = {'notificaciones': False, 'form': form}
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
+    content = {'form': form}
     if request.method == 'POST':
         form = CodeForm(request.POST)
         if form.is_valid():
@@ -44,13 +40,9 @@ def running(request):
         actual.save()
         activo = actual.activo
         finalizado = actual.finalizado
-    content = {
-        'notificaciones': False,
+    content = {        
         'usuario': usuario,
         'activo': activo,
         'finalizado': finalizado           
     }
-    if request.user.is_authenticated:
-        content['notificaciones'] = Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
-        content['notificaciones_nuevas'] = Notificacion.objects.filter(usuario=request.user, vista=False).order_by('-fecha')
     return render(request, 'sorteo/running.html', content)

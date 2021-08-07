@@ -43,8 +43,7 @@
                 <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
               </a>              
               <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-                <span class="bot-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {{ notificaciones_nuevas.count }}           
+                <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
                 </span>
               </img>                
               <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
@@ -82,38 +81,22 @@
         <div class="card-header bg-dark text-white text-center">
           <h5>Notificaciones:</h5>
         </div>
+        <div class="spinner-grow text-dark m-auto my-3" role="status" aria-hidden="true" id="spinner_notificaciones"></div>          
         <div class="lista_notificaciones">
-          {% if not notificaciones %}
-          <p class="text-center my-2">Nada por aqui, comienza a usar QbaRed!!!</p>
-          {% else %}
-          {% for n in notificaciones %}
-          <ul class="border p-1 m-0" style="list-style:none;">
-            <li>
-              <div class="row">
-                <p class="col-3">{{ n.tipo }}</p>
-                <p class="col-9 fs-6 text-start">{{ n.contenido}}</p>
-              </div>
-              <div class="row">
-                <p class="col-9 fs-10 text-muted text-end">{{ n.fecha }}</p>
-                <p class="col-3">
-                  {% if n.vista %}
-                  <span class="badge rounded-pill bg-secondary">Vista</span>
-                  {% else %}
-                  <a href="#"><span class="badge rounded-pill bg-success">Nueva</span></a>
-                  {% endif %}
-                </p>
-              </div>
-            </li>
-          </ul>
-          {% endfor %}
-          {% endif %}
-          <div class="row justify-content-end my-1">
-            <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
-          </div>
+          <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">            
+          </ul>         
+        </div>
+        <div class="row justify-content-end my-1">
+          <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
         </div>
       </div>                  
     </div>
     </main>
+    {% if user.is_authenticated %}
+      {{ user.username|json_script:"usuario" }}
+    {% else %}
+      {{ "anonymous"|json_script:"usuario" }}
+    {% endif %}
     <!--Particles-->
     <script src="{% static 'web/root/particles.min.js' %}"></script>
     <script src="{% static 'web/root/particles-run.js' %}"></script>
@@ -121,20 +104,128 @@
     <script src="{% static 'web/myjs.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/popper.min.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script>
+
     <script>
-      const boton = document.getElementById('boton_notificaciones')
-      const notificaciones = document.getElementById('caja_notificaciones')
-      const cerrar_notificaciones = document.getElementById('caja_notificaciones')
-      boton.onclick = function(e) {
-        if (notificaciones.style.display === 'none') {
-          notificaciones.style.display = 'block'
-        } else {
-          notificaciones.style.display = 'none'
+      var usuario = JSON.parse(document.getElementById('usuario').textContent);
+      var socket = new ReconnectingWebSocket('wss://qbared.com/ws/web/');
+      if (usuario !== 'anonymous') {
+        const boton = document.getElementById('boton_notificaciones')
+        const notificaciones = document.getElementById('caja_notificaciones')
+        const cerrar_notificaciones = document.getElementById('caja_notificaciones')
+        const notificaciones_nuevas = document.getElementById('notificaciones_nuevas')
+        boton.onclick = function(e) {
+          if (notificaciones.style.display === 'none') {
+            notificaciones.style.display = 'block'
+            socket.send(JSON.stringify({
+              'accion': 'notificaciones',
+              'data': {
+                'usuario': usuario
+              }
+            }))
+          } else {
+            notificaciones.style.display = 'none'
+            socket.send(JSON.stringify({
+              'accion': 'notificaciones_nuevas',
+              'data': {
+                'usuario': usuario
+              }
+            }))
+          }
+        }        
+        cerrar_notificaciones.onclick = function(e) {
+          notificaciones.style.display = 'none';
+          socket.send(JSON.stringify({
+            'accion': 'notificaciones_nuevas',
+            'data': {
+              'usuario': usuario
+            }
+          }))
         }
-      }        
-      cerrar_notificaciones.onclick = function(e) {
-        notificaciones.style.display = 'none'
       }
+      socket.onopen = function(e) {
+        console.log('socket conectado');       
+        socket.send(JSON.stringify({
+            'accion': 'saludo',
+            'data': {
+              'identidad': usuario
+            }
+        }));
+        socket.send(JSON.stringify({
+            'accion': 'notificaciones_nuevas',
+            'data': {
+              'usuario': usuario
+            }
+        }));        
+      };
+      socket.onmessage = function(e){
+        var data = JSON.parse(e.data);
+        if (data['accion'] === 'notificaciones') {
+          var lista_notificaciones = document.querySelector('.lista_notificaciones');
+          while (lista_notificaciones.firstChild) {
+            lista_notificaciones.removeChild(lista_notificaciones.firstChild);
+          };
+          if (data['nuevas'] > 0) {
+            notificaciones_nuevas.style.display = 'block'
+            notificaciones_nuevas.textContent = data['nuevas'];
+          } else {
+            notificaciones_nuevas.style.display = 'none'
+          };
+          document.getElementById('spinner_notificaciones').style.display = 'none';
+          var notificaciones = data['notificaciones']
+          var notificaciones = notificaciones.map(notificaciones => {
+            var notListTag = document.createElement('li');
+            var row1 = document.createElement('div');
+            row1.className = "row";
+            var row1tipo = document.createElement('p');
+            row1tipo.textContent = notificaciones['tipo'];
+            row1tipo.className = "col-3";
+            var row1contenido = document.createElement('p');
+            row1contenido.textContent = notificaciones['contenido']
+            row1contenido.className = "col-9 fs-6 text-start";
+            row1.appendChild(row1tipo);
+            row1.appendChild(row1contenido);
+            notListTag.appendChild(row1);
+            var row2 = document.createElement('div');
+            row2.className = "row";
+            var row2fecha = document.createElement('p');
+            fechallegada = new Date(notificaciones['fecha'])
+            row2fecha.textContent = " Hora: " + fechallegada.getUTCHours() + ":" + fechallegada.getUTCMinutes() + " - Día: "  + fechallegada.getUTCDay() + "/" + fechallegada.getUTCMonth() + "/" + fechallegada.getUTCFullYear();
+            row2fecha.className = "col-9 fs-10 text-muted text-end";
+            var row2vista = document.createElement('p');
+            var spanvista = document.createElement('span');
+            if (notificaciones['vista']) {
+              spanvista.textContent = "Vista";
+              spanvista.className = "badge rounded-pill bg-secondary";
+            } else {
+              spanvista.textContent = "Nueva";
+              spanvista.className = "badge rounded-pill bg-success";
+            };
+            row2vista.appendChild(spanvista)
+            row2vista.className = "col-3"
+            row2.appendChild(row2fecha);
+            row2.appendChild(row2vista);
+            notListTag.appendChild(row2)
+
+            notListTag.id = notificaciones['id']
+            document.querySelector('.lista_notificaciones').appendChild(notListTag);
+          });
+          console.log(data);
+        } else if (data['accion'] === 'nuevas') {
+          if (data['nuevas'] > 0) {
+            notificaciones_nuevas.style.display = 'block'
+            notificaciones_nuevas.textContent = data['nuevas'];
+          } else {
+            notificaciones_nuevas.style.display = 'none'
+          }
+        } else {
+          console.log(data)
+        }
+      };
+      socket.onclose = function(e) {
+        console.error('socket cerrado');
+      };      
     </script>
   </body>
 </html>
