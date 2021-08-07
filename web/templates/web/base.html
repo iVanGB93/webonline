@@ -83,7 +83,7 @@
         </div>
         <div class="spinner-grow text-dark m-auto my-3" role="status" aria-hidden="true" id="spinner_notificaciones"></div>          
         <div class="lista_notificaciones">
-          <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">            
+          <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">
           </ul>         
         </div>
         <div class="row justify-content-end my-1">
@@ -161,57 +161,62 @@
       };
       socket.onmessage = function(e){
         var data = JSON.parse(e.data);
-        if (data['accion'] === 'notificaciones') {
-          var lista_notificaciones = document.querySelector('.lista_notificaciones');
-          while (lista_notificaciones.firstChild) {
-            lista_notificaciones.removeChild(lista_notificaciones.firstChild);
-          };
+        if (data['accion'] === 'notificaciones') {                   
           if (data['nuevas'] > 0) {
             notificaciones_nuevas.style.display = 'block'
             notificaciones_nuevas.textContent = data['nuevas'];
           } else {
             notificaciones_nuevas.style.display = 'none'
           };
+          var lista_notificaciones = document.querySelector('.lista_notificaciones');
+          while (lista_notificaciones.firstChild) {
+            lista_notificaciones.removeChild(lista_notificaciones.firstChild);
+          };
           document.getElementById('spinner_notificaciones').style.display = 'none';
-          var notificaciones = data['notificaciones']
-          var notificaciones = notificaciones.map(notificaciones => {
+          if (data['notificaciones'].length === 0) {
             var notListTag = document.createElement('li');
-            var row1 = document.createElement('div');
-            row1.className = "row";
-            var row1tipo = document.createElement('p');
-            row1tipo.textContent = notificaciones['tipo'];
-            row1tipo.className = "col-3";
-            var row1contenido = document.createElement('p');
-            row1contenido.textContent = notificaciones['contenido']
-            row1contenido.className = "col-9 fs-6 text-start";
-            row1.appendChild(row1tipo);
-            row1.appendChild(row1contenido);
-            notListTag.appendChild(row1);
-            var row2 = document.createElement('div');
-            row2.className = "row";
-            var row2fecha = document.createElement('p');
-            fechallegada = new Date(notificaciones['fecha'])
-            row2fecha.textContent = " Hora: " + fechallegada.getUTCHours() + ":" + fechallegada.getUTCMinutes() + " - Día: "  + fechallegada.getUTCDay() + "/" + fechallegada.getUTCMonth() + "/" + fechallegada.getUTCFullYear();
-            row2fecha.className = "col-9 fs-10 text-muted text-end";
-            var row2vista = document.createElement('p');
-            var spanvista = document.createElement('span');
-            if (notificaciones['vista']) {
-              spanvista.textContent = "Vista";
-              spanvista.className = "badge rounded-pill bg-secondary";
-            } else {
-              spanvista.textContent = "Nueva";
-              spanvista.className = "badge rounded-pill bg-success";
-            };
-            row2vista.appendChild(spanvista)
-            row2vista.className = "col-3"
-            row2.appendChild(row2fecha);
-            row2.appendChild(row2vista);
-            notListTag.appendChild(row2)
-
-            notListTag.id = notificaciones['id']
+            notListTag.className = "text-center";
+            notListTag.textContent = "Nada por aquí, comienza a usar QbaRed!!!"
             document.querySelector('.lista_notificaciones').appendChild(notListTag);
-          });
-          console.log(data);
+          } else {            
+            var notificaciones = data['notificaciones']
+            var notificaciones = notificaciones.map(notificaciones => {
+              var notListTag = document.createElement('li');
+              var row1 = document.createElement('div');
+              row1.className = "row";
+              var row1tipo = document.createElement('p');
+              row1tipo.textContent = notificaciones['tipo'];
+              row1tipo.className = "col-3";
+              var row1contenido = document.createElement('p');
+              row1contenido.textContent = notificaciones['contenido']
+              row1contenido.className = "col-9 fs-6 text-start";
+              row1.appendChild(row1tipo);
+              row1.appendChild(row1contenido);
+              notListTag.appendChild(row1);
+              var row2 = document.createElement('div');
+              row2.className = "row";
+              var row2fecha = document.createElement('p');
+              fechallegada = new Date(notificaciones['fecha'])
+              row2fecha.textContent = " Hora: " + fechallegada.getUTCHours() + ":" + fechallegada.getUTCMinutes() + " - Día: "  + fechallegada.getUTCDay() + "/" + fechallegada.getUTCMonth() + "/" + fechallegada.getUTCFullYear();
+              row2fecha.className = "col-9 fs-10 text-muted text-end";
+              var row2vista = document.createElement('p');
+              var spanvista = document.createElement('span');
+              if (notificaciones['vista']) {
+                spanvista.textContent = "Vista";
+                spanvista.className = "badge rounded-pill bg-secondary";
+              } else {
+                spanvista.textContent = "Nueva";
+                spanvista.className = "badge rounded-pill bg-success";
+              };
+              row2vista.appendChild(spanvista)
+              row2vista.className = "col-3"
+              row2.appendChild(row2fecha);
+              row2.appendChild(row2vista);
+              notListTag.appendChild(row2)
+              notListTag.id = notificaciones['id']
+              document.querySelector('.lista_notificaciones').appendChild(notListTag);
+            });
+          }
         } else if (data['accion'] === 'nuevas') {
           if (data['nuevas'] > 0) {
             notificaciones_nuevas.style.display = 'block'
