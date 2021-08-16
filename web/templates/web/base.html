@@ -10,97 +10,42 @@
     <link href="{% static 'web/bootstrap5.0/css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'web/normalize.css' %}">
     <link rel="stylesheet" href="{% static 'web/style.css' %}">
+    <link rel="stylesheet" href="{% static 'web/fontawesome-free-5.15.4-web/css/all.css' %}">
+    {% block head %}
+    {% endblock %}
     <title>QbaRed{% block title %}{% endblock %}</title>
   </head>
-  <body>    
-    <div id="particles-js"></div>
-    <header>
-      <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'web:index' %}">QbaRed</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-              <li class="nav-item">
-                <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
-              </li>
-              <li class="nav-item">
-                <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
-              </li>
-              <li class="nav-item">
-                <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
-              </li>   
-              {% if user.is_staff %}
-              <li class="nav-item">
-                <a class="navtop-link" href="{% url 'sync:control' %}">Control</a>
-              </li> 
-              {% endif %}              
-            </ul>
-            {% if user.is_authenticated %}    
-              <a class="mx-2" style="text-decoration: none" href="{% url 'portal:dashboard' %}">
-                <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
-              </a>              
-              <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-                <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
-                </span>
-              </img>                
-              <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
-            {% else %}
-              <a class="btn btn-sm btn-outline-warning mx-2" href="{% url 'users:login' %}">Entrar</a>
-              <a class="btn btn-sm btn-outline-info mx-2" href="{% url 'users:register' %}">Registrarse</a>
-            {% endif %}
-          </div>
-        </div>
-      </nav>      
-    </header>
+  <body>
+    {% block header %}
+    {% endblock %}
     <main>
-    {% block content %}
-    {% endblock content %}    
-    <div>
-      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-        <defs>
-            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-        </defs>
-        <g class="parallax">
-            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(25,25,25,0.7)" />
-            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(25,25,25,0.5)" />
-            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(25,25,25,0.3)" />
-            <use xlink:href="#gentle-wave" x="48" y="7" fill="rgb(25, 25, 25)" />
-        </g>
-      </svg>
+    <div clas="contenido_principal">
+      {% block content %}
+      {% endblock content %}
     </div>
-    <footer class="page-footer font-small unique-color-dark pt-4">
-    <div class="footer-copyright text-center py-3"><h7>2019-2021 © QbaRed</h7>
-    </div>
-    </footer>
-    </div>
-    <div id="caja_notificaciones" class="notificaciones" style="display: none;">
-      <div class="card">
-        <div class="card-header bg-dark text-white text-center">
-          <h5>Notificaciones:</h5>
-        </div>
-        <div class="spinner-grow text-dark m-auto my-3" role="status" aria-hidden="true" id="spinner_notificaciones"></div>          
-        <div class="lista_notificaciones">
-          <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">
-          </ul>         
-        </div>
-        <div class="row justify-content-end my-1">
-          <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
-        </div>
-      </div>                  
-    </div>
+    {% block footer %}
+    {% endblock %}
+      <div id="caja_notificaciones" class="notificaciones" style="display: none;">
+        <div class="card">
+          <div class="card-header bg-dark text-white text-center">
+            <h5>Notificaciones:</h5>
+          </div>
+          <div class="spinner-grow text-dark m-auto my-3" role="status" aria-hidden="true" id="spinner_notificaciones"></div>          
+          <div class="lista_notificaciones">
+            <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">
+            </ul>         
+          </div>
+          <div class="row justify-content-end my-1">
+            <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
+          </div>
+        </div>                  
+      </div>    
     </main>
     {% if user.is_authenticated %}
       {{ user.username|json_script:"usuario" }}
     {% else %}
       {{ "anonymous"|json_script:"usuario" }}
-    {% endif %}
-    <!--Particles-->
-    <script src="{% static 'web/root/particles.min.js' %}"></script>
-    <script src="{% static 'web/root/particles-run.js' %}"></script>
-    
+    {% endif %}    
     <script src="{% static 'web/myjs.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/popper.min.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/bootstrap.min.js' %}"></script>

@@ -1,45 +1,42 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
 {% block contenido %}
-<div class="row py-5">   
-    <div class="col-8 col-md-6 m-auto text-center">
-        <div class="card">            
-            <div class="card-header text-white bg-dark">
-                Cambiar contraseña:
-            </div>            
-            <div class="card-body">                
-                <form id="myform" action="{% url 'portal:contra' %}"  method="post">
-                    {% if mensaje %}
-                    <div class="alert alert-warning text-center" role="alert">                   
-                        {{ mensaje }}                   
-                    </div>               
-                    {% endif %}
-                    {% csrf_token %}
-                    <div class="row">  
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingActual" required name="actual" placeholder="mi contraseña actual...">
-                            <label for="floatingActual">Contraseña actual:</label>
-                        </div>                   
-                    </div>                
-                    <div class="row">                    
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingNueva" required name="nueva" placeholder="mi contraseña nueva...">
-                            <label for="floatingNueva">Contraseña nueva:</label>
-                        </div>                   
-                    </div>
-                    <div class="row">                    
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingConfirme" required name="confirme" placeholder="mi contraseña nueva otra vez...">
-                            <label for="floatingConfirme">Confirme contraseña nueva:</label>
-                        </div>                   
-                    </div>
-                    <button id="boton" class="form-control btn btn-primary" type="submit">
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
-                        Cambiar
-                    </button>
-                </form>      
+<div class="col-10 col-md-6 m-auto my-5 p-2 text-center caja" style="max-width: 450px; background: #fff;">   
+    <div class="cardHeader titulo">
+        <h3 class="titulo m-3 p-3">Cambiar contraseña:</h3>            
+    </div> 
+    <hr class="dropdown-divider" />
+    <div class="card-body m-3">                
+        <form id="myform" action="{% url 'portal:contra' %}"  method="post">
+            {% if mensaje %}
+            <div class="alert alert-warning text-center my-1" role="alert">                   
+                {{ mensaje }}                   
+            </div>               
+            {% endif %}
+            {% csrf_token %}
+            <div class="row">  
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="floatingActual" required name="actual" placeholder="mi contraseña actual...">
+                    <label for="floatingActual">Contraseña actual:</label>
+                </div>                   
+            </div>                
+            <div class="row">                    
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="floatingNueva" required name="nueva" placeholder="mi contraseña nueva...">
+                    <label for="floatingNueva">Contraseña nueva:</label>
+                </div>                   
             </div>
-        </div>
+            <div class="row">                    
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="floatingConfirme" required name="confirme" placeholder="mi contraseña nueva otra vez...">
+                    <label for="floatingConfirme">Confirme contraseña nueva:</label>
+                </div>                   
+            </div>
+            <button id="boton" class="btn btn-outline-primary" type="submit">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+                Cambiar
+            </button>
+        </form>      
     </div>
 </div>
 <script>

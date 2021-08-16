@@ -1,193 +1,202 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
 {% block contenido %}
-<div>
-<div class="row px-2">
-    <div class="col-6 col-md-3 m-auto mb-2">
-        <div class="card m-auto" style="max-width: 300px;">
-            <h5 class="card-header text-white bg-dark">Internet</h5>
-            <div class="card-body">
-                <div class="row">
-                    <h6 class="card-title col-8">
-                        Servicio:
-                    </h6>
-                    {% if conexion.internet %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">ON</span>
-                    {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">OFF</span>
-                    {% endif %}
-                </div>                
-                <hr class="dropdown-divider" />
-                <div class="row">
-                    <a class="stretched-link" href="{% url 'portal:internet' %}"><p class="card-text col-12 text-center">Click para detalles</p></a>
-                </div> 
-                <hr class="dropdown-divider" />
-                <div class="row">             
-                    <p class="card-text col-8">Mi cuenta:</p>                        
-                    {% if user.estadoservicio.internet %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">Activa</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">No activa</span>
-                    {% endif %}                    
-                </div>
+<div class="servicios">
+    <div class="servicio caja">
+        <div class="row">
+            <div class="col-9 nombre"><i class="fab fa-internet-explorer text-primary"></i> Internet</div>
+            <div class="col-3 estado text-center">
+                {% if conexion.internet and  conexion.online %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
             </div>
         </div>
+        <hr class="dropdown-divider" />
+        <div class="row">
+            <div class="col-9 cuenta"><i class="fas fa-user-circle mx-1"></i> Mi cuenta</div>
+            <div class="col-3 estado text-center">
+                {% if user.estadoservicio.internet %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="dropdown-divider" />        
+        <div class="click text-center"><a class="stretched-link" href="{% url 'portal:internet' %}"><i class="fas fa-info-circle"></i> Click para detalles</a></div>
     </div>
-    <div class="col-6 col-md-3 m-auto mb-2">
-        <div class="card m-auto" style="max-width: 300px;">
-            <h5 class="card-header text-white bg-dark">Joven Club</h5>
-            <div class="card-body">
-                <div class="row">
-                    <h6 class="card-title col-8">
-                        Servicio:
-                    </h6>
-                    {% if conexion.jc %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">En línea</span>
-                    {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">Fuera de línea</span>
-                    {% endif %}
-                </div>                
-                <hr class="dropdown-divider" />
-                <div class="row">
-                    <a class="stretched-link" href="{% url 'portal:jovenclub' %}"><p class="card-text col-12 text-center">Click para detalles</p></a>
-                </div>
-                <hr class="dropdown-divider" />
-                <div class="row">             
-                    <p class="card-text col-8">Mi cuenta:</p>                        
-                    {% if user.estadoservicio.jc %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">Activa</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">No activa</span>
-                    {% endif %}                    
-                </div>            
+    <div class="servicio caja">
+        <div class="row">
+            <div class="col-9 nombre"><i class="fas fa-network-wired"></i> Joven Club</div>
+            <div class="col-3 estado text-center">
+                {% if conexion.jc %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
             </div>
         </div>
+        <hr class="dropdown-divider" />
+        <div class="row">
+            <div class="col-9 cuenta"><i class="fas fa-user-circle mx-1"></i> Mi cuenta</div>
+            <div class="col-3 estado text-center">
+                {% if user.estadoservicio.jc %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="dropdown-divider" />
+        <div class="click text-center"><a class="stretched-link" href="{% url 'portal:jovenclub' %}"><i class="fas fa-info-circle"></i> Click para detalles</a></div>
     </div>
-    <div class="col-6 col-md-3 m-auto mb-2">
-        <div class="card m-auto" style="max-width: 300px;">
-            <h5 class="card-header text-white bg-dark">Emby</h5>
-            <div class="card-body">
-                <div class="row">
-                    <h6 class="card-title col-8">
-                        Servicio:
-                    </h6>
-                    {% if conexion.emby %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">En línea</span>
-                    {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">Fuera de línea</span>
-                    {% endif %}
-                </div>                
-                <hr class="dropdown-divider" />
-                <div class="row">
-                    <a class="stretched-link" href="{% url 'portal:emby' %}"><p class="card-text col-12 text-center">Click para detalles</p></a>
-                </div>
-                <hr class="dropdown-divider" />
-                <div class="row">             
-                    <p class="card-text col-8">Mi cuenta:</p>                        
-                    {% if user.estadoservicio.emby %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">Activa</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">No activa</span>
-                    {% endif %}                    
-                </div>             
+    <div class="servicio caja">
+        <div class="row">
+            <div class="col-9 nombre"><i class="fas fa-tv"></i> Emby</div>
+            <div class="col-3 estado text-center">
+                {% if conexion.emby %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
             </div>
         </div>
+        <hr class="dropdown-divider" />
+        <div class="row">
+            <div class="col-9 cuenta"><i class="fas fa-user-circle mx-1"></i> Mi cuenta</div>
+            <div class="col-3 estado text-center">
+                {% if user.estadoservicio.emby %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="dropdown-divider" />
+        <div class="click text-center"><a class="stretched-link" href="{% url 'portal:emby' %}"><i class="fas fa-info-circle"></i> Click para detalles</a></div>
     </div>
-    <div class="col-6 col-md-3 m-auto mb-2">
-        <div class="card m-auto" style="max-width: 300px;">
-            <h5 class="card-header text-white bg-dark">FileZilla</h5>
-            <div class="card-body">
-                <div class="row">
-                    <h6 class="card-title col-8">
-                        Servicio:
-                    </h6>
-                    {% if conexion.ftp %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">En línea</span>
-                    {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">Fuera de línea</span>
-                    {% endif %}
-                </div>                 
-                <hr class="dropdown-divider"/>
-                <div class="row">
-                    <a class="stretched-link" href="{% url 'portal:filezilla' %}"><p class="card-text col-12 text-center">Click para detalles</p></a>
-                </div>
-                <hr class="dropdown-divider"/>
-                <div class="row">             
-                    <p class="card-text col-8">Mi cuenta:</p>                        
-                    {% if user.estadoservicio.ftp %}
-                        <span class="badge rounded-pill bg-success col-4 m-auto text-center">Activa</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger col-4 m-auto text-center">No activa</span>
-                    {% endif %}                    
-                </div>
+    <div class="servicio caja">
+        <div class="row">
+            <div class="col-9 nombre"><i class="fas fa-copy"></i> FileZilla</div>
+            <div class="col-3 estado text-center">
+                {% if conexion.ftp %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
             </div>
         </div>
+        <hr class="dropdown-divider" />
+        <div class="row">
+            <div class="col-9 cuenta"><i class="fas fa-user-circle mx-1"></i> Mi cuenta</div>
+            <div class="col-3 estado text-center">
+                {% if user.estadoservicio.ftp %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="dropdown-divider" />
+        <div class="click text-center"><a class="stretched-link" href="{% url 'portal:filezilla' %}"><i class="fas fa-info-circle"></i> Click para detalles</a></div>
     </div>
 </div>
 <div class="row justify-content-end">    
-    <h6 class="col-auto card-header text-white bg-dark">↑↑ Ultimo chequeo: {{ conexion.fecha_chequeo|date:"d/m/Y-H:m" }} ↑↑</h6>
+    <h6 class="col-auto card-header caja titulo">Ultimo chequeo <i class="far fa-calendar-check"></i> {{ conexion.fecha_internet|date:"d/m/Y-H:m" }}</h6>
 </div>
-</div>
-<div class="container col-11 m-auto p-3">
-    {% if mensaje %}
-    <div class="alert alert-success text-center" role="alert">                   
-        {{ mensaje }}                   
-    </div>               
-    {% endif %}
-    <div class="card">
-        <h5 class="card-header text-white bg-dark">Mis datos:</h5>        
-        <div class="card-body">
-            <div class="row">
-                <div class="col-7 col-md-8 col-lg-9">
-                    <h5 class="card-title">Sincronización de perfil:</h5>
-                </div>
-                <div class="col-5 col-md-4 col-lg-3">
-                    <p class="card-text d-flex justify-content-end">
-                        {% if user.profile.sync %}
-                        Sincronizado
-                        <form id="myform" action="{% url 'portal:sync_perfil' %}" method="POST">
-                            {% csrf_token%}
-                            <button id="boton" class="form-control btn btn-info" type="submit">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
-                                Chequear
-                            </button>
-                        </form>
-                        {% else %}
-                        Incorrecto
-                        <form id="myform" action="{% url 'portal:sync_perfil' %}" method="POST">
-                            {% csrf_token%}
-                            <button id="boton" class="form-control btn btn-danger" type="submit">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
-                                Sincronizar
-                            </button>
-                        </form>
-                        {% endif %}
-                    </p>
-                </div>
-            </div>          
-            <h5 class="card-title">Nombre de usuario:</h5>
-            <p class="card-text d-flex justify-content-end">{{ user.username }}</p>
-            <h5 class="card-title">Correo:</h5>
-            <p class="card-text d-flex justify-content-end">{{ user.email }}</p>
-            {% if user.first_name %}
-            <h5 class="card-title">Nombre y apellidos:</h5>
-            <p class="card-text d-flex justify-content-end">{{ user.first_name }} {{ user.last_name }}</p>
-            {% endif %}
-            <h5 class="card-title">Ultima sesión:</h5>
-            <p class="card-text d-flex justify-content-end">{{ user.last_login }}</p>
-            <h5 class="card-title">Fecha de registro:</h5>
-            <p class="card-text d-flex justify-content-end">{{ user.date_joined }}</p>            
-            <a class="d-flex justify-content-end" href="{% url 'portal:perfil' %}">Editar</a>
+{% if mensaje %}
+<div class="alert alert-{{ color_msg }} text-center col-8 m-auto" role="alert">                   
+    {{ mensaje }}                  
+</div>               
+{% endif %}
+<div class="row datos m-auto mt-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-4 usuario">
+        <div class="p-2 caja" style="background: #fff;">
+            <div class="cardHeader">
+                <h3 class="titulo"><i class="fas fa-id-card-alt"></i> Mis datos:</h3>
+                <a class="btn btn-outline-info" href="{% url 'portal:perfil' %}">Editar</a>
+            </div>
+            <hr class="dropdown-divider" />
+            <div class="cardHeader my-1">
+                <p class="titulo">Sincronización de perfil:</p>
+                {% if user.profile.sync %}
+                <form id="myform" action="{% url 'portal:sync_perfil' %}" method="POST">
+                    {% csrf_token%}
+                    <button id="boton" class="btn btn-outline-success" type="submit">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+                        <span><i class="fas fa-check-square text-success"></i></span> Chequear
+                    </button>
+                </form>
+                {% else %}
+                Incorrecto
+                <form id="myform" action="{% url 'portal:sync_perfil' %}" method="POST">
+                    {% csrf_token%}
+                    <button id="boton" class="form-control btn btn-danger" type="submit">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+                        <span><i class="fas fa-power-off text-danger"></i></span> Sincronizar
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Nombre de usuario:</p>
+                <p class="texto">{{ user.username }}</p>
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Correo:</p>
+                <p class="texto">{{ user.email }}</p>
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Nombre y apellidos:</p>
+                {% if user.first_name %}
+                <p class="texto">{{ user.first_name }} {{ user.last_name }}</p>
+                {% else %}
+                <p><i class="far fa-question-circle"></i></p>
+                {% endif %}
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Ultima sesión:</p>
+                <p class="texto">{{ user.last_login }}</p>
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Fecha de registro:</p>
+                <p class="texto">{{ user.date_joined }}</p>
+            </div>
+        </div>
+    </div>    
+    <div class="col-12 col-md-6 col-lg-4 mb-4 opciones">
+        <div class="p-2 caja" style="background: #fff;">
+            <div class="cardHeader titulo">
+                <h3><i class="fas fa-cog"></i> Ajustes(pronto):</h3>
+            </div>
+            <hr class="dropdown-divider" />
+            <div class="cardHeader my-1">
+                <p class="titulo">Notificarme 3 dias antes</p>
+                <p class="texto"><i class="fas fa-toggle-on"></i></p>
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Recibir notificaciones al telegram</p>
+                <p class="texto"><i class="fas fa-toggle-off"></i></p>
+            </div>
+            <div class="cardHeader my-1">
+                <p class="titulo">Recibir notificaciones</p>
+                <p class="texto"><i class="fas fa-toggle-on"></i></p>
+            </div>
         </div>
     </div>
-</div>
-<div class="container col-11 m-auto p-3">
-    <div class="card">
-        <h5 class="card-header text-white bg-dark">Sorteos:</h5>
-        <div class="card-body">
+    <div class="col-12 col-md-6 col-lg-4 mb-4 sorteos">
+        <div class="p-2 caja" style="background: #fff;">
+            <div class="cardHeader titulo">
+                <h3><i class="fas fa-gift"></i> Sorteos:</h3>
+            </div>
+            <hr class="dropdown-divider" />
             {% for s in sorteos %}
-                <h5 class="card-title">Ganador mes: {{ s.mes }}</h5>
-                <p class="card-text d-flex justify-content-end">{% if s.ganador == none %}Por determinar...{% else %}{{ s.ganador }}{% endif %}</p>
+            <div class="cardHeader my-1">
+                <p class="titulo">Ganador mes: {{ s.mes }}</p>
+                <p class="texto">{% if s.ganador == none %}<i class="far fa-question-circle"></i>{% else %}{{ s.ganador }}{% endif %}</p>
+            </div>
             {% endfor %}
         </div>
     </div>
@@ -198,5 +207,10 @@
         document.getElementById('spinner').style.display = 'inline-block';
         document.getElementById('boton').disabled=true;
     });
+    var myModal = document.getElementById('myModal')
+    var myInput = document.getElementById('myInput')
+    myModal.addEventListener('shown.bs.modal', function () {
+    myInput.focus()
+    })
 </script>
 {% endblock contenido %}

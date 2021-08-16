@@ -1,48 +1,50 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
 {% block contenido %}
-<div>
-    <div class="row my-3">
-        <div class="col-12 col-lg-10 m-auto overflow-scroll">    
-            <table class="table table-light table-hover text-center">
-                <thead class="table-dark text-white">
-                    <tr>
-                    <th scope="col">Código</th>
-                    <th scope="col">Tipo</th>
-                    <th scope="col">Servicio</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Código Recarga</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Fecha</th>
+<div class="p-2 m-3 text-center caja" style="background: #fff;">
+    <div class="cardHeader titulo">
+        <h3 class="titulo m-1 p-1">Ultimas operaciones:</h3>            
+    </div> 
+    <hr class="dropdown-divider" />
+    <div class="p-2 m-auto overflow-scroll">    
+        <table class="table table-light table-hover text-center">
+            <thead class="table-dark text-white">
+                <tr>
+                <th scope="col">Código</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Servicio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Código Recarga</th>
+                <th scope="col">Destino</th>
+                <th scope="col">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in opers %}
+                <tr>
+                    <th scope="row">{{ o.code }}</th>
+                    <td>{{ o.tipo }}</td>
+                    {% if o.servicio %}
+                        <td>{{ o.servicio }}</td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}            
+                    <td>{{ o.cantidad }}</td>
+                    {% if o.codRec %}
+                        <td>{{ o.codRec }}</td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}    
+                    {% if o.haciaDesde %}
+                        <td>{{ o.haciaDesde }}</td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %} 
+                    <td>{{ o.fecha }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for o in opers %}
-                    <tr>
-                        <th scope="row">{{ o.code }}</th>
-                        <td>{{ o.tipo }}</td>
-                        {% if o.servicio %}
-                            <td>{{ o.servicio }}</td>
-                        {% else %}
-                            <td>-</td>
-                        {% endif %}            
-                        <td>{{ o.cantidad }}</td>
-                        {% if o.codRec %}
-                            <td>{{ o.codRec }}</td>
-                        {% else %}
-                            <td>-</td>
-                        {% endif %}    
-                        {% if o.haciaDesde %}
-                            <td>{{ o.haciaDesde }}</td>
-                        {% else %}
-                            <td>-</td>
-                        {% endif %} 
-                        <td>{{ o.fecha }}</td>
-                        </tr>
-                        {% endfor %}
-                </tbody>   
-            </table>
-        </div>
+                    {% endfor %}
+            </tbody>   
+        </table>
     </div>
 </div>
 {% endblock contenido %}

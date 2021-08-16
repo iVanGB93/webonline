@@ -1,141 +1,152 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
 {% block contenido %}   
-<div class="row my-1">    
-    <div class="col-10 col-md-5 mt-0 mb-2 m-auto">
-        <div class="card">
-            <div class="card-header text-white bg-dark">
-                INTERNET - {{ user }}
-            </div>
-            <div class="card-body">                
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Mi cuenta:</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if user.estadoservicio.internet %}
-                        <span class="badge rounded-pill bg-success">Activa</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger">No activa</span>
-                        {% endif %}
-                    </h5>
-                </div>
-                <hr class="dropdown-divider" />
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Sincronización:</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if user.estadoservicio.sync %}
-                        <span class="badge rounded-pill bg-success mx-1">OK</span>
-                        <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
-                            {% csrf_token %}
-                            <button id="boton_sync" type="submit" class="btn btn-outline-info">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
-                                Check
-                            </button>
-                        </form>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger mx-1">OFF</span>
-                        <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
-                            {% csrf_token %}
-                            <button id="boton_sync" type="submit" class="btn btn-outline-info">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
-                                Sincronizar
-                            </button>
-                        </form>
-                        {% endif %}
-                    </h5>
-                </div>    
-                <hr class="dropdown-divider" />
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Restante:</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if user.estadoservicio.int_time %}
-                            {{ user.estadoservicio.int_time}}
-                        {% else %}
-                            {% if user.estadoservicio.int_tipo == "internetHoras" %}
-                                <a href="https://login.qbared.com/status/">Horas compradas: {{ user.estadoservicio.int_horas }}</a> 
-                            {% else %}
-                                -
-                            {% endif %}
-                        {% endif %}
-                    </h5>
-                </div>  
-                <hr class="dropdown-divider" /> 
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Autopago:</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">
-                        {% if user.estadoservicio.int_auto %}
-                        <span class="badge rounded-pill bg-success mx-1">ON</span>
-                        <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
-                            {% csrf_token %}
-                            <button id="boton_auto" type="submit" class="btn btn-outline-danger">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
-                                Desactivar
-                            </button>
-                        </form>
-                        {% else %}
-                        <span class="badge rounded-pill bg-danger mx-1">OFF</span>
-                        <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
-                            {% csrf_token %}
-                            <button id="boton_auto" type="submit" class="btn btn-outline-success">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
-                                Activar
-                            </button>
-                        </form>
-                        {% endif %}
-                    </h5>
-                </div>  
-            </div>
+<div class="row m-2 p-1">    
+    <div class="col-10 col-md-3 mt-0 mb-4 m-auto caja" style="max-width: 300px; background: #fff;">  
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1"><i class="fab fa-internet-explorer text-primary"></i> INTERNET - {{ user }}</h3>            
+        </div>   
+        <hr class="dropdown-divider" />
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">Mi cuenta:</h6>
+            <h6 class="texto">
+                {% if user.estadoservicio.internet %}
+                <i class="fas fa-check-square text-success"></i>
+                {% else %}
+                <i class="fas fa-power-off text-danger"></i>
+                {% endif %}
+            </h6>
         </div>
+        <hr class="dropdown-divider" />
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">Sincronización:</h6>
+            <h6 class="texto">
+                {% if user.estadoservicio.sync %}
+                <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
+                    {% csrf_token %}
+                    <button id="boton_sync" type="submit" class="btn btn-outline-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
+                        <span><i class="fas fa-check-square text-success"></i></span> Check
+                    </button>
+                </form>
+                {% else %}
+                <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
+                    {% csrf_token %}
+                    <button id="boton_sync" type="submit" class="btn btn-outline-danger">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
+                        <span><i class="fas fa-power-off text-danger"></i></span> Sincronizar
+                    </button>
+                </form>
+                {% endif %}
+            </h6>
+        </div>    
+        {% if user.estadoservicio.internet %}
+        <hr class="dropdown-divider" />
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">Restante:</h6>
+            <h6 class="texto">
+                {% if user.estadoservicio.int_time %}
+                    <p id="tiempo_restante"></p>
+                {% else %}
+                    {% if user.estadoservicio.int_tipo == "internetHoras" %}
+                        <a href="https://login.qbared.com/status/">Horas compradas: {{ user.estadoservicio.int_horas }}</a> 
+                    {% else %}
+                        <p> - </p>
+                    {% endif %}
+                {% endif %}
+            </h6>
+        </div>  
+        {% endif %}
+        <hr class="dropdown-divider" /> 
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">Autopago:</h6>
+            <h6 class="texto">
+                {% if user.estadoservicio.int_auto %}
+                <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
+                    {% csrf_token %}
+                    <button id="boton_auto" type="submit" class="btn btn-outline-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
+                        <span><i class="fas fa-check-square text-success"></i></span> Activo
+                    </button>
+                </form>
+                {% else %}
+                <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
+                    {% csrf_token %}
+                    <button id="boton_auto" type="submit" class="btn btn-outline-danger">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
+                        <span><i class="fas fa-power-off text-danger"></i></span> OFF
+                    </button>
+                </form>
+                {% endif %}
+            </h6>
+        </div>  
     </div>
-    <div class="col-10 col-md-5 mt-0 m-auto text-center">
-        <div class="card">
-            <div class="card-header text-white bg-dark">
-                Costo:
-            </div>
-            <div class="card-body">
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Mensual(solo portal)</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">200 coins</h5>
-                </div>   
-                <hr class="dropdown-divider" />
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Semanal</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">300 coins</h5>
-                </div>
-                <hr class="dropdown-divider" />
-                <div class="row m-auto">
-                    <h5 class="col-6 card-title d-flex justify-content-start">Por horas</h5>
-                    <h5 class="col-6 card-title d-flex justify-content-end">10 coins X hora</h5>
-                </div>   
-            </div>
-        </div>        
+    <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Opciones</h3>            
+        </div>
+        <hr class="dropdown-divider" />        
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">16 horas(11am a 3am):</h6>
+            <h6 class="texto">300 coins</h6>
+        </div>   
+        <hr class="dropdown-divider" />
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">24 horas:</h6>
+            <h6 class="texto">400 coins</h6>
+        </div>
+        <hr class="dropdown-divider" />
+        <div class="d-flex justify-content-between">
+            <h6 class="titulo">Por horas:</h6>
+            <h6 class="texto">10 coins X hora</h6>
+        </div>                      
+    </div>
+    <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Duración</h3>            
+        </div>    
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo">Horas</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo">Semanal</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo">Mensual</h6>
     </div>        
 </div>        
 {% if mensaje %}
     <div class="alert alert-{{ color_msg }} text-center m-auto my-2 col-8 col-md-4" role="alert">                   
-        {{ mensaje }}                   
+        {{ mensaje }}               
     </div>               
 {% endif %}
 {% if not user.estadoservicio.internet %}
-<div class="row my-3">       
-    <div class="col-8 col-md-4 m-auto text-center"> 
-        <h4 class="fw-bold">Activar el servicio Internet:</h4>
-        <form id="myform" action="{% url 'portal:internet' %}" method="post">
+<div class="row my-3" >       
+    <div class="col-8 col-md-4 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Activar el servicio Internet:</h3>            
+        </div>
+        <hr class="dropdown-divider" />
+        <form class="p-2" id="myform" action="{% url 'portal:internet' %}" method="post">
             {% csrf_token %}
-            <select class="form-select mb-3" name="tipo" aria-label="Default select example">
+            <select class="form-select mb-3" name="tipo">
                 <option selected>Seleccione el tipo</option>
-                <option value="mensual">Mensual</option>
-                <option value="semanal">Semanal</option>
+                <option value="16h">16 horas</option>
+                <option value="24h">24 horas</option>
                 <option value="horas">Horas</option>
             </select>
+            <select class="form-select mb-3" name="duracion">
+                <option selected>Seleccione la duración</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensual">Mensual</option>
+            </select>
             <div class="input-group mb-3">
-                <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Horas:</span>
+                <span class="col-auto input-group-text" id="inputGroup-sizing-default">Horas:</span>
                 <input type="number" name="cantidad_horas" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div> 
+            </div>
             <div class="input-group mb-3">
-                <span class="col-5 col-md-4 input-group-text" id="inputGroup-sizing-default">Contraseña</span>
+                <span class="col-auto input-group-text" id="inputGroup-sizing-default">Contraseña:</span>
                 <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
-            <button id="boton" type="submit" class="form-control btn btn-primary">
+            <button id="boton" type="submit" class="form-control btn btn-outline-primary">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
                 Activar
             </button>            
@@ -144,22 +155,40 @@
 </div>
 {% endif %}
 <div class="row py-5">
-    <div class="col-10 col-md-8 m-auto text-center">
-        <div class="card">
-            <div class="card-header text-white bg-dark">Información:</div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item">El tipo mensual solo incluye el acceso al portal nauta para que usted ponga su propia cuenta cuando desee tener internet.</li>
-                    <li class="list-group-item">El tipo semanal es conexión a internet desde las 11am hasta las 3am, serían 16 horas diarias.</li>
-                    <li class="list-group-item">El tipo por horas es conexión a internet cuando usted desee usar el tiempo que tenga,siempre en el horario de 11am a 3pm.</li>
-                    <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, mas información <a href="{% url 'sorteo:index' %}">-->aquí<--</a>.</li>
-                    <li class="list-group-item">Duda y sugerencias, escribir a la administración.</li>
-                </ul>
-            </div>
+    <div class="col-10 col-md-10 m-auto text-center caja" style="background: #fff;">
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Información:</h3>            
+        </div>
+        <div class="p-2 texto">
+            <ul class="list-group text-start">
+                <li class="list-group-item">Si escoge el tipo horas debe especificar la cantidad de horas.</li>
+                <li class="list-group-item">Si escoge el tipo horas no seleccione nada en la opción duración.</li>
+                <li class="list-group-item">Si no escoge el tipo horas no escribe nada en el formulario horas.</li>
+                <li class="list-group-item">Si escoge la duración mensual sería el costo de 4 semanas y tendría 30 días, 2 extras.</li>
+                <li class="list-group-item">El tipo por horas es conexión a internet cuando usted desee usar el tiempo que tenga disponible.</li>
+                <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, más información <a href="{% url 'sorteo:index' %}">-->aquí<--</a>.</li>
+                <li class="list-group-item">Duda y sugerencias, escribir a la administración.</li>
+            </ul>
         </div>
     </div>
 </div>
-<script>    
+{{ user.estadoservicio.int_time|json_script:"fecha" }}
+<script>
+    var fecha = JSON.parse(document.getElementById('fecha').textContent);
+    var countDownDate = new Date(fecha).getTime();
+    var x = setInterval(function() {
+    var now = new Date().getTime();
+    var distance = countDownDate - now;
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    document.getElementById("tiempo_restante").innerHTML = days + "d--" + hours + "h " + minutes + "m " + seconds + "s";
+    if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("tiempo_restante").innerHTML = "Terminado";
+    }
+    }, 1000);  
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';

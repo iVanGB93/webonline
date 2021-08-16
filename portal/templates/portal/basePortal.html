@@ -1,85 +1,138 @@
 {% extends "web/base.html" %}
 {% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'portal/style.css' %}">
+{% endblock %}
 {% block title %} - Portal{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'portal/style.css' %}">
 <div class="fondo"></div>
-<div>
-    <button class="btn btn-dark canvasTriguer" type="button" data-bs-toggle="offcanvas" data-bs-target="#panellateral" aria-controls="offcanvasExample">
-        Panel
-    </button>    
-    <div class="offcanvas offcanvas-start sidebar-nav bg-dark text-white" tabindex="-1" id="panellateral" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title m-auto" id="offcanvasExampleLabel">Panel lateral</h5>
-            <!--button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button-->
-        </div>
-        <div class="offcanvas-body p-0">
-            <nav class="navbar-dark">
-                <ul class="navbar-nav">
-                    <li>
-                        <p class="px-3">Mi Cuenta</p>
-                    </li>
-                    <li class="nav-item">
-                        <ul title="Perfil">
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:dashboard' %}">Dashboard</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:perfil' %}">Editar Perfil</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:contra' %}">Cambiar contraseña</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <p class="px-3">Servicios</p>
-                    </li>
-                    <li class="nav-item">
-                        <ul title="Servicios">
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:internet' %}">Internet</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:jovenclub' %}">Joven Club</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:emby' %}">Emby</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:filezilla' %}">FileZilla</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <p class="px-3">Coins</p>
-                    </li>
-                    <li class="nav-item">
-                        <ul title="Coins">
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:recarga' %}">Recargar</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:transferencia' %}">Transferir</a>
-                            </li>
-                            <li>
-                                <a class="nav-link px-3 active" href="{% url 'portal:operaciones' %}">Operaciones</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
+    <div class="navegacion">
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a href="{% url 'web:index' %}">
+                        <span class="icon"><i class="fab fa-quinscape" style="font-size: 26px;"></i></span>
+                        <span class="title"><h2>QbaRed</h2></span>
+                    </a>
+                </li>
+                <li style="background: transparent; text-align: center;">
+                    <div class="user my-3">
+                        <img  src="{{ user.profile.imagen.url }}" alt="user_image">            
+                    </div>
+                    <h4 class="seccion text-white">Hola {{ user }}</h4>
+                </li>
+                <hr class="dropdown-divider text-white" />
+                <h3 class="seccion">Mi cuenta:</h3>
+                <li>
+                    <a href="{% url 'portal:dashboard' %}">
+                        <span class="icon"><i class="fas fa-address-card"></i></span>
+                        <span class="title"><h5>Dashboard</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:perfil' %}">
+                        <span class="icon"><i class="fas fa-user-tie"></i></span>
+                        <span class="title"><h5>Editar perfil</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:contra' %}">
+                        <span class="icon"><i class="fas fa-key"></i></span>
+                        <span class="title"><h5>Cambiar contraseña</h5></span>
+                    </a>
+                </li>
+                <hr class="dropdown-divider text-white" />
+                <h3 class="seccion">Servicios:</h3>
+                <li>
+                    <a href="{% url 'portal:internet' %}">
+                        <span class="icon"><i class="fab fa-internet-explorer"></i></span>
+                        <span class="title"><h5>Internet</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:jovenclub' %}">
+                        <span class="icon"><i class="fas fa-network-wired"></i></span>
+                        <span class="title"><h5>Joven Club</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:emby' %}">
+                        <span class="icon"><i class="fas fa-tv"></i></span>
+                        <span class="title"><h5>Emby</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:filezilla' %}">
+                        <span class="icon"><i class="fas fa-copy"></i></span>
+                        <span class="title"><h5>FileZilla</h5></span>
+                    </a>
+                </li>
+                <hr class="dropdown-divider text-white" />
+                <h3 class="seccion">Coins:</h3>
+                <li>
+                    <a href="{% url 'portal:recarga' %}">
+                        <span class="icon"><i class="fas fa-donate"></i></span>
+                        <span class="title"><h5>Recargar</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:transferencia' %}">
+                        <span class="icon"><i class="fas fa-exchange-alt"></i></span>
+                        <span class="title"><h5>Transferir</h5></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'portal:operaciones' %}">
+                        <span class="icon"><i class="fas fa-chart-line"></i></span>
+                        <span class="title"><h5>Operaciones</h5></span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
     <div class="contenido">
-        {% block contenido %}
-        {% endblock contenido %}
-    </div>
-</div>
+        <div class="barra_arriba">
+            <div class="toggle" onclick="toggleMenu();"><i class="fas fa-bars"></i></div>
+            <h4 id="boton_notificaciones" class="titulo">Saldo: <span>{{ user.profile.coins }} <i class="fas fa-coins text-warning"></i></span>
+                <span id="notificaciones_nuevas" class="start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                </span>
+            </h4>
+            <div class="boton_salir">  
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'users:logout' %}"><span><i class="fas fa-sign-out-alt mx-1"></i></span>Salir</a>          
+            </div>
+        </div>
+        <div class="block">
+            {% block contenido %}
+            {% endblock contenido %}
+        </div>
+        <div class="footer">
+            <div class="social">
+                <a href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.youtube.com/channel/UC3eLYmYuNWN89CxTPJXcR2g" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube text-danger"></i></a>
+                <a href="https://www.twitch.tv/qbared" target="_blank" rel="noopener noreferrer"><i style="color: #7f06a3;" class="fab fa-twitch"></i></a>
+            </div>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="{% url 'web:index' %}">Inicio</a></li>
+                <li class="list-inline-item"><a href="{% url 'forum:index' 'Noticia' %}">Noticias</a></li>
+                <li class="list-inline-item"><a href="{% url 'sorteo:index' %}">Sorteo</a></li>
+            </ul>
+            <p class="copyright">QbaRed © 2021</p>
+        </div>
+    </div>    
+<script>
+    function toggleMenu(){
+        let toggle = document.querySelector('.toggle');
+        let navigation = document.querySelector('.navigation');
+        let contenido = document.querySelector('.contenido');
+        let user = document.querySelector('.user');
+        let secciones = document.querySelectorAll('.seccion');
+        toggle.classList.toggle('active');
+        navigation.classList.toggle('active');
+        contenido.classList.toggle('active');
+        user.classList.toggle('active');
+        secciones.forEach(element => {
+            element.classList.toggle('active');
+        });
+    }
+</script>
 {% endblock content %}

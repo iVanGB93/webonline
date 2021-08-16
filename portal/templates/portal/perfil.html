@@ -1,40 +1,37 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
-{% block contenido %}
-<div class="row py-5">   
-    <div class="col-8 col-md-6 m-auto text-center">
-        <div class="card">            
-            <div class="card-header text-white bg-dark">
-                Editar perfil:
-            </div>            
-            <div class="card-body">                
-                <form class="border p-1" id="myform" action="{% url 'portal:perfil' %}"  method="post">
-                    {% if mensaje %}
-                    <div class="alert alert-warning text-center" role="alert">                   
-                        {{ mensaje }}                   
-                    </div>               
-                    {% endif %}
-                    {% csrf_token %}
-                    {{ form }}                    
-                    <button id="boton" class="form-control btn btn-primary my-3" type="submit">
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
-                        Cambiar
-                    </button>
-                </form>      
-                <form class="border p-1 mt-2" id="fotoform" action="{% url 'portal:perfil' %}"  method="post" enctype="multipart/form-data">                    
-                    {% csrf_token %}
-                    <label for="imagen" class="form-label">Seleccione la imagen que desee:</label>
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="imagen" name="imagen">
-                    </div>
-                    <button id="botonFoto" class="form-control btn btn-primary my-3" type="submit">
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinnerFoto" style='display: none;'></span>
-                        Guardar
-                    </button>
-                </form>
+{% block contenido %}   
+<div class="col-10 col-md-6 m-auto p-2 my-5 caja" style="max-width: 450px; background: #fff;">                
+    <div class="cardHeader titulo">
+        <h3 class="titulo m-3 p-3">Editar Perfil:</h3>            
+    </div>            
+    <hr class="dropdown-divider" />
+    <div class="card-body text-center">
+        <form class="p-2" id="myform" action="{% url 'portal:perfil' %}"  method="post">
+            {% if mensaje %}
+            <div class="alert alert-warning text-center my-1" role="alert">                   
+                {{ mensaje }}                
+            </div>               
+            {% endif %}
+            {% csrf_token %}
+            {{ form }} 
+            <button id="boton" class="btn btn-outline-primary my-3" type="submit">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+                Cambiar
+            </button>
+        </form>      
+        <form class="p-2 mt-2" id="fotoform" action="{% url 'portal:perfil' %}"  method="post" enctype="multipart/form-data">                    
+            {% csrf_token %}
+            <label for="imagen" class="form-label texto">Seleccione la imagen que desee:</label>
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" id="imagen" name="imagen">
             </div>
-        </div>
-    </div>
+            <button id="botonFoto" class="btn btn-outline-primary my-3" type="submit">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinnerFoto" style='display: none;'></span>
+                Guardar
+            </button>
+        </form>
+    </div>       
 </div>
 <script>
     const myform = document.getElementById("myform");

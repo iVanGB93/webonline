@@ -1,72 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&family=Rock+Salt&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,500;1,300&display=swap');
+
 .fondo {
-    top: 0;
-    left: 0;
-    position: fixed;
-    height: 100vh;
-    width: 100%;
-    z-index: -1;
-    background-color: rgba(15, 70, 135, 0.5);
+  top: 0;
+  left: 0;
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  z-index: -1;
+  background: #f5f5f5;
 }
-
-.contenido {
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    padding-top: 40px;
-    min-height: 100vh;
+.contenedor {
+  height: 100%;
+  min-height: 100vh;
 }
-
-.card:hover {
-  transform: scale(1.02);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.navegacion {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+.navigation {
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  margin: auto;
+  background: #003147;
+  transition: 0.5s;
+  overflow: hidden;
+}
+.navigation.active {
+  width: 60px;
+}
+.navigation ul {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-left: 0;
+  width: 100%;
+  font-family: 'Mate SC', serif;
+}
+.navigation ul li {
+  position: relative;
+  width: 100%;
+  list-style: none;
+}
+.navigation ul li:hover {
+  background: #03a9f4;
+}
+.navigation ul li:nth-child(1) {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-family: 'Rock Salt', cursive;
+}
+.navigation ul li:nth-child(1):hover {
+  background: transparent;
+}
+.navigation ul li a {
+  position: relative;
+  display: block;
+  width: 100%;
+  display: flex;
+  text-decoration: none;
+  color: #fff
+}
+.navigation ul li a .icon {
+  position: relative;
+  display: block;
+  min-width: 60px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+.navigation ul li a .icon .fa {
+  color: #fff;
+  font-size: 24px;
+}
+.navigation ul li a .title {
+  position: relative;
+  display: block;
+  padding: 0 10px;
+  height: 40px;
+  line-height: 40px;
+  white-space: nowrap;
+}
+.navigation ul .seccion {
+  padding-left: 10px;
+  color: #fff;
+}
+.navigation ul .seccion.active {
+  display: none;
+}
+.navigation ul h3:hover {
   cursor: pointer;
 }
-
-.canvasTriguer {
-    position: fixed;
-    left: 5px;
-    margin-top: calc(100vh/2);
-    z-index: 10;
-}
-
-:root {
-  --offcanvas-width: 270px;
-  --topNavbarHeight: 56px;
-}
-.sidebar-nav {
-  width: 250px;
-  left: 6px;
+.caja {
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
   border-radius: 6px;
 }
-.sidebar-link {
+.titulo {
+  font-family: 'Mate SC', serif;
+}
+.texto {
+  font-family: 'Josefin Sans', sans-serif;
+}
+.contenido {
+  position: absolute;
+  width: calc(100% - 300px);
+  left: 300px;
+  min-height: 100vh;
+  background: #f5f5f5;
+  transition: 0.5s;
+}
+.contenido.active {
+  width: calc(100% - 60px);
+  left: 60px;
+}
+.contenido .barra_arriba {
+  width: 100%;
+  background: #fff;
+  height: 60px;
+  padding: 0 10px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
-.sidebar-link .right-icon {
-  display: inline-flex;
+.toggle {
+  position: relative;
+  width: 60px;
+  text-align: center;
+  line-height: 60px;
+  font-size: 24px;
+  height: 60px;
+  cursor: pointer;
 }
-.sidebar-link[aria-expanded="true"] .right-icon {
-  transform: rotate(180deg);
+.toggle::before {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  line-height: 60px;
+  font-size: 24px;
+  text-align: center;
+  color: #111;
 }
-@media (min-width: 992px) {
-  body {
-    overflow: auto !important;
+.user {
+  position: relative;
+  margin: auto;
+  min-width: 100px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+.user.active {
+  position: relative;
+  margin: auto;
+  min-width: 60px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+.user img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.servicios {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  grid-gap:20px;
+}
+.servicios .servicio {
+  position: relative;
+  background: #fff;
+  padding: 10px;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.servicios .servicio .nombre {
+  font-size: 1.5em;
+  font-family: 'Mate SC', serif;
+  font-weight: 500;
+}
+.servicios .servicio .cuenta {
+  font-size: 1.2em;
+  font-weight: 500;
+  font-family: 'Josefin Sans', sans-serif;
+}
+.servicios .servicio .estado {
+  font-size: 1.5em;
+}
+.servicios .servicio .click a {
+  text-decoration: none;
+  font-size: 1em;
+  color: #999;
+  font-family: 'Josefin Sans', sans-serif;
+}
+.datos {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow: hidden;
+  /* display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr; */
+}
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.cardHeader h3 {
+  font-size: 22px;
+  font-weight: 600;
+}
+/* .datos .usuario {
+  position: relative;
+  display: grid;
+  min-width: 380px;
+  background: #fff;
+  padding: 20px;
+}
+.datos .sorteos {
+  position: relative;
+  display: grid;
+  min-width: 380px;
+  background: #fff;
+  padding: 20px;
+}
+.datos .opciones {
+  position: relative;
+  display: grid;
+  min-width: 380px;
+  background: #fff;
+  padding: 20px;
+} */
+.block {
+  min-height: calc(100vh - 220px);
+}
+.footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  height: 160px;
+  width: 100%;
+  text-align: center;
+  background: #fff;
+}
+.footer .social {
+  padding: 10px;
+}
+.footer .social a {
+  font-size: 28px;
+  margin: 10px;
+}
+.footer ul li a {
+  text-decoration: none;
+  font-size: 20px;
+  color: #111;
+  font-family: 'Mate SC', serif;
+  margin: 10px;
+}
+.footer .social a:hover, .footer ul li a:hover {
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  padding: 5px;
+}
+.footer p {
+  padding: 10px;
+  font-family: 'Rock Salt', cursive;
+  cursor: pointer;
+}
+#boton_notificaciones {
+  position: relative;
+  cursor: pointer;
+}
+#notificaciones_nuevas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 25px;
+  text-align: center;
+  font-size: 15px;
+}
+
+@media (max-width: 992px) {
+  .navigation {
+    left: -300px;
+  }
+  .navigation.active {
+    left: 0;
+    width: 300px;
   }
   .contenido {
-    margin-left: 250px;
+    width: 100%;
+    left: 0;
   }
-  .canvasTriguer {
-      margin-left: 8px;
+  .contenido.active {
+    width: calc(100% - 300px);
+    left: 300px;
   }
-  /* this is to remove the backdrop */
-  .offcanvas-backdrop::before {
-    display: none;
+  .servicios {
+    grid-template-columns: repeat(2,1fr);
   }
-  .sidebar-nav {
+  /* .datos {
+    grid-template-columns: repeat(1,1fr);
+  } */
+}
+@media (max-width: 768px) {
+  .datos {
+    overflow-x: scroll;
+  }
+  .cardHeader h3 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+@media (max-width: 480px) {
+  .servicios {
+    grid-template-columns: repeat(1,1fr);
+  }
+  .navigation {
+    width: 100%;
+    left: -100%;
+    z-index: 100;
+  }
+  .navigation.active {
+    width: 100%;
+    left: 0;
+  }
+  .toggle.active {
     position: fixed;
-    -webkit-transform: none;
-    transform: none;
-    visibility: visible !important;
-    height: 70%;
-    margin: auto;
+    z-index: 100;
+    right: 0;
+    left: initial;
+    color: #fff
+  }
+  .contenido, .contenido.active {
+    width: 100%;
+    left: 0;
   }
 }
