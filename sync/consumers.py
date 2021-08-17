@@ -261,7 +261,7 @@ class SyncWSConsumer(WebsocketConsumer):
                 respuesta['code'] = recarga.code
                 respuesta['cantidad'] = recarga.cantidad
                 respuesta['activa'] = recarga.activa
-                respuesta['usuario'] = recarga.usuario.username
+                respuesta['usuario'] = recarga.usuario
                 respuesta['fecha'] = str(recarga.fechaUso)
                 self.responder(respuesta)
             else:
