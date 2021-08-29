@@ -5,9 +5,10 @@ from users.models import Profile
 from sync.syncs import actualizacion_remota
 from sync.models import EstadoConexion
 from decouple import config
+import requests
 
 
-def comprar_internet(usuario, tipo, contra, horas):
+def comprar_internet(usuario, tipo, contra, duracion, horas):
     result = {'correcto': False}
     online = config('APP_MODE')
     if online == 'online':
@@ -24,7 +25,7 @@ def comprar_internet(usuario, tipo, contra, horas):
         result['mensaje'] = 'Debe tener los servicios sincronizados para comprar.'
         return result
     profile = Profile.objects.get(usuario=usuario)
-    data = {'usuario': usuario.username, 'servicio': 'internet', 'tipo': tipo, 'contraseña': contra}
+    data = {'usuario': usuario.username, 'servicio': 'internet', 'tipo': tipo, 'contraseña': contra, 'duracion': duracion, 'horas': horas}
     if tipo == 'mensual':
         user_coins = int(profile.coins)
         if user_coins >= 200:
@@ -60,7 +61,7 @@ def comprar_internet(usuario, tipo, contra, horas):
                 respuesta = actualizacion_remota('comprar_servicio', data=data)
                 if respuesta['estado']:
                     result['correcto'] = True    
-                result['mensaje'] = respuesta['mensaje']
+                result['mensaje'] = respuesta['mensaje']              
                 return result              
             else:
                 result['mensaje'] = 'No tiene suficientes coins.'

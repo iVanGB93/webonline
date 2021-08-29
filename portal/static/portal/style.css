@@ -13,10 +13,6 @@
   z-index: -1;
   background: #f5f5f5;
 }
-.contenedor {
-  height: 100%;
-  min-height: 100vh;
-}
 * {
   margin: 0;
   padding: 0;
@@ -34,7 +30,7 @@
   margin: auto;
   background: #003147;
   transition: 0.5s;
-  overflow: hidden;
+  overflow: auto;
 }
 .navigation.active {
   width: 60px;

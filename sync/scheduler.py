@@ -60,7 +60,7 @@ def chequeo_conexion_servicios():
     conexion.fecha_internet = timezone.now()
     conexion.save()
 
-chequeo_conexion_online()
+#chequeo_conexion_online()
 
 
 def chequeo_conexiones():

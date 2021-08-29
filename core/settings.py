@@ -8,6 +8,8 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+ADMINS = [('iVan', 'ivanguachbeltran@gmail.com')]
+
 ALLOWED_HOSTS = ['*']
 
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
