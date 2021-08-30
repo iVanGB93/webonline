@@ -106,11 +106,6 @@
 <div class="row justify-content-end">    
     <h6 class="col-auto card-header caja titulo">Ultimo chequeo <i class="far fa-calendar-check"></i> {{ conexion.fecha_internet|date:"d/m/Y-H:m" }}</h6>
 </div>
-{% if mensaje %}
-<div class="alert alert-{{ color_msg }} text-center col-8 m-auto" role="alert">                   
-    {{ mensaje }}                  
-</div>               
-{% endif %}
 <div class="row datos m-auto mt-4">
     <div class="col-12 col-md-6 col-lg-4 mb-4 usuario">
         <div class="p-2 caja" style="background: #fff;">
@@ -207,10 +202,5 @@
         document.getElementById('spinner').style.display = 'inline-block';
         document.getElementById('boton').disabled=true;
     });
-    var myModal = document.getElementById('myModal')
-    var myInput = document.getElementById('myInput')
-    myModal.addEventListener('shown.bs.modal', function () {
-    myInput.focus()
-    })
 </script>
 {% endblock contenido %}

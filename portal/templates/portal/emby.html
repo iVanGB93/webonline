@@ -3,13 +3,13 @@
 {% block contenido %}
 <div class="row m-2 p-1">    
     <div class="col-10 col-md-5 mt-0 mb-4 m-auto caja" style="max-width: 300px; background: #fff;">
-        <div class="cardHeader titulo">
+        <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1"><i class="fas fa-tv"></i> EMBY - {{ user }}</h3>            
         </div>                       
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Mi cuenta:</h6>
-            <h6 class="texto">
+            <h6 class="titulo my-auto">Mi cuenta:</h6>
+            <h6 class="texto my-auto">
                 {% if user.estadoservicio.emby %}
                 <i class="fas fa-check-square text-success"></i>
                 {% else %}
@@ -19,94 +19,87 @@
         </div>
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Sincronización:</h6>
-            <h6 class="texto">
-                {% if user.estadoservicio.sync %}
+            <h6 class="titulo my-auto">Sincronización:</h6>
+            <h6 class="texto my-auto">
                 <form id="myform_sync" action="{% url 'portal:sync_servicio' 'emby' %}" method="POST">
                     {% csrf_token %}
+                    {% if user.estadoservicio.sync %}
                     <button id="boton_sync" type="submit" class="btn btn-outline-success">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
                         <span><i class="fas fa-check-square text-success"></i></span> Check
                     </button>
-                </form>
-                {% else %}
-                <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
-                    {% csrf_token %}
+                    {% else %}
                     <button id="boton_sync" type="submit" class="btn btn-outline-danger">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
                         <span><i class="fas fa-power-off text-danger"></i></span> Sincronizar
                     </button>
+                    {% endif %}
                 </form>
-                {% endif %}
             </h6>
         </div>
         {% if user.estadoservicio.emby %}
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Restante:</h6>
-            <h6 class="texto">
+            <h6 class="titulo my-auto">Restante:</h6>
+            <h6 class="texto my-auto">
                 {% if user.estadoservicio.emby_time %}
-                <p id="tiempo_restante"></p>
+                <p class="m-auto" id="tiempo_restante"></p>
                 {% else %}
                     -
                 {% endif %}
             </h6>
-        </div>  
+        </div>
         {% endif %}
         <hr class="dropdown-divider" /> 
-        <div class="d-flex justify-content-between">
-            <h6 class="titulo">Autopago:</h6>
-            <h6 class="texto">
-                {% if user.estadoservicio.emby_auto %}
+        <div class="d-flex justify-content-between mb-2">
+            <h6 class="titulo my-auto">Autopago:</h6>
+            <h6 class="texto my-auto">
                 <form id="myform_auto" action="{% url 'portal:auto' 'emby' %}" method="POST">
                     {% csrf_token %}
+                    {% if user.estadoservicio.emby_auto %}
                     <button id="boton_auto" type="submit" class="btn btn-outline-success">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
                         <span><i class="fas fa-check-square text-success"></i></span> Activo
                     </button>
-                </form>
-                {% else %}
-                <form action="{% url 'portal:auto' 'emby' %}" method="POST">
-                    {% csrf_token %}
-                    <button id="boton" type="submit" class="btn btn-outline-danger">
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                    {% else %}
+                    <button id="boton_auto" type="submit" class="btn btn-outline-danger">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
                         <span><i class="fas fa-power-off text-danger"></i></span> OFF
                     </button>
+                    {% endif %}
                 </form>
-                {% endif %}
             </h6>
         </div>  
     </div>
     <div class="col-10 col-md-5 mt-0 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
-        <div class="cardHeader titulo">
+        <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1">Activar el servicio Emby:</h3>            
         </div>      
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h5 class="titulo">Mensual</h5>
-            <h5 class="texto">100 coins</h5>
+            <h5 class="titulo my-auto">Mensual</h5>
+            <h5 class="texto my-auto">100 coins</h5>
         </div>               
-        {% if not user.estadoservicio.emby %}
         <hr class="dropdown-divider" />
-        <form class="p-2" id="myform" action="{% url 'portal:emby' %}" method="post">            
-            {% csrf_token %}   
-            <div class="input-group mb-3">
-                <span class="col-auto input-group-text" id="inputGroup-sizing-default">Contraseña</span>
-                <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>                      
-            <button id="boton" type="submit" class="form-control btn btn-outline-primary">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
-                Activar
-            </button>            
-        </form>
+        {% if user.estadoservicio.emby %}
+        <div class="d-none">
+        {% else %}
+        <div>
         {% endif %}
+            <form class="p-2" id="myform" action="{% url 'portal:emby' %}" method="post">            
+                {% csrf_token %}   
+                <div class="input-group mb-3">
+                    <span class="col-auto input-group-text" id="inputGroup-sizing-default">Contraseña</span>
+                    <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>                      
+                <button onclick="confirmSubmit(event);" id="boton" type="submit" class="form-control btn btn-outline-primary">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                    Activar
+                </button>            
+            </form>
+        </div>
     </div>
 </div>
-{% if mensaje %}
-    <div class="alert alert-{{ color_msg }} text-center m-auto my-2 col-8 col-md-4" role="alert">                   
-        {{ mensaje }}                   
-    </div>               
-{% endif %}
 <div class="row py-5">
     <div class="col-10 col-md-8 m-auto text-center caja" style="background: #fff;">
         <div class="cardHeader titulo">
@@ -123,6 +116,7 @@
         </div>
     </div>
 </div>
+{% if user.estadoservicio.emby %}
 {{ user.estadoservicio.emby_time|json_script:"fecha" }}
 <script>
     var fecha = JSON.parse(document.getElementById('fecha').textContent);
@@ -140,6 +134,9 @@
         document.getElementById("tiempo_restante").innerHTML = "Terminado";
     }
     }, 1000);
+</script>
+{% endif %}
+<script>
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';
@@ -161,5 +158,24 @@
         document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
+    function confirmSubmit(e) {
+        if (myform.contra.value != "") {
+            e.preventDefault();        
+            Swal.fire({
+                title: '¡Confirme su pago!',
+                text: "¿Seguro que desea pagar 100 coins por 30 días de acceso al Emby?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#007000',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    myform.submit();
+                }
+            }); 
+        }
+    }
 </script>
 {% endblock contenido %}

@@ -3,13 +3,13 @@
 {% block contenido %}   
 <div class="row m-2 p-1">    
     <div class="col-10 col-md-3 mt-0 mb-4 m-auto caja" style="max-width: 300px; background: #fff;">  
-        <div class="cardHeader titulo">
+        <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1"><i class="fab fa-internet-explorer text-primary"></i> INTERNET - {{ user }}</h3>            
         </div>   
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Mi cuenta:</h6>
-            <h6 class="texto">
+            <h6 class="titulo my-auto">Mi cuenta:</h6>
+            <h6 class="texto my-auto">
                 {% if user.estadoservicio.internet %}
                 <i class="fas fa-check-square text-success"></i>
                 {% else %}
@@ -19,34 +19,31 @@
         </div>
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Sincronización:</h6>
-            <h6 class="texto">
-                {% if user.estadoservicio.sync %}
+            <h6 class="titulo my-auto">Sincronización:</h6>
+            <h6 class="texto my-auto">
                 <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
                     {% csrf_token %}
+                    {% if user.estadoservicio.sync %}
                     <button id="boton_sync" type="submit" class="btn btn-outline-success">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
                         <span><i class="fas fa-check-square text-success"></i></span> Check
                     </button>
-                </form>
-                {% else %}
-                <form id="myform_sync" action="{% url 'portal:sync_servicio' 'internet' %}" method="POST">
-                    {% csrf_token %}
+                    {% else %}
                     <button id="boton_sync" type="submit" class="btn btn-outline-danger">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_sync" style='display: none'></span>
                         <span><i class="fas fa-power-off text-danger"></i></span> Sincronizar
                     </button>
+                    {% endif %}
                 </form>
-                {% endif %}
             </h6>
         </div>    
         {% if user.estadoservicio.internet %}
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Restante:</h6>
-            <h6 class="texto">
+            <h6 class="titulo my-auto">Restante:</h6>
+            <h6 class="texto my-auto">
                 {% if user.estadoservicio.int_time %}
-                    <p id="tiempo_restante"></p>
+                    <p class="my-auto" id="tiempo_restante"></p>
                 {% else %}
                     {% if user.estadoservicio.int_tipo == "internetHoras" %}
                         <a href="https://login.qbared.com/status/">Horas compradas: {{ user.estadoservicio.int_horas }}</a> 
@@ -58,74 +55,69 @@
         </div>  
         {% endif %}
         <hr class="dropdown-divider" /> 
-        <div class="d-flex justify-content-between">
-            <h6 class="titulo">Autopago:</h6>
-            <h6 class="texto">
-                {% if user.estadoservicio.int_auto %}
+        <div class="d-flex justify-content-between mb-2">
+            <h6 class="titulo my-auto">Autopago:</h6>
+            <h6 class="texto my-auto">
                 <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
                     {% csrf_token %}
+                    {% if user.estadoservicio.int_auto %}
                     <button id="boton_auto" type="submit" class="btn btn-outline-success">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
                         <span><i class="fas fa-check-square text-success"></i></span> Activo
                     </button>
-                </form>
-                {% else %}
-                <form id="myform_auto" action="{% url 'portal:auto' 'internet' %}" method="POST">
-                    {% csrf_token %}
+                    {% else %}
                     <button id="boton_auto" type="submit" class="btn btn-outline-danger">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_auto" style='display: none'></span>
                         <span><i class="fas fa-power-off text-danger"></i></span> OFF
                     </button>
+                    {% endif %}
                 </form>
-                {% endif %}
             </h6>
         </div>  
     </div>
     <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
-        <div class="cardHeader titulo">
+        <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1">Opciones</h3>            
         </div>
         <hr class="dropdown-divider" />        
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">16 horas(11am a 3am):</h6>
-            <h6 class="texto">300 coins</h6>
+            <h6 class="titulo my-auto">16 horas(11am a 3am):</h6>
+            <h6 class="texto my-auto">300 coins</h6>
         </div>   
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">24 horas:</h6>
-            <h6 class="texto">400 coins</h6>
+            <h6 class="titulo my-auto">24 horas:</h6>
+            <h6 class="texto my-auto">400 coins</h6>
         </div>
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
-            <h6 class="titulo">Por horas:</h6>
-            <h6 class="texto">10 coins X hora</h6>
+            <h6 class="titulo my-auto">Por horas:</h6>
+            <h6 class="texto my-auto">10 coins X hora</h6>
         </div>                      
     </div>
     <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
-        <div class="cardHeader titulo">
+        <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1">Duración</h3>            
         </div>    
         <hr class="dropdown-divider" />
-        <h6 class="text-center titulo">Horas</h6>
+        <h6 class="text-center titulo my-auto">Horas</h6>
         <hr class="dropdown-divider" />
-        <h6 class="text-center titulo">Semanal</h6>
+        <h6 class="text-center titulo my-auto">Semanal</h6>
         <hr class="dropdown-divider" />
-        <h6 class="text-center titulo">Mensual</h6>
+        <h6 class="text-center titulo my-auto">Mensual</h6>
     </div>        
-</div>        
-{% if mensaje %}
-    <div class="alert alert-{{ color_msg }} text-center m-auto my-2 col-8 col-md-4" role="alert">                   
-        {{ mensaje }}               
-    </div>               
-{% endif %}
-{% if not user.estadoservicio.internet %}
+</div>
+{% if user.estadoservicio.internet %}
+<div class="d-none">
+{% else %}
 <div class="row my-3" >       
+{% endif %}
     <div class="col-8 col-md-4 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
         <div class="cardHeader titulo">
             <h3 class="titulo m-1 p-1">Activar el servicio Internet:</h3>            
         </div>
         <hr class="dropdown-divider" />
-        <form class="p-2" id="myform" action="{% url 'portal:internet' %}" method="post">
+        <form class="p-2 texto" id="myform" action="{% url 'portal:internet' %}" method="post">
             {% csrf_token %}
             <select class="form-select mb-3" name="tipo">
                 <option selected>Seleccione el tipo</option>
@@ -135,6 +127,7 @@
             </select>
             <select class="form-select mb-3" name="duracion">
                 <option selected>Seleccione la duración</option>
+                <option value="horas">Horas</option>
                 <option value="semanal">Semanal</option>
                 <option value="mensual">Mensual</option>
             </select>
@@ -146,14 +139,13 @@
                 <span class="col-auto input-group-text" id="inputGroup-sizing-default">Contraseña:</span>
                 <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
-            <button id="boton" type="submit" class="form-control btn btn-outline-primary">
+            <button onclick="confirmSubmit(event);" id="boton" type="submit" class="form-control btn btn-outline-primary">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
                 Activar
             </button>            
         </form>
     </div>
 </div>
-{% endif %}
 <div class="row py-5">
     <div class="col-10 col-md-10 m-auto text-center caja" style="background: #fff;">
         <div class="cardHeader titulo">
@@ -172,6 +164,7 @@
         </div>
     </div>
 </div>
+{% if user.estadoservicio.internet %}
 {{ user.estadoservicio.int_time|json_script:"fecha" }}
 <script>
     var fecha = JSON.parse(document.getElementById('fecha').textContent);
@@ -188,7 +181,10 @@
         clearInterval(x);
         document.getElementById("tiempo_restante").innerHTML = "Terminado";
     }
-    }, 1000);  
+    }, 1000);
+</script>
+{% endif %}
+<script> 
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';
@@ -210,5 +206,80 @@
         document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
+    function confirmSubmit(e) {
+        if (myform.contra.value != "") {
+            e.preventDefault();            
+            if (myform.tipo.value === 'Seleccione el tipo') {
+                Swal.fire({
+                    title: "¡Seleccione un tipo!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
+            } else if (myform.duracion.value === 'Seleccione la duración') {
+                Swal.fire({
+                    title: "¡Seleccione la duración!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
+            } else if (myform.tipo.value === 'horas' && myform.duracion.value != 'horas') {
+                Swal.fire({
+                    title: "¡Si el tipo es horas, la duración debe ser horas!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
+            } else if (myform.tipo.value != 'horas' && myform.duracion.value === 'horas') {
+                Swal.fire({
+                    title: "¡Si el tipo no es horas, la duración no puede ser horas!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
+            } else if (myform.tipo.value === 'horas' && myform.cantidad_horas.value === '') {
+                Swal.fire({
+                    title: "¡Defina la cantidad de horas!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
+            } else {
+                if (myform.tipo.value === 'horas') {
+                    if (myform.cantidad_horas.value < 5) {
+                        Swal.fire({
+                            title: "¡La cantidad mínima es 5 horas!",
+                            icon: 'warning',
+                            confirmButtonColor: '#d33',
+                        })
+                    } else {
+                        costo = parseInt(myform.cantidad_horas.value) * 10
+                        texto = costo + " coins por " + myform.cantidad_horas.value + " horas"
+                    }
+                } else if (myform.tipo.value === '16h') {
+                    if (myform.duracion.value === 'semanal') {
+                        texto = "300 coins por una semana con 16 horas diarias de conexión."
+                    } else {
+                        texto = "1200 coins por 30 días con 16 horas diarias de conexión."
+                    }
+                } else if (myform.tipo.value === '24h') {
+                    if (myform.duracion.value === 'semanal') {
+                        texto = "400 coins por una semana con 24 horas de conexión."
+                    } else {
+                        texto = "1600 coins por 30 días con 24 horas de conexión."
+                    }
+                }
+                Swal.fire({
+                    title: '¡Confirme su pago!',
+                    text: "¿Seguro que desea pagar " + texto,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#007000',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        myform.submit();
+                    }
+                }); 
+            }
+        }
+    }
 </script>
 {% endblock contenido %}

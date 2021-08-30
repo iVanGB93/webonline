@@ -120,6 +120,28 @@
             <p class="copyright">QbaRed © 2021</p>
         </div>
     </div>    
+{% if mensaje %}
+{{ mensaje|json_script:"mensaje" }}
+{{ icon|json_script:"icon" }}
+<script>
+    var mensaje = JSON.parse(document.getElementById('mensaje').textContent);
+    var icon = JSON.parse(document.getElementById('icon').textContent);
+    var resultado = 'Upss!';
+    var botonColor = '#d33';
+    if (icon === 'success') {
+        var resultado = 'Listo!';
+        var botonColor = '#007000';
+    }
+    window.onload = function(){
+        Swal.fire({
+            title: resultado,
+            text: mensaje,
+            icon: icon,
+            confirmButtonColor: botonColor,
+        }) 
+    }             
+</script>
+{% endif %}
 <script>
     function toggleMenu(){
         let toggle = document.querySelector('.toggle');

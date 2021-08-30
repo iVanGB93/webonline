@@ -5,7 +5,6 @@ from . import views
 app_name = 'portal'
 
 urlpatterns = [
-    path('', views.dashboard, name='index'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('perfil/', views.perfil, name='perfil'),
     path('contra/', views.contra, name='contra'),

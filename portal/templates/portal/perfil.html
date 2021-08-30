@@ -7,14 +7,20 @@
     </div>            
     <hr class="dropdown-divider" />
     <div class="card-body text-center">
-        <form class="p-2" id="myform" action="{% url 'portal:perfil' %}"  method="post">
-            {% if mensaje %}
-            <div class="alert alert-warning text-center my-1" role="alert">                   
-                {{ mensaje }}                
-            </div>               
-            {% endif %}
+        <form class="p-2" id="myform" action="{% url 'portal:perfil' %}"  method="post">            
             {% csrf_token %}
-            {{ form }} 
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingEmail" required name="email" value="{{ user.email }}" placeholder="mi correo nuevo...">
+                <label for="floatingEmail">Correo nuevo:</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingName" required name="first_name" value="{{ user.first_name}}"  placeholder="su nombre...">
+                <label for="floatingName">Su nombre:</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingLastName" required name="last_name" value="{{ user.last_name}}" placeholder="sus apellidos...">
+                <label for="floatingLastName">Sus apellidos:</label>
+            </div>
             <button id="boton" class="btn btn-outline-primary my-3" type="submit">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
                 Cambiar

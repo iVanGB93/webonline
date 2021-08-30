@@ -165,11 +165,17 @@ def recargar(code, usuario):
         if not conexion.online:
             result['mensaje'] = "Recarga deshabilitada, intente más tarde."
             return result
+    usuario = User.objects.get(username=usuario)
+    profile = Profile.objects.get(usuario=usuario.id)
+    if not profile.sync:
+        result['mensaje'] = "Sincronice su perfil en dashboard para poder recargar."
+        return result
+    if len(code) != 8:
+        result['mensaje'] = 'Escriba 8 dígitos.'
+        return result
     if Recarga.objects.filter(code=code).exists():
         recarga = Recarga.objects.get(code=code)        
         if recarga.activa:
-            usuario = User.objects.get(username=usuario)
-            profile = Profile.objects.get(usuario=usuario.id)
             cantidad = recarga.cantidad                   
             profile.coins = profile.coins + cantidad
             respuesta = actualizacion_remota('usar_recarga', {'usuario': usuario.username, 'code': code})
@@ -205,13 +211,16 @@ def transferir(desde, hacia, cantidad):
             return result
     if User.objects.filter(username=hacia).exists():
         envia = User.objects.get(username=desde)        
-        enviaProfile = Profile.objects.get(usuario=envia.id)        
+        enviaProfile = Profile.objects.get(usuario=envia.id)
+        recibe = User.objects.get(username=hacia)
+        recibeProfile = Profile.objects.get(usuario=recibe.id)
+        if not enviaProfile.sync or not recibeProfile.sync:
+            result['mensaje'] = "Sincronice ambos perfiles en dashboard para poder transferir"
+            return result  
         coinsDesde = int(enviaProfile.coins) 
         cantidad = int(cantidad)
         if coinsDesde >= cantidad:
             if cantidad >= 20:
-                recibe = User.objects.get(username=hacia)
-                recibeProfile = Profile.objects.get(usuario=recibe.id)
                 recibeProfile.coins = recibeProfile.coins + cantidad
                 enviaProfile.coins = enviaProfile.coins - cantidad 
                 enviaProfile.sync = False     
@@ -235,5 +244,4 @@ def transferir(desde, hacia, cantidad):
         result['mensaje'] = 'El usuario de destino no existe'
         return result
 
-def cambio_auto(usuario, servicio):
-    result = {'estado': False}
+

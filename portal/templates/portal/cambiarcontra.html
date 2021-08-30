@@ -7,31 +7,20 @@
     </div> 
     <hr class="dropdown-divider" />
     <div class="card-body m-3">                
-        <form id="myform" action="{% url 'portal:contra' %}"  method="post">
-            {% if mensaje %}
-            <div class="alert alert-warning text-center my-1" role="alert">                   
-                {{ mensaje }}                   
-            </div>               
-            {% endif %}
+        <form id="myform" action="{% url 'portal:contra' %}"  method="post">            
             {% csrf_token %}
-            <div class="row">  
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingActual" required name="actual" placeholder="mi contraseña actual...">
-                    <label for="floatingActual">Contraseña actual:</label>
-                </div>                   
-            </div>                
-            <div class="row">                    
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingNueva" required name="nueva" placeholder="mi contraseña nueva...">
-                    <label for="floatingNueva">Contraseña nueva:</label>
-                </div>                   
-            </div>
-            <div class="row">                    
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingConfirme" required name="confirme" placeholder="mi contraseña nueva otra vez...">
-                    <label for="floatingConfirme">Confirme contraseña nueva:</label>
-                </div>                   
-            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="floatingActual" required name="actual" placeholder="mi contraseña actual...">
+                <label for="floatingActual">Contraseña actual:</label>
+            </div>                   
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="floatingNueva" required name="nueva" placeholder="mi contraseña nueva...">
+                <label for="floatingNueva">Contraseña nueva:</label>
+            </div>                   
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="floatingConfirme" required name="confirme" placeholder="mi contraseña nueva otra vez...">
+                <label for="floatingConfirme">Confirme contraseña nueva:</label>
+            </div>                   
             <button id="boton" class="btn btn-outline-primary" type="submit">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
                 Cambiar
