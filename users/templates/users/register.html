@@ -8,13 +8,32 @@
 </div> 
 <div class="card-body">       
     <form id="myform" action="{% url 'users:register' %}"  method="post">
-        {% if error %}
+        {% if mensaje %}
         <div class="alert alert-danger text-center" role="alert">
-            {{ error }}
+            {{ mensaje }}
         </div>                
         {% endif %}
         {% csrf_token %}
-        {{ form }}        
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="username" style="background: transparent; color: white;" id="username" placeholder="nombre de usuario" required>
+            <label for="username">Usuario:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="emailInput" name="email" style="background: transparent; color: white;" placeholder="name@example.com" required>
+            <label for="emailInput">Correo:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="emailConfirmInput" name="emailConfirm" style="background: transparent; color: white;" placeholder="name@example.com" required>
+            <label for="emailConfirmInput">Repetir correo:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" style="background: transparent; color: white;" placeholder="Contraseña" required>
+            <label for="password">Contraseña:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" style="background: transparent; color: white;" placeholder="Contraseña" required>
+            <label for="passwordConfirm">Repetir contraseña:</label>
+        </div>
         <button id="boton" class="form-control btn btn-outline-info" type="submit">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
             Registrarme

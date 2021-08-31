@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
+from sorteo.models import Sorteo
 from users.models import Profile, Notificacion
 import threading
 
@@ -104,3 +105,51 @@ class UpdateThreadRecarga(threading.Thread):
                 mensaje = respuesta['mensaje']
                 email = EmailMessage(f'Falló sync recarga', f'Crear recarga, código { recarga.code } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])
                 EmailSending(email).start()
+
+class UpdateThreadUsuario(threading.Thread):
+    def __init__(self, data):
+        self.data = data
+        threading.Thread.__init__(self)
+
+    def run(self):
+        usuario = self.data['usuario']
+        respuesta =  actualizacion_remota('nuevo_usuario', {'usuario': usuario, 'email': self.data['email'], 'password': self.data['password']})
+        if not respuesta['estado']:           
+                mensaje = respuesta['mensaje']
+                email = EmailMessage(f'Falló sync crear usuario', f'Crear usuario {usuario}, no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])
+                EmailSending(email).start()
+
+class UpdateThreadSorteo(threading.Thread):
+    def __init__(self, data):
+        self.data = data
+        threading.Thread.__init__(self)
+
+    def run(self):
+        usuario = self.data['usuario']
+        participacion = Sorteo.objects.get(id=self.data['id'])
+        respuesta = actualizacion_remota('crear_sorteo', self.data)
+        if respuesta['estado']:
+            participacion.sync = True
+            participacion.save()
+        else:
+            mensaje = respuesta['mensaje']
+            email = EmailMessage(f'Falló al subir la participacion', f'La participacion del usuario { usuario } no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])    
+            EmailSending(email).start()
+
+class UpdateThreadForum(threading.Thread):
+    def __init__(self, data):
+        self.data = data
+        threading.Thread.__init__(self)
+
+    def run(self):
+        usuario = self.data['usuario']
+        titulo = self.data['titulo']
+        publicacion = Publicacion.objects.get(id=self.data['id'])
+        respuesta = actualizacion_remota('sync_publicacion', self.data)
+        if respuesta['estado']:
+            publicacion.sync = True
+            publicacion.save()
+        else:
+            mensaje = respuesta['mensaje']
+            email = EmailMessage(f'Falló al subir la publicacion', f'La publicacion del usuario { usuario }, titulo: { titulo }, no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com'])    
+            EmailSending(email).start()

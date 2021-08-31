@@ -8,13 +8,20 @@
 </div>
 <div class="card-body">
     <form id="myform" action="{% url 'users:login' %}"  method="post">
-        {% if error %}
+        {% if mensaje %}
         <div class="alert alert-danger text-center" role="alert">
-            {{ error }}
+            {{ mensaje }}
         </div>                
         {% endif %}                             
         {% csrf_token %}
-        {{ form }}                
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" style="background: transparent; color: white;" id="username" name="username" placeholder="nombre de usuario">
+            <label for="username">Usuario:</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" style="background: transparent; color: white;" id="password" name="password" placeholder="Password">
+            <label for="password">Contraseña:</label>
+        </div>                
         <button id="boton" class="form-control btn btn-outline-warning" type="submit">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
             Entrar

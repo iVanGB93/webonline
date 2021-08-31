@@ -4,11 +4,11 @@ from .models import Publicacion, Encuesta, Comentario, RespuestaComentario
 class PublicacionAdminConfig(admin.ModelAdmin):
     model = Publicacion
     search_fields = ['autor__username', 'titulo']
-    list_filter = ('tema', 'online',)
+    list_filter = ('tema', 'sync',)
     ordering = ('-fecha',)
-    list_display = ('autor', 'tema', 'visitas', 'titulo', 'online', 'fecha')
+    list_display = ('autor', 'tema', 'visitas', 'titulo', 'sync', 'fecha')
     fieldsets = (
-        ('ID', {'fields': ('autor', 'online', 'visitas')}),
+        ('ID', {'fields': ('autor', 'sync', 'visitas')}),
         ('Publicacion', {'fields': ('tema', 'titulo', 'contenido')}),
         ('Fecha', {'fields': ('fecha',)}),
         ('Imagenes', {'fields': ('imagen1', 'imagen2', 'imagen3')}),

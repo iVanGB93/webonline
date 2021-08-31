@@ -1,13 +1,13 @@
 {% extends "forum/baseForum.html" %}
 {% load static %}
 {% block contenido %}
+{% if user.is_authenticated %}
 <div class="text-end py-2">
-    {% if user.is_authenticated %}
     <a href="{% url 'forum:crear' tema %}">
         <button class="btn btn-{{ color }}">Crear nuevo</button>
     </a>
-    {% endif %}
 </div>
+{% endif %}
 <div class="p-1 text-white bg-light overflow-hidden box" style="background-image: url('{% static 'web/noticias/main.jpg' %}')">
     <div class="col-md-10 p-1 px-md-4 text-left" style="text-shadow: 0 0 3px white, 0 0 8px rgb(75, 150, 100);">
         <h2 class="display-4 px-4 fw-bold logo">Cotilleo</h2>
@@ -51,9 +51,13 @@
     <div class="col-2 d-none d-lg-block my-1 mx-auto p-1 box text-center overflow-hidden bg-dark">
         <h3 class="text-center text-{{ color }} pt-2">Ultimas:</h3>    
         <ul class="list-group" style="list-style: none;">
+            {% if todas %}
             {% for p in todas %}
             <li class="list-item py-1 text-white"><a href="{{ p.id }}" class="text-white p-2">{{ p.titulo }}</a></li>
             {% endfor %}
+            {% else %}
+            <li class="list-item py-1 text-white">Nada publicado aún</li>
+            {% endif %}
         </ul>           
     </div>
 </div>

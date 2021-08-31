@@ -2,104 +2,82 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from decouple import config
-from .forms import LoginForm, RegisterForm
 from sync.syncs import actualizacion_remota
 from sync.models import EstadoConexion
+from sync.actions import UpdateThreadUsuario
 
 
 def entrar(request):
     if request.user.is_authenticated:
-        return redirect ('/')
-    form = LoginForm()
-    content = {'form': form}
+        return redirect ('web:index')
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        if User.objects.filter(username=username).exists():            
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                user = authenticate(username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return redirect('web:index')
-                else:
-                    form = LoginForm()
-                    error = "Contraseña Incorrecta"
-                    content = {'error': error, 'form': form}
-                    return render(request, 'users/login.html', content)
+        if User.objects.filter(username=username).exists():
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('web:index')
             else:
-                error = form.errors
-                form = LoginForm()
-                content = {'error': error, 'form': form}
-                return render(request, 'users/login.html', content)
+                content = {'mensaje': "Contraseña Incorrecta"}
+                return render(request, 'users/login.html', content)            
         else:            
-            content['error'] = "Usuario NO Existe"
+            content = {'mensaje': "Usuario no existe"}
             return render(request, 'users/login.html', content)
-    else:        
-        return render(request, 'users/login.html', content)
+    else:
+        return render(request, 'users/login.html')
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect ('/')
-    form = RegisterForm()
-    content = {'form': form}
+        return redirect ('web:index')
+    content = {}
     if request.method == 'POST':
         online = config('APP_MODE')
         if online == 'online':
-            servidor = config('NOMBRE_SERVIDOR')
-            conexion = EstadoConexion.objects.get(servidor=servidor)
+            conexion = EstadoConexion.objects.get(id=1)
             if not conexion.online:
-                content['error'] = "Registro deshabilitado, intente más tarde."
+                content['mensaje'] = "Registro deshabilitado, intente más tarde."
                 return render(request, 'users/register.html', content)
         password = request.POST['password']
         if len(password) <8:
-            content['error'] = "Contraseña mínimo 8 caracteres."
+            content['mensaje'] = "Contraseña mínimo 8 caracteres."
+            return render(request, 'users/register.html', content)
+        password2 = request.POST['passwordConfirm']
+        if password != password2:
+            content['mensaje'] = "Las contraseñas no coinciden."
+            return render(request, 'users/register.html', content)
+        email2 = request.POST['emailConfirm']
+        email = request.POST['email']
+        if email != email2:
+            content['mensaje'] = "Los correos no coinciden."
             return render(request, 'users/register.html', content)
         username = request.POST['username']
         if User.objects.filter(username=username).exists():
-            content['error'] = "Nombre de usuario en uso."
+            content['mensaje'] = "Nombre de usuario en uso."
             return render(request, 'users/register.html', content)
         if online == 'online':
             respuesta = actualizacion_remota('check_usuario', {'usuario': username})
             if respuesta['estado']:
-                content['error'] = respuesta['mensaje']
+                content['mensaje'] = respuesta['mensaje']
                 return render(request, 'users/register.html', content)
-        email = request.POST['email']
         if User.objects.filter(email=email).exists():
-            content['error'] = "Correo en uso."
+            content['mensaje'] = "Correo en uso."
             return render(request, 'users/register.html', content)
         if online == 'online':
             respuesta = actualizacion_remota('check_email', {'email': email})
             if respuesta['estado']:
-                content['error'] = respuesta['mensaje']
+                content['mensaje'] = respuesta['mensaje']
                 return render(request, 'users/register.html', content)
-        email2 = request.POST['email2']
-        if email != email2:
-            content['error'] = "Los correos no coinciden."
-            return render(request, 'users/register.html', content)        
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)            
-            user.set_password(password)
-            user.save()
-            new_user = authenticate(username=user.username, password=password)  
-            respuesta =  actualizacion_remota('nuevo_usuario', {'usuario':user.username, 'email': user.email, 'password': password})
-            if respuesta['estado']:
-                login(request, new_user)
-                return redirect('web:index')
-            else:
-                form = LoginForm()
-                error = respuesta['mensaje']
-                content = {'error': error, 'form': form}
-                return render(request, 'users/login.html', content)
-        else:
-            error = form.errors
-            form = RegisterForm()
-            content = {'error': error, 'form': form}
-            return render(request, 'users/register.html', content)                                      
+        user = User(username=username, email=email)       
+        user.set_password(password)
+        user.save()
+        new_user = authenticate(request, username=user.username, password=password)        
+        UpdateThreadUsuario({'usuario':user.username, 'email': user.email, 'password': password}).start()
+        login(request, new_user)
+        return redirect('web:index')                  
     else:        
-        return render(request, 'users/register.html', content)
+        return render(request, 'users/register.html')
     
 def salir(request):
     logout(request)
-    return redirect('/')
+    return redirect('web:index')

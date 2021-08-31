@@ -1,6 +1,6 @@
 {% extends "forum/baseForum.html" %}
 {% load static %}
-{% block contenido %}    
+{% block contenido %} 
 <div class="col-10 col-lg-8 m-auto box overflow-hidden">
     <div class="p-3">
         <h3 class="text-center p-3">Crear publicación</h3>
@@ -25,13 +25,7 @@
             <div class="mb-3">
                 <label for="contenido" class="form-label">Contenido:</label>
                 <textarea class="form-control" id="contenido" name="contenido" required rows="8"></textarea>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="online" name="online" id="online">
-                <label class="form-check-label" for="online">
-                Publicar en internet
-                </label>
-            </div>   
+            </div>               
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="boton_encuesta" name="encuesta">
                 <label class="form-check-label" for="boton_encuesta">

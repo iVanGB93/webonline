@@ -1,3 +1,4 @@
+from forum.models import Publicacion
 from channels.generic.websocket import WebsocketConsumer
 import json
 from django.utils import timezone
@@ -330,6 +331,23 @@ class SyncWSConsumer(WebsocketConsumer):
         respuesta['mensaje'] = 'Notificación guardada con éxito.'
         respuesta['estado'] = True
         self.responder(respuesta)
+    
+    def sync_publicacion(self, data):
+        respuesta = {'estado': False}
+        if data.get('check'):
+            if data['check']:
+                if Publicacion.objects.filter(titulo=data['titulo']).exists():
+                    respuesta['estado'] = True
+                    respuesta['mensaje'] = 'Existe una publicación con este título.'
+                    self.responder(respuesta)
+        if self.usuario_existe(data):            
+            autor = User.objects.get(username=data['usuario'])
+            publicacion = Publicacion(autor=autor, tema=data['tema'], titulo=data['titulo'], contenido=data['contenido'])
+            publicacion.sync = True
+            publicacion.save()
+            respuesta['mensaje'] = 'Publicación guardada con éxito.'
+            respuesta['estado'] = True
+            self.responder(respuesta)
 
     acciones = {
         'saludo': saludo,
@@ -349,6 +367,7 @@ class SyncWSConsumer(WebsocketConsumer):
         'nueva_operacion': nueva_operacion,
         'crear_sorteo': crear_sorteo,
         'crear_notificacion': crear_notificacion,
+        'sync_publicacion': sync_publicacion,
     }  
 
     def receive(self, text_data):

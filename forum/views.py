@@ -1,9 +1,12 @@
+from sync.syncs import actualizacion_remota
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from .models import Comentario, Encuesta, Publicacion
 from users.models import Notificacion
+from sync.models import EstadoConexion
+from decouple import config
 
 
 def tema_color(tema):
@@ -119,27 +122,35 @@ def crear(request, tema):
         tema = request.POST['tema']
         titulo = request.POST['titulo']
         if Publicacion.objects.filter(titulo=titulo).exists():
-            mensaje = 'Existe una publicación con este título'
-            content['mensaje'] =  mensaje
+            content['mensaje'] =  'Existe una publicación con este título'
             return render(request, 'forum/crear.html', content)
+        online = config('APP_MODE')
+        if online == 'online':
+            conexion = EstadoConexion.objects.get(id=1)
+            if conexion.online:
+                resultado = actualizacion_remota('sync_publicacion', {'check': True, 'titulo': titulo})
+                if resultado['estado']:
+                    content['mensaje'] =  resultado['mensaje']
+                    return render(request, 'forum/crear.html', content)
+            else:
+                content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intentne más tarde.'
+                return render(request, 'forum/crear.html', content)
         contenido = request.POST['contenido']       
-        nueva = Publicacion(autor=usuario, tema=tema, titulo=titulo, contenido=contenido)        
-        if request.POST.get('online'):
-            nueva.online = True
+        nueva = Publicacion(autor=usuario, tema=tema, titulo=titulo, contenido=contenido)
         if request.FILES.get('imagen1'):
             nueva.imagen1 = request.FILES['imagen1']
         if request.FILES.get('imagen2'):
-            nueva.imagen2 = request.FILES['imagen2']       
+            nueva.imagen2 = request.FILES['imagen2']   
         if request.FILES.get('imagen3'):
-            nueva.imagen3 = request.FILES['imagen3']   
-        nueva.save()             
+            nueva.imagen3 = request.FILES['imagen3']
+        nueva.sync = True
+        nueva.save()            
         content['encuesta'] = 'nada'
         if request.POST.get('encuesta'):
             opcion1 = request.POST['opcion1']
             opcion2 = request.POST['opcion2']
             if opcion1 == '' or opcion2 == '':
-                mensaje = 'Debe escribir al menos las 2 primeras opciones.'
-                content['mensaje'] = mensaje
+                content['mensaje'] = 'Debe escribir al menos las 2 primeras opciones.'
                 nueva.delete()
                 return render(request, 'forum/crear.html', content)
             else:
@@ -152,6 +163,7 @@ def crear(request, tema):
                     encuesta.opcion5 = request.POST['opcion5']
                 encuesta.save()
                 content['encuesta'] = encuesta
+        nueva.sync = False
         nueva.save()
         dato = f"Publicación de { nueva.tema } guardada"
         notificacion = Notificacion(usuario=usuario, tipo="REGISTRO", contenido=dato)
@@ -182,13 +194,20 @@ def editar(request, tema, pk):
                     mensaje = 'Existe una publicación con este título'
                     content['mensaje'] =  mensaje
                     return render(request, 'forum/editar.html', content)
-            publicacion.titulo = titulo
+                online = config('APP_MODE')
+                if online == 'online':
+                    conexion = EstadoConexion.objects.get(id=1)
+                    if conexion.online:
+                        resultado = actualizacion_remota('sync_publicacion', {'check': True, 'titulo': titulo})
+                        if resultado['estado']:
+                            content['mensaje'] =  resultado['mensaje']
+                            return render(request, 'forum/crear.html', content)
+                    else:
+                        content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intentne más tarde.'
+                        return render(request, 'forum/crear.html', content)
+                publicacion.titulo = titulo
         if request.POST['contenido'] != '':
             publicacion.contenido = request.POST['contenido']
-        if request.POST.get('online'):
-            publicacion.online = True
-        else:
-            publicacion.online = False
         if request.FILES.get('imagen1'):
             publicacion.imagen1 = request.FILES['imagen1']
         if request.FILES.get('imagen2'):
@@ -196,6 +215,7 @@ def editar(request, tema, pk):
         if request.FILES.get('imagen3'):
             publicacion.imagen3 = request.FILES['imagen3']
         publicacion.fecha = timezone.now()
+        publicacion.sync = False
         publicacion.save()  
         if request.POST.get('encuesta'):
             opcion1 = request.POST['opcion1']

@@ -20,7 +20,7 @@ class Publicacion(models.Model):
     titulo = models.CharField(max_length=60)
     contenido = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
-    online= models.BooleanField(default=False)
+    sync= models.BooleanField(default=False)
     visitas = models.PositiveIntegerField(default=0)
     imagen1 = models.ImageField(_("Imagen1"), upload_to=upload_to, default='defaultForum.png')
     imagen2 = models.ImageField(_("Imagen2"), upload_to=upload_to, default='defaultForum.png')
