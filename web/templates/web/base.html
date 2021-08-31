@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'web/normalize.css' %}">
     <link rel="stylesheet" href="{% static 'web/style.css' %}">
     <link rel="stylesheet" href="{% static 'web/fontawesome-free-5.15.4-web/css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'web/css/sweetalert2.min.css' %}">
     {% block head %}
     {% endblock %}
     <title>QbaRed{% block title %}{% endblock %}</title>
@@ -51,6 +52,8 @@
     <script src="{% static 'web/bootstrap5.0/js/bootstrap.min.js' %}"></script>
 
     <script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script>
+    
+    <script src="{% static 'web/js/sweetalert2.min.js' %}"></script>
 
     <script>
       var usuario = JSON.parse(document.getElementById('usuario').textContent);
