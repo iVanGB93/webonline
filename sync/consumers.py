@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
 from users.models import Profile, Notificacion
+from .models import EstadoConexion
 from sorteo.actions import crear_participacion
 
 class SyncWSConsumer(WebsocketConsumer):
@@ -38,6 +39,25 @@ class SyncWSConsumer(WebsocketConsumer):
         print(f'{ celula } se ha conectado')
         respuesta['estado'] = True
         respuesta['mensaje'] = f'Bienvenido {celula}, está conectado!!!'
+        self.responder(respuesta)
+    
+    def chequeo_conexion(self, data):
+        respuesta = {'estado': False}
+        celula = data['identidad']
+        if EstadoConexion.objects.filter(servidor=data['identidad']).exists():
+            estado = EstadoConexion.objects.get(servidor=data['identidad'])
+            estado.online = True
+            estado.fecha_chequeo = timezone.now()
+            estado.internet = data['internet']
+            estado.jc = data['jc']
+            estado.emby = data['emby']
+            estado.ftp = data['ftp']
+            estado.sync = True
+            estado.save()
+            respuesta['estado'] = True
+            respuesta['mensaje'] = f'Chequeo completado, {celula}!!!'
+        else:
+            respuesta['mensaje'] = f'Su servidor no esta registrado, {celula}!!!'
         self.responder(respuesta)
 
     def check_usuario(self, data):
@@ -351,6 +371,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     acciones = {
         'saludo': saludo,
+        'chequeo_conexion': chequeo_conexion,
         'check_usuario': check_usuario,
         'check_email': check_email,
         'nuevo_usuario': nuevo_usuario,
