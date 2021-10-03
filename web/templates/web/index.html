@@ -5,7 +5,7 @@
     <div class="box" style="background: url({% static 'web/images/home.jpg' %});">
         <div class="content">
             <h3 data-aos="fade-down">Bienvenido{% if user.is_authenticated %} {{user.username}}{% endif %} a QbaRed</h3>
-            <p data-aos="fade-down">Red Privada de Centro Habana</p>
+            <p data-aos="fade-down">Comunidad inalámbrica de Centro Habana</p>
             <div class="button" data-aos="fade-up">
                 {% if user.is_authenticated %}
                 <a href="{% url 'users:logout' %}" class="boton">Salir</a>
