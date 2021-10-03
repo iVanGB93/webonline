@@ -2,16 +2,16 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <meta charset="utf-8">    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{% static 'portal/favicon.ico' %}"/>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'web/images/logo.svg' %}"/>
     <meta name="description" content="Informacion sobre Qbared, red privada de centro habana.">
     <meta name="author" content="iVan">
     <link href="{% static 'web/bootstrap5.0/css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'web/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'web/style.css' %}">
     <link rel="stylesheet" href="{% static 'web/fontawesome-free-5.15.4-web/css/all.css' %}">
     <link rel="stylesheet" href="{% static 'web/css/sweetalert2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'web/css/all.css' %}">
     {% block head %}
     {% endblock %}
     <title>QbaRed{% block title %}{% endblock %}</title>
@@ -20,41 +20,30 @@
     {% block header %}
     {% endblock %}
     <main>
-    <div clas="contenido_principal">
-      {% block content %}
-      {% endblock content %}
-    </div>
+    {% block content %}
+    {% endblock content %}
     {% block footer %}
     {% endblock %}
       <div id="caja_notificaciones" class="notificaciones" style="display: none;">
-        <div class="card">
-          <div class="card-header bg-dark text-white text-center">
-            <h5>Notificaciones:</h5>
+          <div class="notificaciones_header">
+            <h5>Notificaciones</h5>
           </div>
-          <div class="spinner-grow text-dark m-auto my-3" role="status" aria-hidden="true" id="spinner_notificaciones"></div>          
+          <div class="spinner-grow spinner_notificaciones" aria-hidden="true" id="spinner_notificaciones"></div>          
           <div class="lista_notificaciones">
-            <ul id="lista_notificaciones" class="border p-1 m-0" style="list-style:none;">
-            </ul>         
+            <ul id="lista_notificaciones" style="list-style:none;">
+            </ul>
           </div>
-          <div class="row justify-content-end my-1">
-            <a class="col-3" id="cerrar_notificaciones" href="#"><button class="btn btn-secondary">Cerrar</button></a>
-          </div>
-        </div>                  
+          <button id="cerrar_notificaciones" class="notificaciones_boton">Cerrar</button>
       </div>    
     </main>
-    {% if user.is_authenticated %}
-      {{ user.username|json_script:"usuario" }}
-    {% else %}
-      {{ "anonymous"|json_script:"usuario" }}
-    {% endif %}    
-    <script src="{% static 'web/myjs.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/popper.min.js' %}"></script>
     <script src="{% static 'web/bootstrap5.0/js/bootstrap.min.js' %}"></script>
-
-    <script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script>
-    
+    <script src="{% static 'web/js/reconnecting-websocket.js' %}"></script>
     <script src="{% static 'web/js/sweetalert2.min.js' %}"></script>
-
+    {% block script %}
+    {% endblock %}
+    {% if user.is_authenticated %}
+    {{ user.username|json_script:"usuario" }}    
     <script>
       var usuario = JSON.parse(document.getElementById('usuario').textContent);
       var socket = new ReconnectingWebSocket('wss://qbared.com/ws/web/');
@@ -65,7 +54,7 @@
         const notificaciones_nuevas = document.getElementById('notificaciones_nuevas')
         boton.onclick = function(e) {
           if (notificaciones.style.display === 'none') {
-            notificaciones.style.display = 'block'
+            notificaciones.style.display = 'inline'
             socket.send(JSON.stringify({
               'accion': 'notificaciones',
               'data': {
@@ -167,7 +156,7 @@
           }
         } else if (data['accion'] === 'nuevas') {
           if (data['nuevas'] > 0) {
-            notificaciones_nuevas.style.display = 'block'
+            notificaciones_nuevas.style.display = 'inline'
             notificaciones_nuevas.textContent = data['nuevas'];
           } else {
             notificaciones_nuevas.style.display = 'none'
@@ -180,5 +169,8 @@
         console.error('socket cerrado');
       };      
     </script>
+    {% else %}
+    {{ "anonymous"|json_script:"usuario" }}
+    {% endif %}
   </body>
 </html>

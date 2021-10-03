@@ -1,25 +1,20 @@
 {% extends "users/baseUsers.html" %}
 {% load static %}
 {% block title %} - Entrar{% endblock %}
-{% block contenido %}        
+{% block contenido %}    
 <div class="card-header">
-    <h3>QbaRed</h3> 
-    <h5>Entrar</h5>           
+    <h3><a href="{% url 'web:index' %}">QbaRed</a></h3> 
+    <a href="{% url 'web:index' %}">Salir <i class="fas fa-sign-out-alt"></i></a>          
 </div>
 <div class="card-body">
-    <form id="myform" action="{% url 'users:login' %}"  method="post">
-        {% if mensaje %}
-        <div class="alert alert-danger text-center" role="alert">
-            {{ mensaje }}
-        </div>                
-        {% endif %}                             
+    <form id="myform" action="{% url 'users:login' %}"  method="post">                                  
         {% csrf_token %}
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" style="background: transparent; color: white;" id="username" name="username" placeholder="nombre de usuario">
+            <input type="text" class="form-control" style="background: transparent; color: white;" id="username" name="username" placeholder="usuario">
             <label for="username">Usuario:</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" style="background: transparent; color: white;" id="password" name="password" placeholder="Password">
+            <input type="password" class="form-control" style="background: transparent; color: white;" id="password" name="password" placeholder="contraseña">
             <label for="password">Contraseña:</label>
         </div>                
         <button id="boton" class="form-control btn btn-outline-warning" type="submit">
@@ -28,16 +23,8 @@
         </button>
     </form>
 </div>
-<div class="card-footer links">
-    <a href="{% url 'users:register' %}">
-        <button class="form-control btn btn-outline-info" type="submit">
-            ¿No tiene cuenta? --> Registrarme
-        </button>
-    </a>
-    <a href="{% url 'reset_password' %}">
-        <button class="form-control btn btn-outline-danger" type="submit">
-            ¿Olvidó la contraseña?
-        </button>
-    </a>            
+<div class="enlaces">
+    <p>olvidaste la contraseña? <a href="{% url 'reset_password' %}">click aquí</a></p>
+    <p>no tienes cuenta? <a href="{% url 'users:register' %}">crear una</a></p>            
 </div>
 {% endblock contenido %}

@@ -1,0 +1,134 @@
+{% extends "web/base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'web/css/aos.css' %}" />
+<link rel="stylesheet" href="{% static 'web/css/swiper-bundle.min.css' %}" />
+<!-- custom css file link  -->
+<link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+{% endblock %}
+
+{% block header %}
+<header class="header">
+
+    <a href="{% url 'web:index' %}" class="logo"> <i class="fab fa-quinscape"></i> QbaRed </a>
+
+    <nav class="barra">
+        <a href="https://login.qbared.com" class="active">Internet</a>
+        <a href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+        <a href="{% url 'sorteo:index' %}">Sorteo</a>
+        <a href="{% url 'portal:dashboard' %}">Portal</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#about">Sobre nosotros</a>
+        {% if user.is_staff %}
+        <a href="{% url 'sync:control' %}">Control</a>
+        <a href="{% url 'chat:index' %}">Chat</a>
+        {% endif %}
+    </nav>
+
+    <div class="icons">
+        <div id="menu-btn" class="fas fa-bars"></div>
+        {% if user.is_authenticated %}    
+        <a href="#">
+            <img id="boton_notificaciones" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
+            <span id="notificaciones_nuevas" style="display: none; font-size: small;">
+            </span>
+            </img>    
+        </a>
+        <a href="{% url 'users:logout' %}" class="fas fa-sign-out-alt"></a>
+        <button id="login-icon" style="display: none;" class="fas fa-user"></button>
+        {% else %}
+        <a id="login-icon" class="fas fa-user"></a>
+        {% endif %}
+    </div>
+
+</header>
+{% endblock %}
+
+{% block content %}
+    <div class="login-form-container">
+        <span id="close-login-form" class="fas fa-times"></span>
+        <form id="login-form" action="{% url 'users:login' %}" method="post">
+            {% if mensaje %}
+            <div class="alert alert-danger text-center" role="alert">
+                {{ mensaje }}
+            </div>                
+            {% endif %}
+            {% csrf_token %}
+            <input type="text" placeholder="usuario" required name="username" class="box">
+            <input type="password" placeholder="contraseña" required name="password" class="box">
+            <input type="submit" value="entrar" class="boton">            
+            <p>olvidaste la contraseña ?<a href="{% url 'reset_password' %}"> click aquí</a></p>
+            <p>no tienes cuenta?<span id="boton-registro" class="boton">crear una</span></p>
+        </form>
+        <form id="register-form" style="display: none;" action="{% url 'users:register' %}" method="post">
+            <h3></h3>
+            {% csrf_token %}
+            <input type="text" placeholder="usuario" required name="username" class="box">
+            <input type="email" placeholder="email" required name="email" class="box">
+            <input type="email" placeholder="repetir email" required name="emailConfirm" class="box">
+            <input type="password" placeholder="contraseña" required name="password" class="box">
+            <input type="password" placeholder="repetir contraseña" required name="passwordConfirm" class="box">
+            <input type="submit" value="registrarme" class="boton">        
+            <p>ya tienes cuenta?<span id="boton-login" class="boton">click aquí</span></p>
+        </form>
+    </div>
+    {% if mensaje %}
+    {{ mensaje|json_script:"mensaje" }}
+    {{ icon|json_script:"icon" }}
+    <script>
+        var mensaje = JSON.parse(document.getElementById('mensaje').textContent);
+        var icon = JSON.parse(document.getElementById('icon').textContent);
+        var resultado = 'Upss!';
+        var botonColor = '#d33';
+        if (icon === 'success') {
+            var resultado = 'Listo!';
+            var botonColor = '#007000';
+        }
+        window.onload = function(){
+            Swal.fire({
+                title: resultado,
+                text: mensaje,
+                icon: icon,
+                confirmButtonColor: botonColor,
+            }) 
+        }             
+    </script>
+    {% endif %}
+    {% block contenido %}
+    {% endblock %}
+{% endblock %}
+
+{% block footer %}
+<section class="footer" id="footer">
+    <div class="box" data-aos="fade-down">
+        <h3>sitios</h3>
+        <a href="#home" class="active">Internet</a>
+        <a href="#noticias">Noticias</a>
+        <a href="#Sorteo">Sorteo</a>
+        <a href="#portal">Portal</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#about">Sobre nosotros</a>
+    </div>
+    <div class="box" data-aos="fade-left">
+        <h3>social</h3>
+        <a href="https://www.youtube.com/channel/UC3eLYmYuNWN89CxTPJXcR2g" target="_blank" rel="noopener noreferrer"> <i class="fab fa-youtube"></i> YouTube </a>
+        <a href="https://www.twitch.tv/qbared" target="_blank" rel="noopener noreferrer"> <i class="fab fa-twitch"></i> Twitch </a>
+        <a href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"> <i class="fab fa-telegram"></i> Telegram </a>
+        <a href="https://discord.gg/s5QGCarBHd" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i>Discord</a>
+    </div>
+    <div class="credit"> creado por <span><a class="chat" href="{% url 'chat:room' 'iVan' %}">iVan</a></span> | QbaRed @ 2021 </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'web/js/swiper-bundle.min.js' %}"></script>
+<!-- custom js file links  -->
+<script src="{% static 'web/js/main.js' %}"></script>
+<script src="{% static 'web/js/aos.js' %}"></script>
+<script>
+  AOS.init({
+      delay:400,
+      duration:800
+  });
+</script>
+{% endblock %}

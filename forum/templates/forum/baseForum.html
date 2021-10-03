@@ -1,6 +1,9 @@
 {% extends "web/base.html" %}
 {% load static %}
 {% block title %} - Cotilleo{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'forum/style.css' %}">
+{% endblock %}
 {% block header %}
 <header>
   <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
@@ -48,13 +51,12 @@
 </header>
 {% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'forum/style.css' %}">
 <div class="fondo" style="background-image: url({% static 'forum/fondo.jpg' %})"></div>
 <div class="contenedor">
     <div class="col-sm-12 col-lg-10 m-auto p-2 box">
     {% if mensaje %}
     <div class="col-5 offset-7 m-auto alert alert-warning my-2 text-center" role="alert">                   
-        {{ mensaje }}                   
+        {{ mensaje }}
     </div>
     {% endif %}
     {% block contenido %}

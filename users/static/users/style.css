@@ -1,19 +1,10 @@
-.fondo {
-    top: 0;
-    left: 0;
-    position: fixed;
-    height: 100vh;
-    width: 100%;
-    z-index: -1;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-.container {
+.contenedor {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    width: 100%;
+    background: #222;
 }
 
 .box{ 
@@ -21,32 +12,35 @@
     min-width: 300px;
     margin-top: auto;
     margin-bottom: auto;    
-    background-color: rgba(100, 0, 110, 0.4);
+    background: #141215;
     backdrop-filter: blur(5px);
     border-radius: 6px;
-    box-shadow: 0 5px 35px rgba(0,0,0,0.3);
 }
 .box:hover {
     box-shadow: 0 5px 35px rgba(255,255,255,0.3);
 }
 
-.card-header h3{
-    color: white;
-    font-style: italic;
+.card-header{
+    padding: 1rem;
+    display: flex;
+    width: 100%;
+    color:#fff;
+    justify-content: space-between;
 }
-.card-header h3:hover {
+.card-header:hover {
     cursor: default;
     color: black
 }
-
-.card-header h5 {
-    text-align: center;
-    color: white;
-    font-style: italic;
+.card-header h3 a {
+    font-family: 'Rock Salt', cursive;
+    font-weight: bolder;
+    font-size: 2rem;
+    text-decoration: none;
+    color: #fff;
 }
-.card-header h5:hover {
-    cursor: default;
-    color: black
+.card-header a {
+    text-decoration: none;
+    color: #fff;
 }
 
 .input-group-prepend span{
@@ -58,7 +52,6 @@
 input:focus{
     outline: 0 0 0 0  !important;
     box-shadow: 0 0 0 0 !important;
-    
 }
 
 .card-body form label {
@@ -66,7 +59,7 @@ input:focus{
 }
 
 .card-body form button {
-    color: white;
+    color: #FFC312;
     margin-top: 8px;
 }
 
@@ -75,9 +68,16 @@ input:focus{
     background: transparent;
 }
 
-.links button {
-    color: white;
-    margin-top: 8px;
+.enlaces {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.enlaces p {
+    color: #fff;
+}
+.enlaces p a {
+    color: #FFC312;
 }
 
 /* registro */

@@ -1,18 +1,14 @@
-{{% extends "users/baseUsers.html" %}
+{% extends "users/baseUsers.html" %}
 {% load static %}
 {% block title %} - Registrarse{% endblock %}
 {% block contenido %} 
 <div class="card-header">
-    <h3>QbaRed</h3>
-    <h5>Registrarse</h5>        
+    <h3><a href="{% url 'web:index' %}">QbaRed</a></h3> 
+    <a href="{% url 'web:index' %}">Salir <i class="fas fa-sign-out-alt"></i></a>    
 </div> 
-<div class="card-body">       
-    <form id="myform" action="{% url 'users:register' %}"  method="post">
-        {% if mensaje %}
-        <div class="alert alert-danger text-center" role="alert">
-            {{ mensaje }}
-        </div>                
-        {% endif %}
+<div class="card-body">  
+    <h4 class="text-center text-white">Datos de registro:</h4>   
+    <form id="myform" action="{% url 'users:register' %}"  method="post">        
         {% csrf_token %}
         <div class="form-floating mb-3">
             <input type="text" class="form-control" name="username" style="background: transparent; color: white;" id="username" placeholder="nombre de usuario" required>
@@ -34,17 +30,13 @@
             <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" style="background: transparent; color: white;" placeholder="Contraseña" required>
             <label for="passwordConfirm">Repetir contraseña:</label>
         </div>
-        <button id="boton" class="form-control btn btn-outline-info" type="submit">
+        <button id="boton" class="form-control btn btn-outline-warning" type="submit">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
             Registrarme
         </button>
     </form>
 </div>
-<div class="card-footer links">
-    <a href="{% url 'users:login' %}">
-        <button class="form-control btn btn-outline-warning" type="submit">
-            ¿Ya tiene cuenta? --> Entrar
-        </button>
-    </a>                      
+<div class="enlaces">
+    <p>ya tienes cuenta? <a href="{% url 'users:login' %}">entrar</a></p>            
 </div>
 {% endblock contenido %}

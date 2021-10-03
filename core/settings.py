@@ -178,13 +178,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 #configuracion de correo
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST = 'smtpout.secureserver.net'
+EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 80
-#EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_USER = 'admin@qbared.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

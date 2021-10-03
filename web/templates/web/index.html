@@ -1,189 +1,99 @@
-{% extends "web/base.html" %}
+{% extends "web/baseWeb.html" %}
 {% load static %}
-{% block header %}
-<header>
-  <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'web:index' %}">QbaRed</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
-          </li>   
-          {% if user.is_staff %}
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sync:control' %}">Control</a>
-          </li>              
-          {% endif %}                       
-        </ul>
-        {% if user.is_authenticated %}    
-          <a class="mx-2" style="text-decoration: none" href="{% url 'portal:dashboard' %}">
-            <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
-          </a>              
-          <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-            <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
-            </span>
-          </img>                
-          <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
-        {% else %}
-          <a class="btn btn-sm btn-outline-warning mx-2" href="{% url 'users:login' %}">Entrar</a>
-          <a class="btn btn-sm btn-outline-info mx-2" href="{% url 'users:register' %}">Registrarse</a>
-        {% endif %}
-      </div>
-    </div>
-  </nav>      
-</header>
-{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'web/webstyle.css' %}">
-<div id="myCarousel" class="carousel slide col-10 offset-1 col-lg-8 offset-lg-2" data-bs-ride="carousel">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-  </div>
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="{% static 'web/root/slidehabana.jpg' %}" class="img-fluid" alt="Responsive image">       
-      <div class="container">
-        <div class="carousel-caption text-start" style="color:black">
-          <h1 style="font-style: italic; font-weight: 700; text-shadow: 0 0 3px red, 0 0 6px yellow;">Bienvenidos a QbaRed</h1>
-          <p style="font-style: italic; font-weight: 600; text-shadow: 0 0 3px red, 0 0 6px yellow;">Red Privada de Centro Habana, Cuba</p>
-          <p style="font-style: italic; font-weight: 600; text-shadow: 0 0 3px red, 0 0 6px yellow;">
-            {% if user.is_authenticated %}              
-              <a style="box-shadow: 0 0 3px red, 0 0 6px yellow;" class="btn btn-lg btn-warning" href="{% url 'portal:dashboard' %}">Hola {{ request.user }}</a>
-            {% else %}
-              <a style="box-shadow: 0 0 3px red, 0 0 6px yellow;" class="btn btn-lg btn-warning" href="{% url 'users:register' %}">Unirme</a>
-            {% endif %}
-          </p>
+{% block contenido %}
+<section class="home" id="home">
+    <div class="box" style="background: url({% static 'web/images/home.jpg' %});">
+        <div class="content">
+            <h3 data-aos="fade-down">Bienvenido{% if user.is_authenticated %} {{user.username}}{% endif %} a QbaRed</h3>
+            <p data-aos="fade-down">Red Privada de Centro Habana</p>
+            <div class="button" data-aos="fade-up">
+                {% if user.is_authenticated %}
+                <a href="{% url 'users:logout' %}" class="boton">Salir</a>
+                <button style="display: none;" id="login-btn" class="boton">Entrar</button>
+                <button style="display: none;" id="register-btn" class="boton">Registrarme</button>
+                {% else %}
+                <button id="login-btn" class="boton">Entrar</button>
+                <button id="register-btn" class="boton">Registrarme</button>
+                {% endif %}
+            </div>            
         </div>
-      </div>
     </div>
-    <div class="carousel-item">
-      <img src="{% static 'web/root/slidedota2.jpg' %}" class="img-fluid" alt="Responsive image">        
-      <div class="container">
-        <div class="carousel-caption">
-          <h1 style="font-style: italic; font-weight: 700;">Juega Online</h1>
-          <p style="font-style: italic; font-weight: 600;">Compite con todos por ganar y ser el mejor</p>
-          {% if user.is_authenticated %}
-            <p><a class="btn btn-lg btn-primary" href="{% url 'portal:dashboard' %}">¿Juegas DOTA2 {{ user }}?</a></p>
-          {% else %}
-            <p><a class="btn btn-lg btn-primary" href="{% url 'users:register' %}">Unirme</a></p>
-          {% endif %}
+</section>
+
+<section class="servicios" id="servicios">
+    <h1 class="heading">Nuestros <span>Servicios</span> </h1>
+    <div class="box-container">
+        <div class="box" data-aos="fade-right">
+            <div class="image">
+                <img src="{% static 'web/images/servicio_ts.jpg' %}" alt="">
+            </div>
+            <div class="content">
+                <h3>TeamSpeak</h3>
+                <p>Es un software chat de voz sobre IP, permite a los usuarios hablar en un canal de chat con otros usuarios.</p>
+                <a href="{% url 'web:ts' %}" class="boton">Detalles</a>                
+            </div>
         </div>
-      </div>
+        <div class="box" data-aos="fade-down">
+            <div class="image">
+                <img src="{% static 'web/images/servicio_ftp.jpg' %}" alt="">
+            </div>
+            <div class="content">
+                <h3>FileZilla</h3>
+                <p>Es un software de transferencia de archivos sobre el protocolo ftp, permite a los usuarios la descarga de ficheros desde el servidor.</p>
+                <a href="{% url 'web:ftp' %}" class="boton">Detalles</a>                
+            </div>
+        </div>
+        <div class="box" data-aos="fade-left">
+            <div class="image">
+                <img src="{% static 'web/images/servicio_emby.jpg' %}" alt="">
+            </div>
+            <div class="content">
+                <h3>Emby</h3>
+                <p>Es un servidor multimedia desde el cual puedes visualizar contenido en tus dispositivos mediante stream directo.</p>
+                <a href="{% url 'web:emby' %}" class="boton">Detalles</a>                
+            </div>
+        </div>
+        <div class="box" data-aos="fade-left">
+            <div class="image">
+                <img src="{% static 'web/images/servicio_jc.jpg' %}" alt="">
+            </div>
+            <div class="content">
+                <h3>Joven Club</h3>
+                <p>Accede a la red de joven club, en línea con toda Cuba. Debes tener una cuenta con saldo. Para mas información escribir al <a class="chat" href="{% url 'chat:room' 'yanky' %}">Yanky</a>.</p>
+                <a href="{% url 'web:jc' %}" class="boton">Detalles</a>                
+            </div>
+        </div>
     </div>
-    <div class="carousel-item">
-      <img src="{% static 'web/jcslide.jpg' %}" class="img-fluid" alt="Responsive image">        
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
+</section>
 
-<div class="container servicios">
-  <div class="row">
-      <h1 class="text-center" style="text-shadow: 0 0 3px white, 0 0 6px;">Nuestros Servicios</h1>
-      <div class="col-lg-3">
-          <img src="{% static 'web/ts.png' %}" class="rounded-circle" alt="Responsive image" width="120" height="120">
-          <h2 style="color: grey">Team Speak</h2>
-          <p>Hablar con tus amigos.</p>
-          <p><a class="btn btn-secondary stretched-link" href="{% url 'web:ts' %}" role="button">¿Como usarlo? &raquo;</a></p>
-      </div>
-      <div class="col-lg-3">
-        <img src="{% static 'web/ftp.png' %}" class="rounded-circle" alt="Responsive image" width="120" height="120">
-          <h2 style="color: red">FileZilla</h2>
-          <p>Descargar archivos.</p>
-          <p><a class="btn btn-danger stretched-link" href="{% url 'web:ftp' %}" role="button">¿Como usarlo? &raquo;</a></p>
-      </div>
-      <div class="col-lg-3">
-        <img src="{% static 'web/jc.png' %}" class="rounded-circle" alt="Responsive image" width="120" height="120">
-          <h2 style="color: rgb(23, 23, 184)">Joven Club</h2>
-          <p>Conecta con toda Cuba.</p>
-          <p><a class="btn btn-primary stretched-link" href="{% url 'web:jc' %}" role="button">¿Como usarlo? &raquo;</a></p>
-      </div>   
-      <div class="col-lg-3">
-        <img src="{% static 'web/emby.png' %}" class="rounded-circle" alt="Responsive image" width="120" height="120">
-          <h2 style="color: green">Emby</h2>
-          <p>Stream multimedia.</p>
-          <p><a class="btn btn-success stretched-link" href="{% url 'web:emby' %}" role="button">¿Como usarlo? &raquo;</a></p>
-      </div>
-  </div>
-</div>
-  <hr class="featurette-divider">
-<div class="container detalles">
-  <div class="row featurette" style="background-color: rgba(27, 25, 25, 0.8); padding: 10px; box-shadow: 5px 5px 5px 1px;">
-    <div class="col-md-7" style="color: white;">
-      <h2 class="featurette-heading">¿Quienes somos?</h2>
-      <br>
-      <p class="lead" style="font-size: 20px;">Desde septiembre de 2019 en nuestro país se permitió la creación de redes privadas para compartir
-        en una comunidad digital, o navegar por el inmenso mundo del internet desde la comodidad de su casa, según las resoluciones 98 y 99 del Ministerio de las Comunicaciones(Mincom) para la organización y legalización de comunidades interconectadas inalámbricamente o cableadas. 
-        Nosotros bajo la licencia No: SC-627-00003858-19 constituimos la nuestra, con el objetivo de compartir información, mensajes de texto y voz, y muy importante jugar DOTA2, y otros juegos.</p>
+<section class="about" id="about">
+    <div class="box">
+        <div class="image" data-aos="fade-left">
+            <img src="{% static 'web/images/equipo.jpg' %}" alt="">
+        </div>
+        <div class="content" data-aos="fade-right">
+            <h3>¿QbaRed?</h3>
+            <p>
+                Desde septiembre de 2019 en nuestro país se permitió la creación de redes privadas para compartir
+                en una comunidad digital, o navegar por el inmenso mundo del internet desde la comodidad de su casa, según las resoluciones 98 y 99 del Ministerio de las Comunicaciones(Mincom) para la organización y legalización de comunidades interconectadas inalámbricamente o cableadas. 
+                Nosotros bajo la licencia No: SC-627-00003858-19 constituimos la nuestra, con el objetivo de compartir información, mensajes de texto y voz, y muy importante jugar DOTA2, y otros juegos.
+            </p>
+        </div>        
     </div>
-    <div class="col-md-5">
-      <img src="{% static 'web/root/square1.jpg' %}" style="height:500px; width: 500px; border-radius: 25%;" class="img-fluid" alt="Responsive image">
+    <div class="box">        
+        <div class="content" data-aos="fade-left">
+            <h3>¿Donde estamos?</h3>
+            <p>Nos encontramos en los consejos populares Colón y San Leopoldo, del municipio Centro Habana. El área sombreada en el mapa representa aproximadamente nuestro alcance. Si no eres parte de esta red y vives cerca puedes unirte, todos son bienvenidos.</p>
+        </div>    
+        <div class="image" data-aos="fade-right">
+            <img src="{% static 'web/images/ubicacion.jpg' %}" alt="">
+        </div>    
     </div>
-  </div>
-
-  <hr class="featurette-divider">
-
-  <div class="row featurette" style="background-color: rgba(77, 180, 228, 0.8); padding: 10px; box-shadow: 5px 5px 5px 1px rgb(77, 180, 228)">
-    <div class="col-md-7 order-md-2" style="color: black;">
-      <h2 class="featurette-heading">¿Donde estamos?</h2>
-      <br>
-      <p class="lead" style="font-size: 25px;">Nos encontramos en los consejos populares Colón y San Leopoldo, del municipio Centro Habana. El área sombreada en el mapa representa aproximadamente nuestro alcance. Si no eres parte de esta red y vives cerca puedes unirte, todos son bienvenidos.</p>
+    <div class="box">        
+        <div class="content" data-aos="fade-left">
+            <h3>Importante</h3>
+            <p>En la red no se permite ningún tipo de propaganda sobre política, religión o sexo. Esta creada para el disfrute y entretenimiento de todos, asi como todos aportan a la estructuración de la misma. No tiene fines comerciales, ni de lucro personal.</p>
+        </div>
     </div>
-    <div class="col-md-5 order-md-1">
-      <img src="{% static 'web/root/square2.jpg' %}" style="height:500px; width: 500px; border-radius: 50%;" class="img-fluid" alt="Responsive image">
-    </div>
-  </div>
-  <hr class="featurette-divider">
-
-  <div class="row featurette">
-    <div class="col-md-7" style="color: black;">
-      <h2 class="featurette-heading">Importante</h2>
-      <br>
-      <p class="lead" style="font-size: 25px;">En la red no se permite ningún tipo de propaganda sobre política, religión o sexo. Esta creada para el disfrute y entretenimiento de todos, asi como todos aportan a la estructuración de la misma. No tiene fines comerciales, ni de lucro personal.</p>
-    </div>
-    <div class="col-md-5">
-      <img src="{% static 'web/root/warning.jpg' %}" style="height:500px; width: 500px; border-radius: 25%;" class="img-fluid" alt="Responsive image">
-    </div>
-  </div>
-
-  <hr class="featurette-divider">
-</div> 
-{% endblock content %}
-{% block footer %}  
-<div>
-  <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-    <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-    </defs>
-    <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(25,25,25,0.7)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(25,25,25,0.5)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(25,25,25,0.3)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="rgb(25, 25, 25)" />
-    </g>
-  </svg>
-</div>
-<footer class="page-footer font-small unique-color-dark">
-  <div class="footer-copyright text-center py-3"><h7>2019-2021 © QbaRed</h7>
-  </div>
-</footer>
+</section>
 {% endblock %}

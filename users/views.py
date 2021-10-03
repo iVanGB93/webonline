@@ -19,10 +19,10 @@ def entrar(request):
                 login(request, user)
                 return redirect('web:index')
             else:
-                content = {'mensaje': "Contraseña Incorrecta"}
+                content = {'mensaje': "Contraseña Incorrecta", 'icon': 'error'}
                 return render(request, 'users/login.html', content)            
         else:            
-            content = {'mensaje': "Usuario no existe"}
+            content = {'mensaje': "Usuario no existe", 'icon': 'error'}
             return render(request, 'users/login.html', content)
     else:
         return render(request, 'users/login.html')
@@ -30,7 +30,7 @@ def entrar(request):
 def register(request):
     if request.user.is_authenticated:
         return redirect ('web:index')
-    content = {}
+    content = {'icon': 'error'}
     if request.method == 'POST':
         online = config('APP_MODE')
         if online == 'online':
@@ -68,7 +68,7 @@ def register(request):
             if respuesta['estado']:
                 content['mensaje'] = respuesta['mensaje']
                 return render(request, 'users/register.html', content)
-        user = User(username=username, email=email)       
+        user = User(username=username, email=email)
         user.set_password(password)
         user.save()
         new_user = authenticate(request, username=user.username, password=password)        

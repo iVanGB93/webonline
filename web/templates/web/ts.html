@@ -1,69 +1,70 @@
-{% extends "web/base.html" %}
+{% extends "web/baseWeb.html" %}
 {% load static %}
 {% block title %} - TeamSpeak{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'web/webstyle.css' %}">
-<div class="fondo" style="background-color: rgba(30, 48, 70, 0.5);"></div>
-<div class="container marketing">
-<hr class="featurette-divider">
-    <div class="row info">
-      <div class="col-md-8 order-md-2">
-        <p>
-            TeamSpeak es un software chat de voz sobre IP, permite a los usuarios hablar en un canal de chat con otros usuarios, 
-            tal como se hace en una conferencia vía llamada telefónica tradicional. Los usuarios deben usar un software cliente de 
-            TeamSpeak, para conectarse a un servidor TeamSpeak, una vez conectados establecen el canal y pueden hablar. 
-            Los principales usuarios de TeamSpeak son jugadores de videojuegos en red, quienes usan diferentes software para 
-            comunicarse entre jugadores o equipos en modalidad multijugador. La comunicación mediante voz en estos juegos les da una 
-            gran ventaja competitiva, dado que permiten a los jugadores una experiencia superior en lo que diversión se refiere.
-        </p>
-      </div>
-      <div class="col-md-4 order-md-1" >
-        <h4 class="text-center">TeamSpeak:</h4>
-        <img src="{% static 'web/TS/ts1.jpg' %}" class="img-fluid" alt="Responsive image"> 
-      </div>
-    </div>
-<hr class="featurette-divider">   
-    <div class="row info">
-        <div class="col-md-7">
-            <h3>Primero descargar la aplicacion e instalar.</h3>            
-        </div>    
-        <div class="col-md-5 text-center">
-            <p class="row">Version 3.1.10 para windows 64bits:   
-                <a href="{% static 'web/TS/TeamSpeak3-Client-win64-3.1.10.exe' %}">
-                    <button class="btn btn-secondary">Descargar</button>
-                </a>
-            </p>            
-            <p class="row">Aplicacion para android: 
-                <a href="{% static 'web/TS/TS3 R4P3.apk' %}">
-                    <button class="btn btn-secondary">Descargar</button>
-                </a>
-            </p>            
-        </div>    
-    </div>
-<hr class="featurette-divider">
-    <div class="row info">
-        <div class="col-md-7">
-            <h2>Luego conéctate a nuestro servidor.</h2>            
-        </div>  
-        <div class="col-md-5">
-            <p>Click para entrar desde la pc -->
-                <a style="float: right;" href="ts3server://ts.qbared.com">
-                    <button class="btn btn-primary">ts.qbared.com</button>
-                </a>
-            </p><br>            
-            <p class="text-muted">Desde el teléfono pones la dirección "ts.qbared.com" en la casilla servidor de la aplicación.</p>
+{% block contenido %}
+<section class="descripcion">
+    <div class="row">
+        <div class="col-md-4 order-md-1 p-4 text-center"  data-aos="fade-right">
+            <img src="{% static 'web/images/ts_imagen1.jpg' %}" class="img-fluid" alt="Responsive image"> 
+        </div>
+        <div class="col-md-8 order-md-2 d-flex" data-aos="fade-left">
+            <p class="text-white fs-4">
+                TeamSpeak es un software chat de voz sobre IP, permite a los usuarios hablar en un canal de chat con otros usuarios, 
+                tal como se hace en una conferencia vía llamada telefónica tradicional. Los usuarios deben usar un software cliente de 
+                TeamSpeak, para conectarse a un servidor TeamSpeak, una vez conectados establecen el canal y pueden hablar. 
+                Los principales usuarios de TeamSpeak son jugadores de videojuegos en red, quienes usan diferentes software para 
+                comunicarse entre jugadores o equipos en modalidad multijugador. La comunicación mediante voz en estos juegos les da una 
+                gran ventaja competitiva, dado que permiten a los jugadores una experiencia superior en lo que diversión se refiere.
+            </p>
         </div>      
     </div>
-<hr class="featurette-divider">
-    <div class="row info">
-      <div class="col-md-8 order-md-1">
-        <h4 >Ayuda!!!</h4>
-        <p class="lead">En el video se explica como utilizarlo.</p>
-      </div>
-      <div class="col-md-4 order-md-2" >
-        <img src="" class="img-fluid" alt="Pronto"> 
-      </div>
+</section>
+<section class="descargas">
+    <div class="row">
+        <div class="col-md-7 fs-4" data-aos="fade-right">
+            <h3 class="m-2 fs-2">Primero descargar la aplicacion e instalar.</h3>   
+            <div class="d-flex justify-content-between mt-4">
+                <p class="mt-2">Version 3.1.10 para windows 64bits:</p>     
+                <a href="{% static 'web/files/TeamSpeak3-Client-win64-3.1.10.exe' %}">
+                    <button class="boton">Descargar</button>
+                </a>    
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <p class="m-2">Aplicacion para android:</p>     
+                <a href="{% static 'web/files/TS3 R4P3.apk' %}">
+                    <button class="boton">Descargar</button>
+                </a>
+            </div>
+        </div>    
+        <div class="col-md-5 text-center p-4" data-aos="fade-left">
+            <img src="{% static 'web/images/ts_imagen2.jpg' %}" class="img-fluid" alt="Responsive image"> 
+        </div>    
     </div>
 <hr class="featurette-divider">
-</div>
-{% endblock content %}
+    <div class="row">
+        <div class="col-md-5 text-center p-4" data-aos="fade-right">
+            <img src="{% static 'web/images/ts_imagen3.jpg' %}" class="img-fluid" alt="Responsive image"> 
+        </div>            
+        <div class="col-md-7 fs-4" data-aos="fade-left">
+            <h3 class="m-2 fs-2">Luego conéctate a nuestro servidor.</h3>   
+            <div class="d-flex justify-content-between mt-4">
+                <p>Click para entrar desde la pc --></p>
+                <a href="ts3server://143.198.184.119:1234">
+                    <button class="boton">ts.qbared.com</button>
+                </a>     
+            </div>   
+            <p class="mt-4">Desde el teléfono pones la dirección "ts.qbared.com" como servidor en la aplicación.</p>         
+        </div>              
+    </div>
+</section>
+<section class="explicacion">
+<hr class="featurette-divider">
+    <div class="row text-white">
+      <div class="col-md-8">
+        <h4 >Ayuda!!!</h4>
+        <p class="lead">Pronto un video sobre como instalar y conectarse.</p>
+      </div>      
+    </div>
+<hr class="featurette-divider">
+</section>
+{% endblock contenido %}

@@ -1,77 +1,76 @@
-{% extends "web/base.html" %}
+{% extends "web/baseWeb.html" %}
 {% load static %}
 {% block title %} - FileZilla{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'web/webstyle.css' %}">
-<div class="fondo" style="background-color: rgba(136, 40, 40, 0.5);"></div>
-<div class="container marketing">
-<hr class="featurette-divider">
-    <div class="row info">
-      <div class="col-md-8 order-md-2">
-        <h4>FileZilla.</h4>
-        <p>
-            FileZilla es un software de transferencia de archivos sobre el protocolo ftp, permite a los usuarios la descarga de 
-            ficheros desde el servidor. Los usuarios deben usar un software cliente de FileZilla, para conectarse a un servidor 
-            FileZilla, una vez conectados pueden copiar a su ordenador el contenido del servidor. Se encuentran dos paquetes semanales,
-            actual y el anterior; programas, entre otras cosas.
-        </p>
-      </div>
-      <div class="col-md-4 order-md-1" style="text-align: center;">
-        <img src="{% static 'web/FTP/ftp.png' %}" class="img-fluid" alt="Responsive image" style="height: 200px;"> 
-      </div>
-    </div>
-<hr class="featurette-divider">   
-    <div class="row info">
-        <div class="col-md-8">
-            <h2>Primero descargar la aplicacion e instalar.</h2> 
+{% block contenido %}
+<section class="descripcion">
+    <div class="row">
+        <div class="col-md-4 order-md-1 p-4 text-center" data-aos="fade-right">
+            <img src="{% static 'web/images/ftp_imagen1.png' %}" class="img-fluid" alt="Responsive image" style="height: 200px;"> 
         </div>
-        <div class="col-md-4">
-            <p>Windows 64bits:
-                <a style="float: right" href="{% static 'web/FTP/FileZilla.3.37.4.x64.exe' %}">
-                    <button class="btn btn-danger">Descargar</button>
-                </a>                
-            </p><br>
-            <p>Windows 32bits:
-                <a style="float: right" href="{% static 'web/FTP/FileZilla_3.41.2_win32.exe' %}">
-                    <button class="btn btn-danger">Descargar</button>
-                </a>
+        <div class="col-md-8 order-md-2 d-flex" data-aos="fade-left">
+            <p class="text-white fs-4">
+                FileZilla es un software de transferencia de archivos sobre el protocolo ftp, permite a los usuarios la descarga de 
+                ficheros desde el servidor. Los usuarios deben usar un software cliente de FileZilla, para conectarse a un servidor 
+                FileZilla, una vez conectados pueden copiar a su ordenador el contenido del servidor. Se encuentran dos paquetes semanales,
+                actual y el anterior; programas, entre otras cosas.
             </p>
-          </div>
+        </div>      
     </div>
-<hr class="featurette-divider">
-<div class="row info">
-    <div class="col-md-8">
-        <h2>Como conectar:</h2>
-        <ol>
-            <li>Dirección: ftp.qbared.com</li>
-            <li>Usuario: Su nombre de usuario</li>
-            <li>Conexión rápida</li>                
-        </ol>
-        <h4>*En contraseña se escribe su contraseña.</h4>         
-    </div> 
-    <div class="col-md-4">
-        <img src="{% static 'web/FTP/ftppasos.png' %}" class="img-fluid" alt="Responsive image" width="300" height="300">         
-    </div>          
-</div>
-<hr class="featurette-divider">
-    <div class="row info">
-        <div class="col-md-8">
-            <h2>Puede crear su cuenta en el Portal del Usuario:</h2>           
-        </div>        
-        <div class="col-md-4 text-center">
-            <a href="{% url 'portal:filezilla' %}"><button class="btn btn-danger">Portal</button></a>
+</section>
+<section class="descargas">
+    <div class="row">
+        <div class="col-md-7 fs-4" data-aos="fade-right">
+            <h2>Primero descargar la aplicacion e instalar.</h2> 
+            <div class="d-flex justify-content-between mt-4">
+                <p>Windows 64bits:</p>
+                <a href="{% static 'web/FTP/FileZilla.3.37.4.x64.exe' %}">
+                    <button class="boton">Descargar</button>
+                </a>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <p>Windows 32bits:</p>
+                <a href="{% static 'web/FTP/FileZilla_3.41.2_win32.exe' %}">
+                    <button class="boton">Descargar</button>
+                </a>
+            </div>      
+        </div>
+        <div class="col-md-5 text-center p-4" data-aos="fade-left">
+            <img src="{% static 'web/images/ftp_imagen2.jpg' %}" class="img-fluid" alt="Responsive image"> 
         </div>
     </div>
     <hr class="featurette-divider">
-    <div class="row info">
-      <div class="col-md-8 order-md-1">
-        <h4 >Ayuda!!!</h4>
-        <p class="lead">En el video se explica como utilizarlo.</p>
-      </div>
-      <div class="col-md-4 order-md-2" >
-        <img src="" class="img-fluid" alt="Pronto"> 
-      </div>
+    <div class="row">
+        <div class="col-md-5 text-center p-4" data-aos="fade-right">
+            <img src="{% static 'web/images/ftp_imagen3.png' %}" class="img-fluid" alt="Responsive image"> 
+        </div>
+        <div class="col-md-7 fs-4" data-aos="fade-left">
+            <h2 class="m-2 fs-2">Como conectar:</h2>
+            <ol class="m-1">
+                <li class="m-1">Dirección: ftp.qbared.com</li>
+                <li class="m-1">Usuario: Su nombre de usuario</li>
+                <li class="m-1">Contraseña: Su contraseña</li>
+                <li class="m-1">Conexión rápida</li>                
+            </ol>               
+        </div>     
     </div>
     <hr class="featurette-divider">
-</div>
-{% endblock content %}
+    <div class="row">
+        <div class="d-flex justify-content-between mt-4 fs-4">
+            <h2 data-aos="fade-right">Puede crear su cuenta en el Portal del Usuario:</h2> 
+            <a href="{% url 'portal:filezilla' %}" data-aos="fade-left">
+                <button class="boton">Portal</button>
+            </a>        
+        </div>
+    </div>
+</section>
+<section class="explicacion">        
+    <hr class="featurette-divider">
+    <div class="row text-white">
+      <div class="col-md-8">
+        <h4 >Ayuda!!!</h4>
+        <p class="lead">Pronto un video sobre como instalar y conectarse.</p>
+      </div>      
+    </div>
+    <hr class="featurette-divider">
+</section>
+{% endblock contenido %}
