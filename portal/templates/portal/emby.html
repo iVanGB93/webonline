@@ -72,6 +72,12 @@
         </div>  
     </div>
     <div class="col-10 col-md-5 mt-0 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
+        {% if user.estadoservicio.emby %}
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Ya tiene activo este servicio <i class="fas fa-thumbs-up"></i></h3>            
+        </div>
+        <div class="d-none">
+        {% else %}
         <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1">Activar el servicio Emby:</h3>            
         </div>      
@@ -81,9 +87,6 @@
             <h5 class="texto my-auto">100 coins</h5>
         </div>               
         <hr class="dropdown-divider" />
-        {% if user.estadoservicio.emby %}
-        <div class="d-none">
-        {% else %}
         <div>
         {% endif %}
             <form class="p-2" id="myform" action="{% url 'portal:emby' %}" method="post">            
@@ -173,6 +176,10 @@
                 }).then((result) => {
                 if (result.isConfirmed) {
                     myform.submit();
+                    document.getElementById('spinner').style.display = 'inline-block';
+                    document.getElementById('boton').disabled=true;
+                    document.getElementById('boton_sync').disabled=true;
+                    document.getElementById('boton_auto').disabled=true;
                 }
             }); 
         }

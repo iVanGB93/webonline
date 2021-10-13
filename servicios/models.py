@@ -58,6 +58,8 @@ class EstadoServicio(models.Model):
     int_time = models.DateTimeField(null=True, blank=True)
     int_horas = models.IntegerField(null=True, blank=True)
     int_tipo = models.CharField(max_length=50, null=True, blank=True)
+    int_duracion = models.CharField(max_length=50, null=True, blank=True)
+    int_velocidad = models.CharField(max_length=50, null=True, blank=True)
     int_auto = models.BooleanField(default=False)
     emby = models.BooleanField(default=False)
     emby_time = models.DateTimeField(null=True, blank=True)

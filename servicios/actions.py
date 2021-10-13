@@ -8,7 +8,7 @@ from decouple import config
 import requests
 
 
-def comprar_internet(usuario, tipo, contra, duracion, horas):
+def comprar_internet(usuario, tipo, contra, duracion, horas, velocidad):
     result = {'correcto': False}
     online = config('APP_MODE')
     if online == 'online':
@@ -24,54 +24,14 @@ def comprar_internet(usuario, tipo, contra, duracion, horas):
     if not servicio.sync:
         result['mensaje'] = 'Debe tener los servicios sincronizados para comprar.'
         return result
-    profile = Profile.objects.get(usuario=usuario)
-    data = {'usuario': usuario.username, 'servicio': 'internet', 'tipo': tipo, 'contraseña': contra, 'duracion': duracion, 'horas': horas}
-    if tipo == 'mensual':
-        user_coins = int(profile.coins)
-        if user_coins >= 200:
-            respuesta = actualizacion_remota('comprar_servicio', data=data)
-            if respuesta['estado']:
-                result['correcto'] = True           
-            result['mensaje'] = respuesta['mensaje']
-            return result       
-        else:
-            result['mensaje'] = 'No tiene suficientes coins.'
-            return result
-    elif tipo == 'semanal':
-        user_coins = int(profile.coins)
-        if user_coins >= 300:
-            respuesta = actualizacion_remota('comprar_servicio', data=data)
-            if respuesta['estado']:
-                result['correcto'] = True           
-            result['mensaje'] = respuesta['mensaje']
-            return result                     
-        else:
-            result['mensaje'] = 'No tiene suficientes coins.'
-            return result
-    elif tipo == 'horas':
-        try:
-            cantidad_horas = int(horas)
-            if cantidad_horas <5:
-                result['mensaje'] = 'Mínimo 5 horas.'
-                return result
-            cantidad = cantidad_horas * 10
-            user_coins = int(profile.coins)
-            if user_coins >= cantidad:
-                data['horas'] = horas
-                respuesta = actualizacion_remota('comprar_servicio', data=data)
-                if respuesta['estado']:
-                    result['correcto'] = True    
-                result['mensaje'] = respuesta['mensaje']              
-                return result              
-            else:
-                result['mensaje'] = 'No tiene suficientes coins.'
-                return result
-        except ValueError:
-            result['mensaje'] = 'Defina bien las horas'
-            return result
-    else:
-        result['mensaje'] = 'Error de solicitud'
-        return result
+    data = {'usuario': usuario.username, 'servicio': 'internet', 'tipo': tipo, 'contraseña': contra, 'duracion': duracion, 'horas': horas, 'velocidad': velocidad}
+    respuesta = actualizacion_remota('comprar_servicio', data=data)
+    if tipo == 'horas':
+        data['horas'] = horas
+    if respuesta['estado']:
+        result['correcto'] = True           
+    result['mensaje'] = respuesta['mensaje']
+    return result
 
 def comprar_jc(usuario):
     result = {'correcto': False}

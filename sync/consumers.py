@@ -180,6 +180,10 @@ class SyncWSConsumer(WebsocketConsumer):
                         self.responder(respuesta)
                     elif s.int_tipo != data['int_tipo']:
                         self.responder(respuesta)
+                    elif s.int_duracion != data['int_duracion']:
+                        self.responder(respuesta)
+                    elif s.int_velocidad != data['int_velocidad']:
+                        self.responder(respuesta)
                     elif s.int_auto != data['int_auto']:
                         self.responder(respuesta)
                     elif s.jc != data['jc']:
@@ -218,6 +222,8 @@ class SyncWSConsumer(WebsocketConsumer):
                     s.int_horas = data['int_horas']
                     s.int_time = data['int_time']
                     s.int_tipo = data['int_tipo']
+                    s.int_duracion = data['int_duracion']
+                    s.int_velocidad = data['int_velocidad']
                     s.int_auto = data['int_auto']                   
                     s.jc = data['jc']
                     s.jc_time = data['jc_time']            
@@ -250,6 +256,8 @@ class SyncWSConsumer(WebsocketConsumer):
                     respuesta['int_horas'] = s.int_horas
                     respuesta['int_time'] = str(s.int_time)
                     respuesta['int_tipo'] = s.int_tipo
+                    respuesta['int_duracion'] = s.int_duracion
+                    respuesta['int_velocidad'] = s.int_velocidad
                     respuesta['int_auto'] = s.int_auto                  
                     respuesta['jc'] = s.jc
                     respuesta['jc_time'] = str(s.jc_time)

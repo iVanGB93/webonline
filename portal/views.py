@@ -114,27 +114,18 @@ def internet(request):
     if request.method == 'POST':
         tipo = request.POST['tipo']
         duracion = request.POST['duracion']
+        velocidad = request.POST['velocidad']
         horas = request.POST['cantidad_horas']
-        contra = request.POST['contra']
-        if tipo != 'Seleccione el tipo':
-            if tipo != 'horas' and duracion == 'Seleccione la duración':
-                content['mensaje'] = 'Seleccione la duración.'
-                return render(request, 'portal/internet.html', content)
-            if tipo == 'horas' and horas == '':
-                content['mensaje'] = 'Defina la cantidad de horas.'
-                return render(request, 'portal/internet.html', content)
-            if usuario.check_password(contra):
-                result = comprar_internet(usuario, tipo, contra, duracion, horas)
-                if result['correcto']:        
-                    content['icon'] = 'success'                    
-                content['mensaje'] = result['mensaje']
-                return render(request, 'portal/internet.html', content)
-            else:
-                content['mensaje'] = 'Contraseña incorrecta.'
-                return render(request, 'portal/internet.html', content)
+        contra = request.POST['contra']        
+        if usuario.check_password(contra):
+            result = comprar_internet(usuario, tipo, contra, duracion, horas, velocidad)
+            if result['correcto']:        
+                content['icon'] = 'success'                    
+            content['mensaje'] = result['mensaje']
+            return render(request, 'portal/internet.html', content)
         else:
-            content['mensaje'] = 'Seleccione un tipo de internet'
-            return render(request, 'portal/internet.html', content)         
+            content['mensaje'] = 'Contraseña incorrecta.'
+            return render(request, 'portal/internet.html', content)       
     else:
         return render(request, 'portal/internet.html', content)
 

@@ -74,10 +74,11 @@
                 </form>
             </h6>
         </div>  
+        <hr class="dropdown-divider" />
     </div>
     <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
         <div class="cardHeader titulo my-auto">
-            <h3 class="titulo m-1 p-1">Opciones</h3>            
+            <h3 class="titulo m-1 p-1">Tipo</h3>            
         </div>
         <hr class="dropdown-divider" />        
         <div class="d-flex justify-content-between">
@@ -94,6 +95,9 @@
             <h6 class="titulo my-auto">Por horas:</h6>
             <h6 class="texto my-auto">10 coins X hora</h6>
         </div>                      
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">*costos a 1mb</h6>
+        <hr class="dropdown-divider" />
     </div>
     <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
         <div class="cardHeader titulo my-auto">
@@ -105,33 +109,62 @@
         <h6 class="text-center titulo my-auto">Semanal</h6>
         <hr class="dropdown-divider" />
         <h6 class="text-center titulo my-auto">Mensual</h6>
+        <hr class="dropdown-divider" />
     </div>        
+    <div class="col-10 col-md-3 mt-0 mb-4 m-auto text-center caja" style="max-width: 300px; background: #fff;">
+        <div class="cardHeader titulo my-auto">
+            <h3 class="titulo m-1 p-1">Velocidad</h3>           
+        </div>    
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">512kb</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">1mb</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">2mb</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">3mb</h6>
+        <hr class="dropdown-divider" />
+        <h6 class="text-center titulo my-auto">4mb</h6>
+        <hr class="dropdown-divider" />
+    </div>
 </div>
-{% if user.estadoservicio.internet %}
-<div class="d-none">
-{% else %}
-<div class="row my-3" >       
-{% endif %}
-    <div class="col-8 col-md-4 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
+<div class="row my-3">
+    <div class="col-10 m-auto text-center caja" style="max-width: 300px; background: #fff;"> 
+        {% if user.estadoservicio.internet %}
+        <div class="cardHeader titulo">
+            <h3 class="titulo m-1 p-1">Ya tiene activo este servicio <i class="fas fa-thumbs-up"></i></h3>   
+        </div>
+        <p class="texto">{{ user.estadoservicio.int_tipo }} a {{ user.estadoservicio.int_velocidad }}</p>         
+        <form class="p-2 texto d-none" id="myform" action="{% url 'portal:internet' %}" method="post">
+        {% else %}
         <div class="cardHeader titulo">
             <h3 class="titulo m-1 p-1">Activar el servicio Internet:</h3>            
-        </div>
+        </div>        
         <hr class="dropdown-divider" />
         <form class="p-2 texto" id="myform" action="{% url 'portal:internet' %}" method="post">
+        {% endif %}
             {% csrf_token %}
+            <h4 class="texto" id="costo">¿Qué tipo de internet?</h4>
             <select class="form-select mb-3" name="tipo">
                 <option selected>Seleccione el tipo</option>
                 <option value="16h">16 horas</option>
                 <option value="24h">24 horas</option>
                 <option value="horas">Horas</option>
             </select>
-            <select class="form-select mb-3" name="duracion">
+            <select id="duracion_form" class="form-select mb-3" name="duracion">
                 <option selected>Seleccione la duración</option>
-                <option value="horas">Horas</option>
                 <option value="semanal">Semanal</option>
                 <option value="mensual">Mensual</option>
             </select>
-            <div class="input-group mb-3">
+            <select class="form-select mb-3" name="velocidad">
+                <option selected>Seleccione la velocidad</option>
+                <option value="512kb">512kb</option>
+                <option value="1mb">1mb</option>
+                <option value="2mb">2mb</option>
+                <option value="3mb">3mb</option>
+                <option value="4mb">4mb</option>
+            </select>
+            <div id="horas_form" class="input-group mb-3" style="display: none;">
                 <span class="col-auto input-group-text" id="inputGroup-sizing-default">Horas:</span>
                 <input type="number" name="cantidad_horas" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
@@ -153,9 +186,6 @@
         </div>
         <div class="p-2 texto">
             <ul class="list-group text-start">
-                <li class="list-group-item">Si escoge el tipo horas debe especificar la cantidad de horas.</li>
-                <li class="list-group-item">Si escoge el tipo horas no seleccione nada en la opción duración.</li>
-                <li class="list-group-item">Si no escoge el tipo horas no escribe nada en el formulario horas.</li>
                 <li class="list-group-item">Si escoge la duración mensual sería el costo de 4 semanas y tendría 30 días, 2 extras.</li>
                 <li class="list-group-item">El tipo por horas es conexión a internet cuando usted desee usar el tiempo que tenga disponible.</li>
                 <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, más información <a href="{% url 'sorteo:index' %}">-->aquí<--</a>.</li>
@@ -164,7 +194,7 @@
         </div>
     </div>
 </div>
-{% if user.estadoservicio.internet %}
+{% if user.estadoservicio.internet and user.estadoservicio.int_tipo != 'internetHoras' %}
 {{ user.estadoservicio.int_time|json_script:"fecha" }}
 <script>
     var fecha = JSON.parse(document.getElementById('fecha').textContent);
@@ -200,14 +230,102 @@
         document.getElementById('boton').disabled=true;
     });
     const myform = document.getElementById("myform");
+    var costo = "";
     myform.addEventListener("submit", (e) => {       
         document.getElementById('spinner').style.display = 'inline-block';
         document.getElementById('boton').disabled=true;
         document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
+    function saberCosto() {
+        var texto = "¿Qué tipo de internet?";
+        document.querySelector('#duracion_form').style.display = 'flex';
+        document.querySelector('#horas_form').style.display = 'none';
+        if (myform.tipo.value === '16h') {
+            texto = "¿Qué duración?";
+            if (myform.duracion.value === 'semanal') {
+                texto = "¿Qué velocidad?";
+                if (myform.velocidad.value === '512kb') {
+                    costo = 180;
+                } else if (myform.velocidad.value === '1mb') {
+                    costo = 300;
+                } else if (myform.velocidad.value === '2mb') {
+                    costo = 600;
+                } else if (myform.velocidad.value === '3mb') {
+                    costo = 900;
+                } else if (myform.velocidad.value === '4mb') {
+                    costo = 1200;
+                };
+            } else if (myform.duracion.value === 'mensual') {
+                texto = "¿Qué velocidad?";
+                if (myform.velocidad.value === '512kb') {
+                    costo = 700;
+                } else if (myform.velocidad.value === '1mb') {
+                    costo = 1200;
+                } else if (myform.velocidad.value === '2mb') {
+                    costo = 2400;
+                } else if (myform.velocidad.value === '3mb') {
+                    costo = 3600;
+                } else if (myform.velocidad.value === '4mb') {
+                    costo = 4800;
+                };
+            }
+        } else if (myform.tipo.value === '24h') {
+            texto = "¿Qué duración?";
+            if (myform.duracion.value === 'semanal') {
+                texto = "¿Qué velocidad?";
+                if (myform.velocidad.value === '512kb') {
+                    costo = 250;
+                } else if (myform.velocidad.value === '1mb') {
+                    costo = 400;
+                } else if (myform.velocidad.value === '2mb') {
+                    costo = 800;
+                } else if (myform.velocidad.value === '3mb') {
+                    costo = 1200;
+                } else if (myform.velocidad.value === '4mb') {
+                    costo = 1600;
+                };
+            } else if (myform.duracion.value === 'mensual') {
+                texto = "¿Qué velocidad?";
+                if (myform.velocidad.value === '512kb') {
+                    costo = 1000;
+                } else if (myform.velocidad.value === '1mb') {
+                    costo = 1600;
+                } else if (myform.velocidad.value === '2mb') {
+                    costo = 3200;
+                } else if (myform.velocidad.value === '3mb') {
+                    costo = 4800;
+                } else if (myform.velocidad.value === '4mb') {
+                    costo =6400;
+                };
+            }
+        } else if (myform.tipo.value === 'horas') {
+            document.querySelector('#duracion_form').style.display = 'none';
+            document.querySelector('#horas_form').style.display = 'flex';
+            texto = "¿Qué velocidad?";
+            if (myform.velocidad.value === '512kb') {
+                    costo = myform.cantidad_horas.value * 8;
+                } else if (myform.velocidad.value === '1mb') {
+                    costo = myform.cantidad_horas.value * 10;
+                } else if (myform.velocidad.value === '2mb') {
+                    costo = myform.cantidad_horas.value * 20;
+                } else if (myform.velocidad.value === '3mb') {
+                    costo = myform.cantidad_horas.value * 30;
+                } else if (myform.velocidad.value === '4mb') {
+                    costo = myform.cantidad_horas.value * 40;
+                };
+        };
+        if (costo != "") {
+            texto = "Costo: " + costo + " coins"
+        }
+        document.querySelector('#costo').innerHTML = texto;
+    }
+    myform.addEventListener("input", function () {
+        saberCosto();
+    });
     function confirmSubmit(e) {
         if (myform.contra.value != "") {
+            console.log(costo);
             e.preventDefault();            
             if (myform.tipo.value === 'Seleccione el tipo') {
                 Swal.fire({
@@ -215,21 +333,15 @@
                     icon: 'warning',
                     confirmButtonColor: '#d33',
                 })
-            } else if (myform.duracion.value === 'Seleccione la duración') {
+            } else if (myform.duracion.value === 'Seleccione la duración' && myform.tipo.value != 'horas') {
                 Swal.fire({
                     title: "¡Seleccione la duración!",
                     icon: 'warning',
                     confirmButtonColor: '#d33',
                 })
-            } else if (myform.tipo.value === 'horas' && myform.duracion.value != 'horas') {
+            }  else if (myform.velocidad.value === 'Seleccione la velocidad') {
                 Swal.fire({
-                    title: "¡Si el tipo es horas, la duración debe ser horas!",
-                    icon: 'warning',
-                    confirmButtonColor: '#d33',
-                })
-            } else if (myform.tipo.value != 'horas' && myform.duracion.value === 'horas') {
-                Swal.fire({
-                    title: "¡Si el tipo no es horas, la duración no puede ser horas!",
+                    title: "¡Seleccione la velocidad!",
                     icon: 'warning',
                     confirmButtonColor: '#d33',
                 })
@@ -248,20 +360,19 @@
                             confirmButtonColor: '#d33',
                         })
                     } else {
-                        costo = parseInt(myform.cantidad_horas.value) * 10
-                        texto = costo + " coins por " + myform.cantidad_horas.value + " horas"
+                        texto = costo + " coins por " + myform.cantidad_horas.value + " horas a " + myform.velocidad.value + "."
                     }
                 } else if (myform.tipo.value === '16h') {
                     if (myform.duracion.value === 'semanal') {
-                        texto = "300 coins por una semana con 16 horas diarias de conexión."
+                        texto = costo + " coins por una semana con 16 horas diarias de conexion a " + myform.velocidad.value + "."
                     } else {
-                        texto = "1200 coins por 30 días con 16 horas diarias de conexión."
+                        texto = costo + " coins por 30 días con 16 horas diarias de conexión a " + myform.velocidad.value + "."
                     }
                 } else if (myform.tipo.value === '24h') {
                     if (myform.duracion.value === 'semanal') {
-                        texto = "400 coins por una semana con 24 horas de conexión."
+                        texto = costo + " coins por una semana con 24 horas de conexión a " + myform.velocidad.value + "."
                     } else {
-                        texto = "1600 coins por 30 días con 24 horas de conexión."
+                        texto = costo + " coins por 30 días con 24 horas de conexión a " + myform.velocidad.value + "."
                     }
                 }
                 Swal.fire({
@@ -276,6 +387,10 @@
                     }).then((result) => {
                     if (result.isConfirmed) {
                         myform.submit();
+                        document.getElementById('spinner').style.display = 'inline-block';
+                        document.getElementById('boton').disabled=true;
+                        document.getElementById('boton_sync').disabled=true;
+                        document.getElementById('boton_auto').disabled=true;
                     }
                 }); 
             }
