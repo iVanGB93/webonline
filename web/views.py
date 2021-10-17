@@ -15,3 +15,6 @@ def emby(request):
 
 def jc(request):
     return render(request, 'web/jc.html')
+
+def axie(request):
+    return render(request, 'web/axie.html')
