@@ -1,17 +1,29 @@
 from django.shortcuts import render
-
+from sync.models import EstadoConexion
 
 def index(request):
-    return render(request, 'web/index.html')
+    content = {'local': False}
+    conexion = EstadoConexion.objects.get(id=1)
+    if conexion.ip_online == '134.209.214.38':
+        content['local'] = True
+    return render(request, 'web/index.html', content)
 
 def ts(request):
-    return render(request, 'web/ts.html')
+    content = {'local': False}
+    conexion = EstadoConexion.objects.get(id=1)
+    if conexion.ip_online == '134.209.214.38':
+        content['local'] = True
+    return render(request, 'web/ts.html', content)
 
 def ftp(request):
     return render(request, 'web/ftp.html')
 
 def emby(request):
-    return render(request, 'web/emby.html')
+    content = {'local': False}
+    conexion = EstadoConexion.objects.get(id=1)
+    if conexion.ip_online == '134.209.214.38':
+        content['local'] = True
+    return render(request, 'web/emby.html', content)
 
 def jc(request):
     return render(request, 'web/jc.html')

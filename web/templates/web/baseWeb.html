@@ -13,13 +13,17 @@
     <a href="{% url 'web:index' %}" class="logo"> <i class="fab fa-quinscape"></i> QbaRed </a>
 
     <nav class="barra">
-        <a href="{% url 'forum:index' 'Noticia' %}" class="active">Noticias</a>
+        {% if local %}
+        <a href="https://login.qbared.com" class="active">Internet</a>
+        {% endif %}
+        <a href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
         <a href="{% url 'sorteo:index' %}">Sorteo</a>
         <a href="{% url 'portal:dashboard' %}">Portal</a>
         <a href="#servicios">Servicios</a>
         <a href="#about">Sobre nosotros</a>
         {% if user.is_staff %}
         <a href="{% url 'sync:control' %}">Control</a>
+        <a href="{% url 'chat:index' %}">Chat</a>
         {% endif %}
     </nav>
 
@@ -27,7 +31,7 @@
         <div id="menu-btn" class="fas fa-bars"></div>
         {% if user.is_authenticated %}    
         <a href="#">
-            <img id="boton_notificaciones" src="{{ user.profile.imagen.url }}" alt="i">
+            <img id="boton_notificaciones" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
             <span id="notificaciones_nuevas" style="display: none; font-size: small;">
             </span>
             </img>    
@@ -114,7 +118,7 @@
         <a href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"> <i class="fab fa-telegram"></i> Telegram </a>
         <a href="https://discord.gg/s5QGCarBHd" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i>Discord</a>
     </div>
-    <div class="credit"> creado por <span><a class="chat" href="#">iVan</a></span> | QbaRed @ 2021 </div>
+    <div class="credit"> creado por <span><a class="chat" href="{% url 'chat:room' 'iVan' %}">iVan</a></span> | QbaRed @ 2021 </div>
 </section>
 {% endblock %}
 

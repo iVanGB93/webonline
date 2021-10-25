@@ -363,6 +363,35 @@ section{
     color:var(--main-color);
 }
 
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10000;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-container.active {
+    display: none;
+}
+.loader-container i {
+    color: var(--main-color);
+    font-size: 3rem;
+    animation: loading 2s linear infinite;
+}
+@keyframes loading{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
 .descripcion {
     margin-top: 10rem;
 }

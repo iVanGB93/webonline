@@ -35,10 +35,18 @@ window.onscroll = () =>{
   }); */
 };
 
+function loader() {
+  document.querySelector('.loader-container').classList.add('active')
+}
+function fadeOut() {
+  setTimeout(loader, 1000);
+}
+
 window.onload = () =>{
+  fadeOut();
   if(window.scrollY > 0){
     document.querySelector('.header').classList.add('active');
-}else{
+  }else{
     document.querySelector('.header').classList.remove('active');
   }
 }

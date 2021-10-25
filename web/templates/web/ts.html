@@ -48,8 +48,12 @@
         <div class="col-md-7 fs-4" data-aos="fade-left">
             <h3 class="m-2 fs-2">Luego conéctate a nuestro servidor.</h3>   
             <div class="d-flex justify-content-between mt-4">
-                <p>Click para entrar desde la pc --></p>
+                <p>Click para entrar desde la pc --></p>    
+                {% if local %}
+                <a href="ts3server://ts.qbared.com">
+                {% else %}
                 <a href="ts3server://143.198.184.119:1234">
+                {% endif %}
                     <button class="boton">ts.qbared.com</button>
                 </a>     
             </div>   
