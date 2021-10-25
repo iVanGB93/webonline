@@ -13,6 +13,7 @@ urlpatterns = [
     path('sorteo/', include('sorteo.urls')),
     path('cotilleo/', include('forum.urls')),
     path('portal/', include('portal.urls')),
+    path('chat/', include('chat.urls')),
     path('api/servicios/', include('servicios.api.urls')),
     path('users/', include('users.urls')),
     path('api/users/', include('users.api.urls')),
