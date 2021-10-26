@@ -36,7 +36,10 @@ window.onscroll = () =>{
 };
 
 function loader() {
-  document.querySelector('.loader-container').classList.add('active')
+  var loader_container = document.querySelector('.loader-container');
+  if (loader_container != null) {
+    document.querySelector('.loader-container').classList.add('active')
+  };
 }
 function fadeOut() {
   setTimeout(loader, 1000);

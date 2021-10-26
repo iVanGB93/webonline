@@ -23,14 +23,28 @@
   <div class="row" style="min-height: 300px;">
     <div class="col-12 col-lg-10 overflow-auto m-auto p-2">
       <div class="row mb-4">
+        {% if user.is_authenticated and user.is_superuser %}
+        <div class="d-flex justify-content-between text-white fs-4">          
+          <div class="d-flex border border-secondary p-2">
+            <img src="{% static 'web/images/axie_slp.png' %}" class="img-fluid" alt="Responsive image" style="height: 30px; width: 30px; margin: 0; padding: 0;"> 
+            <p class="m-auto" id="slp-manager"></p>      
+            <p class="m-auto" id="ganancia-manager"></p>      
+          </div>          
+        {% else %}
         <div class="d-flex justify-content-end text-white fs-4">
+          <div class="d-none">
+            <p class="m-auto d-none" id="slp-manager"></p>      
+            <p class="m-auto d-none" id="ganancia-manager"></p> 
+          </div>
+        {% endif %}
           <div class="d-flex border border-secondary p-2">
             <img src="{% static 'web/images/axie_slp.png' %}" class="img-fluid" alt="Responsive image" style="height: 30px; width: 30px; margin: 0; padding: 0;"> 
             <p class="m-auto" id="slp_precio"></p>      
           </div>  
         </div>  
       </div>
-      <table class="table text-white text-center texto fs-4">
+      <h3 class="text-warning text-center m-4">Becas QbaRed:</h3>
+      <table class="table text-white text-center texto fs-4" style="cursor: default;">
         <thead>
           <tr class="text-warning">
             <th scope="col">#</th>
@@ -46,6 +60,51 @@
             <th scope="col">Próximo Pago</th>
           </tr>
         </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td><span id="jugador0"></span></br><span class="fs-6">iVan</span></td>
+            <td><span id="mmr0"></span> <i class="fas fa-trophy"></i></br><span class="fs-6" id="copas0"></span></td>
+            <td><span id="slp-hoy0"></span></br><span class="fs-6" id="ganancia-hoy0"></span></td>
+            <td><span id="slp-ayer0"></span></br><span class="fs-6" id="ganancia-ayer0"></span></td>
+            <td><span id="slp-total0"></span></br><span class="fs-6" id="ganancia-total0"></span></td>
+            <td><span id="average0"></span></br><span class="fs-6" id="ganancia-average0"></span></td>
+            <td><span id="rendimiento0"></span></td>
+            <td><span id="ganancia0"></span></br><span class="fs-6" id="ganancia-ganancia0"></span></td>
+            <td><span id="ultimo-pago0"></span></td>
+            <td><span id="proximo-pago0"></span></td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td><span id="jugador1"></span></br><span class="fs-6">zsayel</span></td>
+            <td><span id="mmr1"></span> <i class="fas fa-trophy"></i></br><span class="fs-6" id="copas1"></span></td>
+            <td><span id="slp-hoy1"></span></br><span class="fs-6" id="ganancia-hoy1"></span></td>
+            <td><span id="slp-ayer1"></span></br><span class="fs-6" id="ganancia-ayer1"></span></td>
+            <td><span id="slp-total1"></span></br><span class="fs-6"  id="ganancia-total1"></span></td>
+            <td><span id="average1"></span></br><span class="fs-6" id="ganancia-average1"></span></td>
+            <td><span id="rendimiento1"></span></td>
+            <td><span id="ganancia1"></span></br><span class="fs-6" id="ganancia-ganancia1"></span></td>
+            <td><span id="ultimo-pago1"></span></td>
+            <td><span id="proximo-pago1"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 class="text-warning text-center m-4">Otras cuentas:</h3>
+      <table class="table text-white text-center texto fs-4" style="cursor: default;">
+        <thead>
+          <tr class="text-warning">
+            <th scope="col">#</th>
+            <th scope="col">Jugador</th>
+            <th scope="col">MMR Arena</th>
+            <th scope="col">SLP(hoy)</th>
+            <th scope="col">SLP(ayer)</th>
+            <th scope="col">SLP(total)</th>
+            <th scope="col">Average</th>
+            <th scope="col">Ganancia</th>
+            <th scope="col">Ultimo Pago</th>
+            <th scope="col">Próximo Pago</th>
+          </tr>
+        </thead>
         <tbody id="tabla">
         </tbody>
       </table>
@@ -56,8 +115,12 @@
   <hr class="featurette-divider">
   <div class="row text-white">
     <div class="col-md-8">
-      <h4>Lista de espera</h4>
-      <p class="lead">Pronto nuevas becas.</p>
+      <h3>Lista de espera:</h3>
+      <ol class="fs-4">
+        <li>yanky</li>
+        <li>tsunami</li>
+      </ol>
+      <h4>Pronto más...</h4>
     </div>      
   </div>
   <hr class="featurette-divider">
@@ -66,115 +129,218 @@
 
 {% block scriptWeb %}
 <script>
-  var slp_price = 0;
-  fetch("https://api.coingecko.com/api/v3/simple/price?ids=smooth-love-potion&vs_currencies=usd", {
-    "method": "GET",
-    "accept": "application/json",
-  })
-  .then(response => response.json())
-  .then(data => {
-    slp_price = data["smooth-love-potion"]["usd"];
-    document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-    console.log(slp_price);
-    const wallets = ["0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664", "0x03ae674003626b4082e430f3820b67baf4062e11", "0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a"];
-    for (let i = 0; i < wallets.length; i++) {
-      fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
-        "method": "GET",
-        "headers": {
-          "x-rapidapi-host": "axie-infinity.p.rapidapi.com",
-          "x-rapidapi-key": "339b115b24mshd9f46924ce40dc2p197cbejsn6cb7324e3d67"
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.hasOwnProperty("leaderboard")) {
-          leaderboard = data["leaderboard"]
-        } else {
-          leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
-        };
-        slp = data["slp"];
-        console.log(leaderboard);
-        console.log(slp);
-        var tabla = document.querySelector('#tabla');
-        var fila = document.createElement('tr'); 
-        var numero = document.createElement('th');
-        var jugador = document.createElement('td');
-        var arena = document.createElement('td');
-        var slp_hoy = document.createElement('td');
-        var slp_ayer = document.createElement('td');
-        var slp_total = document.createElement('td');
-        var average = document.createElement('td');
-        var rendimiento = document.createElement('td');
-        var ganancia = document.createElement('td');
-        var ult_pago = document.createElement('td');
-        ult_pago.className = "fs-5";
-        var prox_pago = document.createElement('td');
-        prox_pago.className = "fs-5";
-        numero.innerHTML = i;    
-        jugador.innerHTML = leaderboard["name"];
-        arena.innerHTML = leaderboard["elo"];
-        slp_hoy.innerHTML = slp["todaySoFar"];
-        slp_ayer.innerHTML = slp["yesterdaySLP"];
-        total = slp["total"] - slp["claimableTotal"];
-        var fecha = Math.floor(new Date().getTime());
-        var saco = new Date(slp["lastClaimedItemAt"] * 1000);
-        var diferencia = (fecha - saco) / (1000 * 60 * 60 *24);
-        var dias = Math.round(diferencia);
-        slp_total.innerHTML = total + " ( " + dias + " dias )";
-        if (dias != 0) {
-          var promedio = Math.round(total / dias)
-        } else {
-          var promedio = 0
-        }
-        average.innerHTML = promedio + " SLP x día";
-        if (promedio <= 130) {
-          var porciento = 30;
-        } else if (promedio <= 160) {
-          var porciento = 35;
-        } else if (promedio <= 190) {
-          var porciento = 40;
-        } else if (promedio <= 220) {
-          var porciento = 45;
-        } else {
-          var porciento = 50;
-        };
-        rendimiento.innerHTML = porciento + "%";
-        ganancia.innerHTML = Math.round(total * porciento / 100) + " SLP" + " ≈" + Number(total * porciento / 100 * slp_price).toFixed(2) + " USD";
-        ult_pago.innerHTML = saco.getDate() + "/" + saco.getMonth() + "/" + saco.getFullYear();
-        var proximo_pago = saco.setDate(saco.getDate() + 14);
-        var countDownDate = new Date(proximo_pago).getTime();
-        var x = setInterval(function() {
-        var now = new Date().getTime();
-        var distance = countDownDate - now;
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        prox_pago.innerHTML = days + "d-" + hours + "h " + minutes + "m ";
-        if (distance < 0) {
-            clearInterval(x);
-            prox_pago.innerHTML = "Puede Reclamar";
-        }
-        }, 1000);
-        fila.appendChild(numero);
-        fila.appendChild(jugador);
-        fila.appendChild(arena);
-        fila.appendChild(slp_hoy);
-        fila.appendChild(slp_ayer);
-        fila.appendChild(slp_total);
-        fila.appendChild(average);
-        fila.appendChild(rendimiento);
-        fila.appendChild(ganancia);
-        fila.appendChild(ult_pago);
-        fila.appendChild(prox_pago);
-        tabla.appendChild(fila);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-    }
-  })
-  .catch(err => {
-  console.error(err);
-  });
+  function get_slp_price () {
+    var slp_price = 0;
+    var slp_manager = 0;
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=smooth-love-potion&vs_currencies=usd", {
+      "method": "GET",
+      "accept": "application/json",
+    })
+    .then(response => response.json())
+    .then(data => {
+      slp_price = data["smooth-love-potion"]["usd"];
+      document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
+      const wallets = ["0x03ae674003626b4082e430f3820b67baf4062e11", "0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664"];
+      for (let i = 0; i < wallets.length; i++) {
+        fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
+          "method": "GET",
+          "headers": {
+            "x-rapidapi-host": "axie-infinity.p.rapidapi.com",
+            "x-rapidapi-key": "339b115b24mshd9f46924ce40dc2p197cbejsn6cb7324e3d67"
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.hasOwnProperty("leaderboard")) {
+            leaderboard = data["leaderboard"]
+          } else {
+            leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
+          };
+          slp = data["slp"];
+          document.querySelector('#jugador'+i).innerHTML = leaderboard["name"];
+          mmr = leaderboard["elo"];
+          document.querySelector('#mmr'+i).innerHTML = mmr;
+          if (mmr < 800) {
+            slp_victoria = 0;
+          } else if (mmr <1000) {
+            slp_victoria = 1;
+          } else if (mmr <1100) {
+            slp_victoria = 3;
+          } else if (mmr <1300) {
+            slp_victoria = 6;
+          } else if (mmr <1500) {
+            slp_victoria = 9;
+          } else if (mmr <1800) {
+            slp_victoria = 12;
+          } else if (mmr <2000) {
+            slp_victoria = 15;
+          } else if (mmr <2200) {
+            slp_victoria = 18;
+          } else {
+            slp_victoria = 21;
+          };
+          document.querySelector('#copas'+i).innerHTML = slp_victoria + " X victoria";
+          document.querySelector('#slp-hoy'+i).innerHTML = slp["todaySoFar"];
+          document.querySelector('#ganancia-hoy'+i).innerHTML = "≈" + Number(slp["todaySoFar"] * slp_price).toFixed(2) + " USD";
+          document.querySelector('#slp-ayer'+i).innerHTML = slp["yesterdaySLP"];
+          document.querySelector('#ganancia-ayer'+i).innerHTML = "≈" + Number(slp["yesterdaySLP"] * slp_price).toFixed(2) + " USD";
+         var fecha = Math.floor(new Date().getTime());
+          var saco = new Date(slp["lastClaimedItemAt"] * 1000);
+          var diferencia = (fecha - saco) / (1000 * 60 * 60 *24);
+          var dias = Math.round(diferencia);
+          total = slp["total"] - slp["claimableTotal"];
+          document.querySelector('#slp-total'+i).innerHTML = total + " ( " + dias + " dias )";
+          document.querySelector('#ganancia-total'+i).innerHTML = "≈" + Number(total * slp_price).toFixed(2) + " USD";
+          if (dias != 0) {
+            var promedio = Math.round(total / dias)
+          } else {
+            var promedio = 0
+          }
+          document.querySelector('#average'+i).innerHTML = promedio + " SLP x día";
+          document.querySelector('#ganancia-average'+i).innerHTML = "≈" + Number(promedio * slp_price).toFixed(2) + " USD";
+          if (promedio <= 130) {
+            var porciento = 30;
+          } else if (promedio <= 160) {
+            var porciento = 35;
+          } else if (promedio <= 190) {
+            var porciento = 40;
+          } else if (promedio <= 220) {
+            var porciento = 45;
+          } else {
+            var porciento = 50;
+          };
+          document.querySelector('#rendimiento'+i).innerHTML = porciento + "%";
+          slp_becado = total * porciento / 100;
+          slp_manager = slp_manager + (total - slp_becado);
+          document.querySelector('#ganancia'+i).innerHTML = Math.round(slp_becado) + " SLP";
+          document.querySelector('#ganancia-ganancia'+i).innerHTML = " ≈" + Number(slp_becado * slp_price).toFixed(2) + " USD";
+          document.querySelector('#ultimo-pago'+i).innerHTML = saco.getDate() + "/" + (saco.getMonth() + 1) + "/" + saco.getFullYear();
+          var proximo_pago = saco.setDate(saco.getDate() + 14);
+          var countDownDate = new Date(proximo_pago).getTime();
+          var x = setInterval(function() {
+          var now = new Date().getTime();
+          var distance = countDownDate - now;
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          document.querySelector('#proximo-pago'+i).innerHTML = days + "d-" + hours + "h " + minutes + "m ";
+          if (distance < 0) {
+              clearInterval(x);
+              document.querySelector('#proximo-pago'+i).innerHTML = "Puede Reclamar";
+          }
+          }, 1000);         
+          document.querySelector('#slp-manager').innerHTML = Math.round(slp_manager);
+          document.querySelector('#ganancia-manager').innerHTML = " ≈" + Number(slp_manager * slp_price).toFixed(2) + " USD";
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      }
+    })
+    .catch(err => {
+    console.error(err);
+    });
+  }
+  get_slp_price();
+
+  function get_slp_price2 () {
+    var slp_price = 0;
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=smooth-love-potion&vs_currencies=usd", {
+      "method": "GET",
+      "accept": "application/json",
+    })
+    .then(response => response.json())
+    .then(data => {
+      slp_price = data["smooth-love-potion"]["usd"];
+      document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
+      console.log(slp_price);
+      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a"];
+      for (let i = 0; i < wallets.length; i++) {
+        fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
+          "method": "GET",
+          "headers": {
+            "x-rapidapi-host": "axie-infinity.p.rapidapi.com",
+            "x-rapidapi-key": "339b115b24mshd9f46924ce40dc2p197cbejsn6cb7324e3d67"
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.hasOwnProperty("leaderboard")) {
+            leaderboard = data["leaderboard"]
+          } else {
+            leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
+          };
+          slp = data["slp"];
+          console.log(leaderboard);
+          console.log(slp);
+          var tabla = document.querySelector('#tabla');
+          var fila = document.createElement('tr'); 
+          var numero = document.createElement('th');
+          var jugador = document.createElement('td');
+          var arena = document.createElement('td');
+          var slp_hoy = document.createElement('td');
+          var slp_ayer = document.createElement('td');
+          var slp_total = document.createElement('td');
+          var average = document.createElement('td');
+          var ganancia = document.createElement('td');
+          var ult_pago = document.createElement('td');
+          ult_pago.className = "fs-5";
+          var prox_pago = document.createElement('td');
+          prox_pago.className = "fs-5";
+          numero.innerHTML = i;    
+          jugador.innerHTML = leaderboard["name"];
+          arena.innerHTML = leaderboard["elo"];
+          slp_hoy.innerHTML = slp["todaySoFar"];
+          slp_ayer.innerHTML = slp["yesterdaySLP"];
+          total = slp["total"] - slp["claimableTotal"];
+          var fecha = Math.floor(new Date().getTime());
+          var saco = new Date(slp["lastClaimedItemAt"] * 1000);
+          var diferencia = (fecha - saco) / (1000 * 60 * 60 *24);
+          var dias = Math.round(diferencia);
+          slp_total.innerHTML = total + " ( " + dias + " dias )";
+          if (dias != 0) {
+            var promedio = Math.round(total / dias)
+          } else {
+            var promedio = 0
+          }
+          average.innerHTML = promedio + " SLP x día";          
+          ganancia.innerHTML = " ≈" + Number(total * slp_price).toFixed(2) + " USD";
+          ult_pago.innerHTML = saco.getDate() + "/" + (saco.getMonth() + 1) + "/" + saco.getFullYear();
+          var proximo_pago = saco.setDate(saco.getDate() + 14);
+          var countDownDate = new Date(proximo_pago).getTime();
+          var x = setInterval(function() {
+          var now = new Date().getTime();
+          var distance = countDownDate - now;
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          prox_pago.innerHTML = days + "d-" + hours + "h " + minutes + "m ";
+          if (distance < 0) {
+              clearInterval(x);
+              prox_pago.innerHTML = "Puede Reclamar";
+          }
+          }, 1000);
+          fila.appendChild(numero);
+          fila.appendChild(jugador);
+          fila.appendChild(arena);
+          fila.appendChild(slp_hoy);
+          fila.appendChild(slp_ayer);
+          fila.appendChild(slp_total);
+          fila.appendChild(average);
+          fila.appendChild(ganancia);
+          fila.appendChild(ult_pago);
+          fila.appendChild(prox_pago);
+          tabla.appendChild(fila);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      }
+    })
+    .catch(err => {
+    console.error(err);
+    });
+  }
+  get_slp_price2();
 </script>
 {% endblock %}
