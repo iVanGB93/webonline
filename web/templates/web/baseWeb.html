@@ -104,10 +104,12 @@
 <section class="footer" id="footer">
     <div class="box" data-aos="fade-down">
         <h3>sitios</h3>
-        <a href="#home" class="active">Internet</a>
-        <a href="#noticias">Noticias</a>
-        <a href="#Sorteo">Sorteo</a>
-        <a href="#portal">Portal</a>
+        {% if local %}
+        <a href="https://login.qbared.com" class="active">Internet</a>
+        {% endif %}
+        <a href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+        <a href="{% url 'sorteo:index' %}">Sorteo</a>
+        <a href="{% url 'portal:dashboard' %}">Portal</a>
         <a href="#servicios">Servicios</a>
         <a href="#about">Sobre nosotros</a>
     </div>

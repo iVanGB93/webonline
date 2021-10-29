@@ -1,105 +1,107 @@
 {% extends "forum/baseForum.html" %}
 {% load static %}
 {% block contenido %}    
-<div class="col-10 col-lg-8 m-auto box overflow-hidden">
-    <div class="p-3">
-        <h3 class="text-center p-3">Editar publicación</h3>
-        <form id="myform" action="{% url 'forum:editar' tema p.id %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="input-group mb-3">
-                <label class="input-group-text" for="inputGroupSelect01">Tema</label>
-                <select class="form-select" required id="inputGroupSelect01" name="tema">            
-                    <option selected value={{ tema }}>{{ tema }}</option>            
-                    <option value="Noticia">Noticia</option>
-                    <option value="Internet">Internet</option>
-                    <option value="JovenClub">JovenClub</option>
-                    <option value="Emby">Emby</option>
-                    <option value="FileZilla">FileZilla</option>
-                    <option value="QbaRed">QbaRed</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="titulo" class="form-label">Título:</label>
-                <input class="form-control" id="titulo" autofocus name="titulo" type="text" value="{{ p.titulo }}" aria-label="default input example">
-            </div>
-            <div class="mb-3">
-                <label for="contenido" class="form-label">Contenido:</label>
-                <textarea class="form-control" id="contenido" name="contenido" rows="8">{{ p.contenido }}</textarea>
-            </div>              
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="boton_encuesta" {% if encuesta != 'nada' %}checked{% endif %} name="encuesta">
-                <label class="form-check-label" for="boton_encuesta">
-                Agregar encuesta
-                </label>
-            </div>
-            <div class="col-12 mb-3 text-center" id="encuesta" {% if encuesta != 'nada' %}style="display: inline-block;"{% else %}style='display: none'{% endif %}>
-                <label for="encuesta" class="form-label">Escriba las opciones a continuación, mínimo 2 y máximo 5:</label>
-                <input class="form-control mb-2" id="opcion1" name="opcion1" type="text" placeholder="opción 1 {{ encuesta.opcion1 }}">
-                <input class="form-control mb-2" id="opcion2" name="opcion2" type="text" placeholder="opción 2 {{ encuesta.opcion2 }}">
-                <input class="form-control mb-2" name="opcion3" type="text" placeholder="opción 3 {{ encuesta.opcion3 }}">
-                <input class="form-control mb-2" name="opcion4" type="text" placeholder="opción 4 {{ encuesta.opcion4 }}">
-                <input class="form-control" name="opcion5" type="text" placeholder="opción 5 {{ encuesta.opcion5 }}">
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="boton_imagen">
-                <label class="form-check-label" for="boton_imagen">
-                Agregar imágenes
-                </label>
-            </div>
-            <div class="row m-auto text-center imagenes py-2">
-                {% if p.imagen1.url != '/media/defaultForum.png' %}
-                <div class="col-12 col-md-4">
-                    <img src="{{ p.imagen1.url }}" alt="imagen1">
+<section class="primera">
+    <div class="container-xl">
+        <div class="row gy-4">
+            <h3 class="text-center p-2">Editar publicación</h3>
+            <form id="myform" action="{% url 'forum:editar' tema p.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupSelect01">Tema</label>
+                    <select class="form-select" required id="inputGroupSelect01" name="tema">            
+                        <option selected value={{ tema }}>{{ tema }}</option>            
+                        <option value="Noticia">Noticia</option>
+                        <option value="Internet">Internet</option>
+                        <option value="JovenClub">JovenClub</option>
+                        <option value="Emby">Emby</option>
+                        <option value="FileZilla">FileZilla</option>
+                        <option value="QbaRed">QbaRed</option>
+                    </select>
                 </div>
-                {% endif %}
-                {% if p.imagen2.url != '/media/defaultForum.png' %}
-                <div class="col-12 col-md-4">
-                    <img src="{{ p.imagen2.url }}" alt="imagen2">
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título:</label>
+                    <input class="form-control" id="titulo" autofocus name="titulo" type="text" value="{{ p.titulo }}" aria-label="default input example">
                 </div>
-                {% endif %}
-                {% if p.imagen3.url != '/media/defaultForum.png' %}
-                <div class="col-12 col-md-4">
-                    <img src="{{ p.imagen3.url }}" alt="imagen3">
+                <div class="mb-3">
+                    <label for="contenido" class="form-label">Contenido:</label>
+                    <textarea class="form-control" id="contenido" name="contenido" rows="8">{{ p.contenido }}</textarea>
+                </div>              
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="boton_encuesta" {% if encuesta != 'nada' %}checked{% endif %} name="encuesta">
+                    <label class="form-check-label" for="boton_encuesta">
+                    Agregar encuesta
+                    </label>
                 </div>
-                {% endif %}
-            </div>
-            <div class="col-12 text-center" id="imagenes" style="display: none;">
-                <label for="imagen1" class="form-label">Seleccione las imágenes, máximo 3:</label>
-                <div class="col-12 col-md-10 col-lg-8">
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="imagen1" name="imagen1">
-                        <label class="input-group-text" for="imagen1">Imagen-1</label>
+                <div class="col-12 mb-3 text-center" id="encuesta" {% if encuesta != 'nada' %}style="display: inline-block;"{% else %}style='display: none'{% endif %}>
+                    <label for="encuesta" class="form-label">Escriba las opciones a continuación, mínimo 2 y máximo 5:</label>
+                    <input class="form-control mb-2" id="opcion1" name="opcion1" type="text" placeholder="opción 1 {{ encuesta.opcion1 }}">
+                    <input class="form-control mb-2" id="opcion2" name="opcion2" type="text" placeholder="opción 2 {{ encuesta.opcion2 }}">
+                    <input class="form-control mb-2" name="opcion3" type="text" placeholder="opción 3 {{ encuesta.opcion3 }}">
+                    <input class="form-control mb-2" name="opcion4" type="text" placeholder="opción 4 {{ encuesta.opcion4 }}">
+                    <input class="form-control" name="opcion5" type="text" placeholder="opción 5 {{ encuesta.opcion5 }}">
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="boton_imagen">
+                    <label class="form-check-label" for="boton_imagen">
+                    Agregar imágenes
+                    </label>
+                </div>
+                <div class="row m-auto text-center imagenes py-2">
+                    {% if p.imagen1.url != '/media/defaultForum.png' %}
+                    <div class="col-12 col-md-4">
+                        <img src="{{ p.imagen1.url }}" alt="imagen1">
+                    </div>
+                    {% endif %}
+                    {% if p.imagen2.url != '/media/defaultForum.png' %}
+                    <div class="col-12 col-md-4">
+                        <img src="{{ p.imagen2.url }}" alt="imagen2">
+                    </div>
+                    {% endif %}
+                    {% if p.imagen3.url != '/media/defaultForum.png' %}
+                    <div class="col-12 col-md-4">
+                        <img src="{{ p.imagen3.url }}" alt="imagen3">
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-12 text-center" id="imagenes" style="display: none;">
+                    <label for="imagen1" class="form-label">Seleccione las imágenes, máximo 3:</label>
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" id="imagen1" name="imagen1">
+                            <label class="input-group-text" for="imagen1">Imagen-1</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-10 col-lg-8 m-auto">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" id="imagen2" name="imagen2">
+                            <label class="input-group-text" for="imagen2">Imagen-2</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-10 offset-md-2 col-lg-8 offset-lg-4 align-self-end">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" id="imagen3" name="imagen3">
+                            <label class="input-group-text" for="imagen3">Imagen-3</label>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-10 col-lg-8 m-auto">
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="imagen2" name="imagen2">
-                        <label class="input-group-text" for="imagen2">Imagen-2</label>
-                    </div>
+                <div class="col-12 text-end">
+                    <button id="boton" class="boton" type="submit">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
+                        Guardar
+                    </button>             
                 </div>
-                <div class="col-12 col-md-10 offset-md-2 col-lg-8 offset-lg-4 align-self-end">
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="imagen3" name="imagen3">
-                        <label class="input-group-text" for="imagen3">Imagen-3</label>
-                    </div>
-                </div>
+            </form>
+            <div class="col-12 text-end py-2">
+                <a href="{% url 'forum:detalles' tema p.id %}">
+                    <button id="boton2" class="boton">
+                        Atrás
+                    </button>
+                </a>
             </div>
-            <div class="col-12 text-end">
-                <button id="boton" class="btn btn-{{ color }}" type="submit">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
-                    Guardar
-                </button>                
-            </div>
-        </form>
-        <div class="col-12 text-end py-2">
-            <a href="{% url 'forum:detalles' tema p.id %}">
-                <button id="boton2" class="btn btn-secondary mx-2">
-                    Atrás
-                </button>
-            </a>
         </div>
     </div>
-</div>
+</section>
 <script>
     const myform = document.getElementById("myform");
     myform.addEventListener("submit", (e) => {       

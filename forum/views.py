@@ -41,10 +41,11 @@ def color_tema(color):
 
 def index(request, pk):
     publicaciones = Publicacion.objects.filter(tema=pk).order_by('-fecha')
-    todas = Publicacion.objects.all().order_by('-fecha')[:20]
+    recientes = Publicacion.objects.all().order_by('-fecha')[:10]
+    populares = Publicacion.objects.all().order_by('-visitas')[:10]
     color = tema_color(pk)
     tema = pk
-    data = {'publicaciones': publicaciones, 'todas': todas, 'color': color, 'tema': tema}
+    data = {'publicaciones': publicaciones, 'recientes': recientes, 'populares': populares , 'color': color, 'tema': tema}
     return render(request, 'forum/index.html', data)
 
 def detalles(request, tema, pk):

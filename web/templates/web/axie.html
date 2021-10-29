@@ -63,8 +63,8 @@
         <tbody>
           <tr>
             <th scope="row">1</th>
-            <td><span id="jugador0"></span></br><span class="fs-6">iVan</span></td>
-            <td><span id="mmr0"></span> <i class="fas fa-trophy"></i></br><span class="fs-6" id="copas0"></span></td>
+            <td><span id="jugador0"></span></br><span id="jugador-nombre0" class="fs-6" style="display: none;">iVan</span></td>
+            <td><span id="mmr0"></span> <i class="fas fa-trophy" id="copa0" style="display: none;"></i></br><span class="fs-6" id="copas0"></span></td>
             <td><span id="slp-hoy0"></span></br><span class="fs-6" id="ganancia-hoy0"></span></td>
             <td><span id="slp-ayer0"></span></br><span class="fs-6" id="ganancia-ayer0"></span></td>
             <td><span id="slp-total0"></span></br><span class="fs-6" id="ganancia-total0"></span></td>
@@ -76,8 +76,8 @@
           </tr>
           <tr>
             <th scope="row">2</th>
-            <td><span id="jugador1"></span></br><span class="fs-6">zsayel</span></td>
-            <td><span id="mmr1"></span> <i class="fas fa-trophy"></i></br><span class="fs-6" id="copas1"></span></td>
+            <td><span id="jugador1"></span></br><span id="jugador-nombre1" class="fs-6" style="display: none;">zsayel</span></td>
+            <td><span id="mmr1"></span> <i class="fas fa-trophy" id="copa1" style="display: none;"></i></br><span class="fs-6" id="copas1"></span></td>
             <td><span id="slp-hoy1"></span></br><span class="fs-6" id="ganancia-hoy1"></span></td>
             <td><span id="slp-ayer1"></span></br><span class="fs-6" id="ganancia-ayer1"></span></td>
             <td><span id="slp-total1"></span></br><span class="fs-6"  id="ganancia-total1"></span></td>
@@ -228,7 +228,9 @@
               clearInterval(x);
               document.querySelector('#proximo-pago'+i).innerHTML = "Puede Reclamar";
           }
-          }, 1000);         
+          }, 1000);     
+          document.querySelector('#jugador-nombre'+i).style.display = "";    
+          document.querySelector('#copa'+i).style.display = "";    
           document.querySelector('#slp-manager').innerHTML = Math.round(slp_manager);
           document.querySelector('#ganancia-manager').innerHTML = " ≈" + Number(slp_manager * slp_price).toFixed(2) + " USD";
         })
@@ -254,7 +256,7 @@
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
       console.log(slp_price);
-      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a"];
+      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",

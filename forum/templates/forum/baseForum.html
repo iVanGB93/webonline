@@ -1,85 +1,106 @@
 {% extends "web/base.html" %}
 {% load static %}
+
 {% block title %} - Cotilleo{% endblock %}
+
 {% block head %}
-<link rel="stylesheet" href="{% static 'forum/style.css' %}">
+<link rel="stylesheet" href="{% static 'forum/css/style.css' %}">
 {% endblock %}
+
 {% block header %}
-<header>
-  <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'web:index' %}">QbaRed</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
-          </li>   
-          {% if user.is_staff %}
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sync:control' %}">Control</a>
-          </li>              
-          {% endif %}
-          <li class="nav-item">
-            <a class="navtop-link mx-3" href="https://login.qbared.com">Internet</a>
-          </li>              
-        </ul>
-        {% if user.is_authenticated %}    
-          <a class="mx-2" style="text-decoration: none" href="{% url 'portal:dashboard' %}">
-            <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
-          </a>              
-          <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-            <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
-            </span>
-          </img>                
-          <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
-        {% else %}
-          <a class="btn btn-sm btn-outline-warning mx-2" href="{% url 'users:login' %}">Entrar</a>
-          <a class="btn btn-sm btn-outline-info mx-2" href="{% url 'users:register' %}">Registrarse</a>
-        {% endif %}
+<header class="header-default">
+  <nav class="navbar navbar-expand-lg">
+      <div class="container-xl">
+          <a href="{% url 'web:index' %}" class="navbar-brand"><i class="fab fa-quinscape"></i> QbaRed</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+              <i id="navbar-toggler-icon" class="fas fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarContent">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                      <a href="{% url 'web:index' %}" class="nav-link">Inicio</a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'sorteo:index' %}" class="nav-link">Sorteo</a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'portal:dashboard' %}" class="nav-link">Portal</a>
+                  </li>                       
+              </ul>
+          </div>
+          <div class="header-right">
+              <ul class="social-icons list-unstyled list-inline mb-0"> 
+                  <li class="list-inline-item">
+                      <a href="https://www.youtube.com/channel/UC3eLYmYuNWN89CxTPJXcR2g" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="https://www.twitch.tv/qbared" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitch"></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="https://discord.gg/s5QGCarBHd" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i></a>
+                  </li>
+              </ul>
+              <div class="header-buttons">                        
+                  <button class="search icon-button">
+                      <span class="search-icon"><i class="fas fa-search"></i></span>
+                  </button>
+                  {% if user.is_authenticated %}    
+                  <a class="icon-button" href="#">
+                      <img id="boton_notificaciones" src="{{ user.profile.imagen.url }}" alt="">
+                      <span id="notificaciones_nuevas" style="display: none; font-size: small;"></span>
+                      </img>
+                  </a>
+                  <a class="icon-button" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+                  <button id="login-icon" style="display: none;" class="fas fa-user"></button>
+                  {% else %}
+                  <a class="icon-button" href="{% url 'users:login' %}" id="login-icon"><i class="fas fa-user"></i></a>
+                  {% endif %}
+              </div>
+          </div>
       </div>
-    </div>
-  </nav>      
+  </nav>
 </header>
 {% endblock %}
+
 {% block content %}
-<div class="fondo" style="background-image: url({% static 'forum/fondo.jpg' %})"></div>
-<div class="contenedor">
-    <div class="col-sm-12 col-lg-10 m-auto p-2 box">
-    {% if mensaje %}
-    <div class="col-5 offset-7 m-auto alert alert-warning my-2 text-center" role="alert">                   
-        {{ mensaje }}
-    </div>
-    {% endif %}
-    {% block contenido %}
-    {% endblock contenido %}
-    </div>
-</div>
+
+{% block contenido %}
+{% endblock contenido %}
+    
 {% endblock content %}
-{% block footer %}   
-<div>
-  <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-    <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-    </defs>
-    <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(25,25,25,0.7)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(25,25,25,0.5)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(25,25,25,0.3)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="rgb(25, 25, 25)" />
-    </g>
-  </svg>
-</div>
-<footer class="page-footer font-small unique-color-dark">
-  <div class="footer-copyright text-center py-3"><h7>2019-2021 © QbaRed</h7>
-  </div>
-</footer>
+
+{% block footer %}
+<section class="footer" id="footer">
+    <div class="box" data-aos="fade-down">
+        <h3>sitios</h3>
+        <a class="boton" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+        <a class="boton" href="{% url 'sorteo:index' %}">Sorteo</a>
+        <a class="boton" href="{% url 'portal:dashboard' %}">Portal</a>
+    </div>
+    <div class="box" data-aos="fade-left">
+        <h3>social</h3>
+        <a class="boton" href="https://www.youtube.com/channel/UC3eLYmYuNWN89CxTPJXcR2g" target="_blank" rel="noopener noreferrer"> <i class="fab fa-youtube"></i> YouTube </a>
+        <a class="boton" href="https://www.twitch.tv/qbared" target="_blank" rel="noopener noreferrer"> <i class="fab fa-twitch"></i> Twitch </a>
+        <a class="boton" href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"> <i class="fab fa-telegram"></i> Telegram </a>
+        <a class="boton" href="https://discord.gg/s5QGCarBHd" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i>Discord</a>
+    </div>
+    <div class="credit"> creado por <span><a class="chat" href="{% url 'chat:room' 'iVan' %}">iVan</a></span> | QbaRed @ 2021 </div>
+</section>
 {% endblock %}
+
+{% block script %}
+<script src="{% static 'forum/js/main.js' %}"></script>
+<script src="{% static 'web/js/swiper-bundle.min.js' %}"></script>
+<!-- custom js file links  -->
+<script src="{% static 'web/js/aos.js' %}"></script>
+<script>
+  AOS.init({
+      delay:400,
+      duration:800
+  });
+</script>
+{% endblock script %}
+

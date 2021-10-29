@@ -1,162 +1,159 @@
 {% extends "forum/baseForum.html" %}
 {% load static %}
 {% block contenido %}   
-<div class="col-10 col-lg-8 m-auto box overflow-hidden">
-    <div class="seccion">
-        <h1 class="col-12 text-center text-{{ color }}">{{ p.titulo }}</h1>
-    </div>
-    <hr class="featurette-divider mx-4">
-    <div class="seccion">
-        <span class="col-12 col-md-6 offset-md-6 align-self-end text-{{ color }}">Publicado el {{ p.fecha }}</span>
-    </div>
-    <div class="seccion">
-        <div class="col-12 contenido">
-            <p class="fw-bolder h5 p-5 text-{{ color }}">{{ p.contenido }}</p>
-        </div>
-        {% if encuesta != 'nada' %}
-        <hr class="featurette-divider mx-4">
-        <div class="col-10 m-auto p-4 mx-4 fw-bolder text-{{ color }}">
-            <h3>Encuesta:</h3>
-            <form action="{% url 'forum:detalles' tema p.id %}" method="POST">
-                {% csrf_token %}
-                <div class="row py-1">
-                    <div class="col-6 form-check">
-                        <input class="form-check-input" type="radio" {% if voto == 'opcion1' %}checked{% endif %} name="opcion" value="opcion1">
-                        <label class="form-check-label" for="opcion1">{{ encuesta.opcion1 }}</label>
+<section class="primera">
+    <div class="container-xl">
+        <div class="row gy-4">
+            <div>
+                <h3 class="text-center">{{ p.titulo }}</h3>
+                <div class="col-12 text-end">{{ p.fecha }}</div>
+            </div>
+            <div class="p-4">
+                <p class="text-dark">{{ p.contenido }}</p>
+            </div>
+            {% if encuesta != 'nada' %}
+            <div>
+                <h4>Encuesta:</h4>
+                <form action="{% url 'forum:detalles' tema p.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row py-1">
+                        <div class="col-6 form-check">
+                            <input class="form-check-input" type="radio" {% if voto == 'opcion1' %}checked{% endif %} name="opcion" value="opcion1">
+                            <label class="form-check-label" for="opcion1">{{ encuesta.opcion1 }}</label>
+                        </div>
+                        <div class="col-6">{{ encuesta.voto1.all.count }}</div>
                     </div>
-                    <div class="col-6">{{ encuesta.voto1.all.count }}</div>
-                </div>
-                <div class="row py-1">
-                    <div class="col-6 form-check">
-                        <input class="form-check-input" type="radio" {% if voto == 'opcion2' %}checked{% endif %} name="opcion" value="opcion2">
-                        <label class="form-check-label" for="opcion2">{{ encuesta.opcion2 }}</label>
+                    <div class="row py-1">
+                        <div class="col-6 form-check">
+                            <input class="form-check-input" type="radio" {% if voto == 'opcion2' %}checked{% endif %} name="opcion" value="opcion2">
+                            <label class="form-check-label" for="opcion2">{{ encuesta.opcion2 }}</label>
+                        </div>
+                        <div class="col-6">{{ encuesta.voto2.all.count }}</div>
                     </div>
-                    <div class="col-6">{{ encuesta.voto2.all.count }}</div>
-                </div>
-                {% if encuesta.opcion3 %}
-                <div class="row py-1">
-                    <div class="col-6 form-check">
-                        <input class="form-check-input" type="radio" {% if voto == 'opcion3' %}checked{% endif %} name="opcion" value="opcion3">
-                        <label class="form-check-label" for="opcion3">{{ encuesta.opcion3 }}</label>
+                    {% if encuesta.opcion3 %}
+                    <div class="row py-1">
+                        <div class="col-6 form-check">
+                            <input class="form-check-input" type="radio" {% if voto == 'opcion3' %}checked{% endif %} name="opcion" value="opcion3">
+                            <label class="form-check-label" for="opcion3">{{ encuesta.opcion3 }}</label>
+                        </div>
+                        <div class="col-6">{{ encuesta.voto3.all.count }}</div>
                     </div>
-                    <div class="col-6">{{ encuesta.voto3.all.count }}</div>
-                </div>
-                {% endif %}
-                {% if encuesta.opcion4 %}
-                <div class="row py-1">
-                    <div class="col-6 form-check">
-                        <input class="form-check-input" type="radio" {% if voto == 'opcion4' %}checked{% endif %} name="opcion" value="opcion4">
-                        <label class="form-check-label" for="opcion4">{{ encuesta.opcion4 }}</label>
+                    {% endif %}
+                    {% if encuesta.opcion4 %}
+                    <div class="row py-1">
+                        <div class="col-6 form-check">
+                            <input class="form-check-input" type="radio" {% if voto == 'opcion4' %}checked{% endif %} name="opcion" value="opcion4">
+                            <label class="form-check-label" for="opcion4">{{ encuesta.opcion4 }}</label>
+                        </div>
+                        <div class="col-6">{{ encuesta.voto4.all.count }}</div>
                     </div>
-                    <div class="col-6">{{ encuesta.voto4.all.count }}</div>
-                </div>
-                {% endif %}
-                {% if encuesta.opcion5 %}
-                <div class="row py-1">
-                    <div class="col-6 form-check">
-                        <input class="form-check-input" type="radio" {% if voto == 'opcion5' %}checked{% endif %} name="opcion" value="opcion5">
-                        <label class="form-check-label" for="opcion5">{{ encuesta.opcion5 }}</label>
+                    {% endif %}
+                    {% if encuesta.opcion5 %}
+                    <div class="row py-1">
+                        <div class="col-6 form-check">
+                            <input class="form-check-input" type="radio" {% if voto == 'opcion5' %}checked{% endif %} name="opcion" value="opcion5">
+                            <label class="form-check-label" for="opcion5">{{ encuesta.opcion5 }}</label>
+                        </div>
+                        <div class="col-6">{{ encuesta.voto5.all.count }}</div>
                     </div>
-                    <div class="col-6">{{ encuesta.voto5.all.count }}</div>
-                </div>
-                {% endif %}
-                <div class="row py-1">
-                    {% if user.is_authenticated %}
-                        {% if voto != 'no' %}
-                            <button class="col-4 m-auto btn btn-{{ color }}" disabled type="submit">Ya votó</button>
+                    {% endif %}
+                    <div class="col-12 text-center py-2">
+                        {% if user.is_authenticated %}
+                            {% if voto != 'no' %}
+                                <button class="boton" disabled type="submit">Ya votó</button>
+                            {% else %}
+                                <button class="boton" type="submit">Votar</button>
+                            {% endif %}
                         {% else %}
-                            <button class="col-4 m-auto btn btn-{{ color }}" type="submit">Votar</button>
+                            <h4>Debe autenticarse para poder votar.</h4>
                         {% endif %}
-                    {% else %}
-                        <h4 class="py-2 text-center">Debe autenticarse para poder votar.</h4>
-                    {% endif %}
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+            <div class="col-12 text-end">
+                {% if p.sync %}
+                Publicada en internet
+                {% else %}
+                Solo local
+                {% endif %}
+            </div>
+            <div class="col-12 text-end">Vistas: {{ p.visitas }}</div>    
+            <div class="row m-auto text-center imagenes py-2">
+            {% if p.imagen1.url != '/media/defaultForum.png' %}
+                <div class="col-12 col-md-4">
+                    <img src="{{ p.imagen1.url }}" alt="imagen1">
                 </div>
-            </form>
-        </div>
-        {% endif %}
-    </div>
-    <hr class="featurette-divider mx-4">
-    <span class="col-6 offset-6 col-md-3 offset-md-9 align-self-end fw-bolder">
-        {% if p.sync %}
-        Publicada en internet
-        {% else %}
-        Solo local
-        {% endif %}
-    </span>
-    <span class="col-6 offset-6 col-md-3 offset-md-9 align-self-end fw-bolder">Vistas: {{ p.visitas }}</span>    
-    <div class="row m-auto text-center imagenes py-2">
-    {% if p.imagen1.url != '/media/defaultForum.png' %}
-        <div class="col-12 col-md-4">
-            <img src="{{ p.imagen1.url }}" alt="imagen1">
-        </div>
-    {% endif %}
-    {% if p.imagen2.url != '/media/defaultForum.png' %}
-        <div class="col-12 col-md-4">
-            <img src="{{ p.imagen2.url }}" alt="imagen2">
-        </div>
-    {% endif %}
-    {% if p.imagen3.url != '/media/defaultForum.png' %}
-        <div class="col-12 col-md-4">
-            <img src="{{ p.imagen3.url }}" alt="imagen3">
-        </div>
-    {% endif %}
-    </div>
-    <hr class="featurette-divider mx-4">
-    <div class="seccion">
-        <div class="col-10 m-auto p-4 mx-4 fw-bolder text-{{ color }}">
-            <form action="{% url 'forum:detalles' tema p.id %}" method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="comentario" class="form-label">Comentar:</label>
-                    <textarea class="form-control" id="comentario" name="comentario" placeholder="escriba un comentario si desea..." required rows="3"></textarea>
+            {% endif %}
+            {% if p.imagen2.url != '/media/defaultForum.png' %}
+                <div class="col-12 col-md-4">
+                    <img src="{{ p.imagen2.url }}" alt="imagen2">
                 </div>
-                <div class="row">
-                    {% if user.is_authenticated %}
-                    <button class="col-3 align-self-end m-auto btn btn-{{ color }}" type="submit">Enviar</button>
-                    {% else %}
-                    <h4 class="py-2 text-center">Debe autenticarse para poder comentar.</h4>
-                    {% endif %}
+            {% endif %}
+            {% if p.imagen3.url != '/media/defaultForum.png' %}
+                <div class="col-12 col-md-4">
+                    <img src="{{ p.imagen3.url }}" alt="imagen3">
                 </div>
-            </form>
+            {% endif %}
+            </div>
+            <div class="col-12 text-end fs-6">
+                {% if user == p.autor %}
+                <a class="mx-2" href="{% url 'forum:editar' tema p.id %}">
+                    <button class="boton">Editar</button>
+                </a>
+                <a class="mx-2" href="{% url 'forum:eliminar' tema p.id %}">
+                    <button class="boton">Eliminar</button>
+                </a>
+                {% endif %}
+                <a class="mx-2" href="{% url 'forum:index' tema %}">
+                    <button class="boton">Atrás</button>
+                </a>
+            </div> 
+            <hr class="featurette-divider mx-4">
         </div>
     </div>
-    <hr class="featurette-divider mx-4">
-    <div class="col-12 text-end py-3">
-        {% if user == p.autor %}
-        <a href="{% url 'forum:editar' tema p.id %}">
-            <button class="btn btn-{{ color }} mx-2">Editar</button>
-        </a>
-        <a href="{% url 'forum:eliminar' tema p.id %}">
-            <button class="btn btn-danger mx-2">Eliminar</button>
-        </a>
-        {% endif %}
-        <a href="{% url 'forum:index' tema %}">
-            <button class="btn btn-secondary mx-2">Atrás</button>
-        </a>
-    </div> 
-    <hr class="featurette-divider mx-4">
-    <div class="row">
-        <div class="col-10 m-auto fw-bolder py-3">
-            {% if comentarios != 'no' %}
-            <h3 class="py-2">Comentarios:</h3>
-            {% for comentario in comentarios %}
-            <div class="seccion text-{{ color }}">
+</section>
+<section>
+    <div class="container-xl">
+        <div class="row">
+            <div class="my-3">
+                <form action="{% url 'forum:detalles' tema p.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label text-dark">Comentar:</label>
+                        <textarea class="form-control mx-3" id="comentario" name="comentario" placeholder="escriba un comentario si desea..." required rows="3"></textarea>
+                    </div>
+                    <div class="col-12 text-center">
+                        {% if user.is_authenticated %}
+                        <button class="boton" type="submit">Enviar</button>
+                        {% else %}
+                        <h4 class="py-2 text-center">Debe autenticarse para poder comentar.</h4>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>        
+            <div class="p-4">
+                {% if comentarios != 'no' %}
+                {% for comentario in comentarios %}
+                <div class="rounded bordered p-2 m-2">
+                    <p class="text-dark">{{ comentario.contenido }}</p>
                     <p class="text-end">{{ comentario.autor.username }}<span>, fecha:{{ comentario.fecha }}</span></p>
-                    <p>{{ comentario.contenido }}</p>
                     {% if comentario.autor == request.user %}
                     <form action="{% url 'forum:detalles' tema p.id %}" method="POST">
                         {% csrf_token %}
-                        <div class="row">
-                            <button class="col-3 align-self-end m-auto btn btn-{{ color }}" name="eliminar" value={{ comentario.id }} type="submit">Eliminar</button>
+                        <div class="col-12 text-center">
+                            <button class="boton" name="eliminar" value={{ comentario.id }} type="submit">Eliminar</button>
                         </div>
                     </form>
                     {% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                <h4 class="py-2 text-center">No hay comentarios aún.</h4>
+                {% endif %}
             </div>
-            {% endfor %}
-            {% else %}
-            <h3 class="py-2 text-center">No hay comentarios aún.</h3>
-            {% endif %}
-        </div>
-    </div>   
+        </div>   
+    </div>
 </div>
+</section>
 {% endblock contenido %}

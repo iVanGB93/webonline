@@ -1,64 +1,174 @@
 {% extends "forum/baseForum.html" %}
 {% load static %}
+
 {% block contenido %}
-{% if user.is_authenticated %}
-<div class="text-end py-2">
-    <a href="{% url 'forum:crear' tema %}">
-        <button class="btn btn-{{ color }}">Crear nuevo</button>
-    </a>
-</div>
-{% endif %}
-<div class="p-1 text-white bg-light overflow-hidden box" style="background-image: url('{% static 'web/noticias/main.jpg' %}')">
-    <div class="col-md-10 p-1 px-md-4 text-left" style="text-shadow: 0 0 3px white, 0 0 8px rgb(75, 150, 100);">
-        <h2 class="display-4 px-4 fw-bold logo">Cotilleo</h2>
-        <p class="d-none d-md-block p-0 lead my-3 fw-bold">Aquí encontrarás las últimas noticias sobre la Red.</p>      
-    </div>
-</div>
-<div class="row py-1 h4">
-    <div class="col-12 col-md-10 offset-md-1 d-md-flex d-block justify-content-between bg-dark border rounded py-1 px-3">
-        <a class="link-warning" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
-        <a class="link-light" href="{% url 'forum:index' 'Internet' %}">Internet</a>
-        <a class="link-primary" href="{% url 'forum:index' 'JovenClub' %}">Joven Club</a>
-        <a class="link-success" href="{% url 'forum:index' 'Emby' %}">Emby</a>
-        <a class="link-danger" href="{% url 'forum:index' 'Filezilla' %}">FileZilla</a>
-        <a class="link-info" href="{% url 'forum:index' 'QbaRed' %}">QbaRed</a>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12 col-lg-9">
-        <div class="row">
-            {% if not publicaciones %}
-            <h3 class="text-center m-4">No hay ninguna publicación de este tema.</h3>
-            {% endif %}
-            {% for p in publicaciones %}
-            <div class="col-md-6">
-                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-200 position-relative box bg-dark text-{{ color }}" style="height: 200px;">
-                    <div class="col p-3 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-{{ color }}">{{ p.tema }} - {{ p.autor }}</strong>
-                        <h3 class="mb-0">{{ p.titulo }}</h3>
-                        <div class="m-0">{{ p.fecha }}</div>
-                        <p class="m-0">{{ p.contenido }}</p>
-                        <a href="{{ p.id }}" class="stretched-link">Click para detalles...</a>
+<section class="primera" id="hero">
+    <div class="container-xl">
+        <div class="row gy-4">
+            <div class="col-lg-8">
+                {% for p in publicaciones %}
+                {% if p.id == 16 %}
+                <div class="post featured-post-lg">
+                    <div class="details clearfix">
+                        <a href="{{ p.id }}" class="category-badge">{{ p.tema }}</a>
+                        <h2 class="post-title">
+                            <a href="{{ p.id }}">{{ p.titulo }}</a>
+                        </h2>
+                        <ul class="meta list-inline mb-0">
+                            <li class="list-inline-item">
+                                <a href="{{ p.id }}">{{ p.autor }}</a>
+                            </li>
+                            <li class="list-inline-item">{{ p.fecha }}</li>
+                        </ul>
                     </div>
-                    <div class="col-auto d-none d-lg-block">
-                        <img src="{{ p.imagen1.url }}" width="200" height="200" class="img-fluid" alt="Responsive image">
+                    <a href="{{ p.id }}">
+                        <div class="thumb rounded">
+                            <img class="inner" src="{{ p.imagen1.url }}" alt="">
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-lg-4">
+                <div class="post-tabs rounded bordered">
+                    <ul class="nav nav-tabs nav-pills nav-fill" id="postTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button aria-controls="popular" aria-selected="true" class="nav-link active" data-bs-target="#popular"
+                                data-bs-toggle="tab" id="popular-tab" role="tab" type="button">
+                                Popular
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button aria-controls="recent" aria-selected="false" class="nav-link" data-bs-target="#recent"
+                                data-bs-toggle="tab" id="recent-tab" role="tab" type="button">
+                                Recientes
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="postsTabContent">
+                        <div class="lds-dual-ring"></div>
+                        <div class="tab-pane fade show active" id="popular" aria-labelledby="popular-tab" role="tabpanel">
+                            {% if populares %}
+                            {% for p in populares %}
+                            <div class="post post-list-sm circle">
+                                <div class="thumb circle">
+                                    <a href="{{ p.id }}">
+                                        <div class="inner">
+                                            <img src="{{ p.imagen1.url }}" alt="">
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="details clearfix">
+                                    <h6 class="post-title my-0">
+                                        <a href="{{ p.id }}">{{ p.titulo }}</a>
+                                    </h6>
+                                    <ul class="meta list-inline mt-1 mb-0">
+                                        <li class="list-inline-item">{{ p.fecha|date:"d/m/Y-H:m" }}</li>
+                                        <li class="list-inline-item fw-bold text-dark">{{ p.visitas }} vistas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <li class="list-item py-1 text-white">Nada publicado aún</li>
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane fade" id="recent" aria-labelledby="recent-tab" role="tabpanel">
+                            {% if populares %}
+                            {% for p in recientes %}                            
+                            <div class="post post-list-sm circle">
+                                <div class="thumb circle">
+                                    <a href="{{ p.id }}">
+                                        <div class="inner">
+                                            <img src="{{ p.imagen1.url }}" alt="">
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="details clearfix">
+                                    <h6 class="post-title my-0">
+                                        <a href="{{ p.id }}">{{ p.titulo }}</a>
+                                    </h6>
+                                    <ul class="meta list-inline mt-1 mb-0">
+                                        <li class="list-inline-item">{{ p.fecha|date:"d/m/Y-H:m" }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <li class="list-item py-1 text-white">Nada publicado aún</li>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>           
-            {% endfor %}
+            </div>
+        </div>
+        <div class="row my-4 h4">
+            <hr class="dropdown-divider" />
+            <div class="col-12 temas d-flex justify-content-between ">
+                <a id="Noticia" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+                <a id="Internet" href="{% url 'forum:index' 'Internet' %}">Internet</a>
+                <a id="JovenClub" href="{% url 'forum:index' 'JovenClub' %}">Joven Club</a>
+                <a id="Emby" href="{% url 'forum:index' 'Emby' %}">Emby</a>
+                <a id="Filezilla" href="{% url 'forum:index' 'Filezilla' %}">FileZilla</a>
+                <a id="QbaRed" href="{% url 'forum:index' 'QbaRed' %}">QbaRed</a>
+            </div>
+            <hr class="dropdown-divider" />
         </div>
     </div>
-    <div class="col-2 d-none d-lg-block my-1 mx-auto p-1 box text-center overflow-hidden bg-dark">
-        <h3 class="text-center text-{{ color }} pt-2">Ultimas:</h3>    
-        <ul class="list-group" style="list-style: none;">
-            {% if todas %}
-            {% for p in todas %}
-            <li class="list-item py-1 text-white"><a href="{{ p.id }}" class="text-white p-2">{{ p.titulo }}</a></li>
-            {% endfor %}
-            {% else %}
-            <li class="list-item py-1 text-white">Nada publicado aún</li>
-            {% endif %}
-        </ul>           
+</section>
+<section class="main-content">
+    <div class="container-xl">
+        <div class="section-header d-flex justify-content-between">
+            <h3 class="section-title">Sobre {{ tema }}</h3>
+            <a style="align-self: center;" href="{% url 'forum:crear' tema %}">
+                <button class="boton">Crear nuevo</button>
+            </a>
+        </div>
+        <div class="padding-30 rounded bordered">
+            <div class="row">
+                <div class="col-md-12 col-sm-6">
+                    {% if not publicaciones %}
+                    <h3 class="text-center m-4"><i class="far fa-frown"></i> No hay ninguna publicación de este tema <i class="far fa-frown"></i></h3>
+                    {% endif %}
+                    {% for p in publicaciones %}
+                    <hr class="dropdown-divider my-1 mx-auto" style="width: 80%;" />
+                    <div class="post post-list clearfix" data-aos="fade-down">
+                        <div class="thumb rounded">                            
+                            <a href="{{ p.id }}">
+                                <div class="inner">
+                                    <img src="{{ p.imagen1.url }}" alt="">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="details">
+                            <ul class="meta list-inline mb-3">
+                                <li class="list-inline-item">
+                                    <a href="{{ p.id }}">
+                                        <img class="autor" src="{{ p.autor.profile.imagen.url }}" alt="">
+                                        {{ p.autor }}
+                                    </a>
+                                </li>
+                                <li class="list-inline-item">
+                                    {{ p.fecha }}
+                                </li>
+                            </ul>
+                            <h5 class="post-title">
+                                <a href="{{ p.id }}">{{ p.titulo }}</a>
+                            </h5>
+                            <p class="contenido">{{ p.contenido }}</p>
+                            <a href="{{ p.id }}">seguir leyendo...</a>
+                        </div>
+                    </div>
+                    <hr class="dropdown-divider mt-0 mx-auto" style="width: 80%;" />
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-{% endblock contenido %}
+</section>
+
+{{ tema|json_script:"tema" }}
+
+{% endblock  %}
