@@ -10,18 +10,18 @@
                 {% if p.id == 16 %}
                 <div class="post featured-post-lg">
                     <div class="details clearfix">
-                        <a href="{{ p.id }}" class="category-badge">{{ p.tema }}</a>
+                        <a href="{% url 'forum:index' p.tema %}" class="category-badge">{{ p.tema }}</a>
                         <h2 class="post-title">
-                            <a href="{{ p.id }}">{{ p.titulo }}</a>
+                            <a href="{{ p.slug }}">{{ p.titulo }}</a>
                         </h2>
                         <ul class="meta list-inline mb-0">
                             <li class="list-inline-item">
-                                <a href="{{ p.id }}">{{ p.autor }}</a>
+                                <a href="{{ p.slug }}">{{ p.autor }}</a>
                             </li>
                             <li class="list-inline-item">{{ p.fecha }}</li>
                         </ul>
                     </div>
-                    <a href="{{ p.id }}">
+                    <a href="{{ p.slug }}">
                         <div class="thumb rounded">
                             <img class="inner" src="{{ p.imagen1.url }}" alt="">
                         </div>
@@ -53,7 +53,7 @@
                             {% for p in populares %}
                             <div class="post post-list-sm circle">
                                 <div class="thumb circle">
-                                    <a href="{{ p.id }}">
+                                    <a href="{{ p.slug }}">
                                         <div class="inner">
                                             <img src="{{ p.imagen1.url }}" alt="">
                                         </div>
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="details clearfix">
                                     <h6 class="post-title my-0">
-                                        <a href="{{ p.id }}">{{ p.titulo }}</a>
+                                        <a href="{{ p.slug }}">{{ p.titulo }}</a>
                                     </h6>
                                     <ul class="meta list-inline mt-1 mb-0">
                                         <li class="list-inline-item">{{ p.fecha|date:"d/m/Y-H:m" }}</li>
@@ -80,7 +80,7 @@
                             {% for p in recientes %}                            
                             <div class="post post-list-sm circle">
                                 <div class="thumb circle">
-                                    <a href="{{ p.id }}">
+                                    <a href="{{ p.slug }}">
                                         <div class="inner">
                                             <img src="{{ p.imagen1.url }}" alt="">
                                         </div>
@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="details clearfix">
                                     <h6 class="post-title my-0">
-                                        <a href="{{ p.id }}">{{ p.titulo }}</a>
+                                        <a href="{{ p.slug }}">{{ p.titulo }}</a>
                                     </h6>
                                     <ul class="meta list-inline mt-1 mb-0">
                                         <li class="list-inline-item">{{ p.fecha|date:"d/m/Y-H:m" }}</li>
@@ -136,7 +136,7 @@
                     <hr class="dropdown-divider my-1 mx-auto" style="width: 80%;" />
                     <div class="post post-list clearfix" data-aos="fade-down">
                         <div class="thumb rounded">                            
-                            <a href="{{ p.id }}">
+                            <a href="{{ p.slug }}">
                                 <div class="inner">
                                     <img src="{{ p.imagen1.url }}" alt="">
                                 </div>
@@ -145,7 +145,7 @@
                         <div class="details">
                             <ul class="meta list-inline mb-3">
                                 <li class="list-inline-item">
-                                    <a href="{{ p.id }}">
+                                    <a href="{{ p.slug }}">
                                         <img class="autor" src="{{ p.autor.profile.imagen.url }}" alt="">
                                         {{ p.autor }}
                                     </a>
@@ -155,10 +155,10 @@
                                 </li>
                             </ul>
                             <h5 class="post-title">
-                                <a href="{{ p.id }}">{{ p.titulo }}</a>
+                                <a href="{{ p.slug }}">{{ p.titulo }}</a>
                             </h5>
                             <p class="contenido">{{ p.contenido }}</p>
-                            <a href="{{ p.id }}">seguir leyendo...</a>
+                            <a href="{{ p.slug }}">seguir leyendo...</a>
                         </div>
                     </div>
                     <hr class="dropdown-divider mt-0 mx-auto" style="width: 80%;" />

@@ -59,15 +59,15 @@
             <th scope="col">Ultimo Pago</th>
             <th scope="col">Próximo Pago</th>
           </tr>
-        </thead>
+        </thead>        
         <tbody>
-          <tr>
+          <tr>            
             <th scope="row">1</th>
             <td><span id="jugador0"></span></br><span id="jugador-nombre0" class="fs-6" style="display: none;">iVan</span></td>
             <td><span id="mmr0"></span> <i class="fas fa-trophy" id="copa0" style="display: none;"></i></br><span class="fs-6" id="copas0"></span></td>
             <td><span id="slp-hoy0"></span></br><span class="fs-6" id="ganancia-hoy0"></span></td>
             <td><span id="slp-ayer0"></span></br><span class="fs-6" id="ganancia-ayer0"></span></td>
-            <td><span id="slp-total0"></span></br><span class="fs-6" id="ganancia-total0"></span></td>
+            <td><span id="slp-total0"></span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader0"></span></br><span class="fs-6" id="ganancia-total0"></span></td>
             <td><span id="average0"></span></br><span class="fs-6" id="ganancia-average0"></span></td>
             <td><span id="rendimiento0"></span></td>
             <td><span id="ganancia0"></span></br><span class="fs-6" id="ganancia-ganancia0"></span></td>
@@ -80,7 +80,7 @@
             <td><span id="mmr1"></span> <i class="fas fa-trophy" id="copa1" style="display: none;"></i></br><span class="fs-6" id="copas1"></span></td>
             <td><span id="slp-hoy1"></span></br><span class="fs-6" id="ganancia-hoy1"></span></td>
             <td><span id="slp-ayer1"></span></br><span class="fs-6" id="ganancia-ayer1"></span></td>
-            <td><span id="slp-total1"></span></br><span class="fs-6"  id="ganancia-total1"></span></td>
+            <td><span id="slp-total1"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader1"></span></span></br><span class="fs-6"  id="ganancia-total1"></span></td>
             <td><span id="average1"></span></br><span class="fs-6" id="ganancia-average1"></span></td>
             <td><span id="rendimiento1"></span></td>
             <td><span id="ganancia1"></span></br><span class="fs-6" id="ganancia-ganancia1"></span></td>
@@ -88,7 +88,7 @@
             <td><span id="proximo-pago1"></span></td>
           </tr>
         </tbody>
-      </table>
+      </table>     
       <h3 class="text-warning text-center m-4">Otras cuentas:</h3>
       <table class="table text-white text-center texto fs-4" style="cursor: default;">
         <thead>
@@ -231,6 +231,7 @@
           }, 1000);     
           document.querySelector('#jugador-nombre'+i).style.display = "";    
           document.querySelector('#copa'+i).style.display = "";    
+          document.querySelector('#loader'+i).style.display = "none";    
           document.querySelector('#slp-manager').innerHTML = Math.round(slp_manager);
           document.querySelector('#ganancia-manager').innerHTML = " ≈" + Number(slp_manager * slp_price).toFixed(2) + " USD";
         })
@@ -242,7 +243,8 @@
     .catch(err => {
     console.error(err);
     });
-  }
+  };
+  
   get_slp_price();
 
   function get_slp_price2 () {
@@ -342,7 +344,8 @@
     .catch(err => {
     console.error(err);
     });
-  }
+  };
+  
   get_slp_price2();
 </script>
 {% endblock %}

@@ -39,17 +39,16 @@ def color_tema(color):
         tema = "FileZilla"
     return tema
 
-def index(request, pk):
-    publicaciones = Publicacion.objects.filter(tema=pk).order_by('-fecha')
+def index(request, tema):
+    publicaciones = Publicacion.objects.filter(tema=tema).order_by('-fecha')
     recientes = Publicacion.objects.all().order_by('-fecha')[:10]
     populares = Publicacion.objects.all().order_by('-visitas')[:10]
-    color = tema_color(pk)
-    tema = pk
+    color = tema_color(tema)
     data = {'publicaciones': publicaciones, 'recientes': recientes, 'populares': populares , 'color': color, 'tema': tema}
     return render(request, 'forum/index.html', data)
 
-def detalles(request, tema, pk):
-    publicacion = Publicacion.objects.get(id=pk)
+def detalles(request, tema, slug):
+    publicacion = Publicacion.objects.get(slug=slug)
     encuesta = 'nada'
     color = tema_color(tema)
     voto = 'no'
@@ -177,9 +176,9 @@ def crear(request, tema):
         return render(request, 'forum/crear.html', content)
 
 @login_required(login_url='/users/login/')
-def editar(request, tema, pk):
+def editar(request, tema, slug):
     usuario = User.objects.get(username=request.user)
-    publicacion = Publicacion.objects.get(id=pk)
+    publicacion = Publicacion.objects.get(slug=slug)
     color = tema_color(tema)
     encuesta = 'nada'
     if Encuesta.objects.filter(publicacion=publicacion).exists():
@@ -248,9 +247,9 @@ def editar(request, tema, pk):
         return render(request, 'forum/editar.html', content) 
 
 @login_required(login_url='/users/login/')
-def eliminar(request, tema, pk):
+def eliminar(request, tema, slug):
     usuario = User.objects.get(username=request.user)
-    publicacion = Publicacion.objects.get(id=pk)
+    publicacion = Publicacion.objects.get(slug=slug)
     color = tema_color(tema)
     content = {'p': publicacion, 'tema': tema, 'color': color}    
     if request.method == 'POST':
@@ -258,7 +257,7 @@ def eliminar(request, tema, pk):
         notificacion = Notificacion(usuario=usuario, tipo="REGISTRO", contenido=dato)
         notificacion.save()
         publicacion.delete()
-        publicaciones = Publicacion.objects.filter(tema=pk).order_by('-fecha')
+        publicaciones = Publicacion.objects.filter(tema=tema).order_by('-fecha')
         todas = Publicacion.objects.all().order_by('-fecha')[:20]
         data = {'publicaciones': publicaciones, 'todas': todas, 'color': color, 'tema': tema}
         return redirect('forum:index', tema)

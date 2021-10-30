@@ -98,10 +98,10 @@
             </div>
             <div class="col-12 text-end fs-6">
                 {% if user == p.autor %}
-                <a class="mx-2" href="{% url 'forum:editar' tema p.id %}">
+                <a class="mx-2" href="{% url 'forum:editar' tema p.slug %}">
                     <button class="boton">Editar</button>
                 </a>
-                <a class="mx-2" href="{% url 'forum:eliminar' tema p.id %}">
+                <a class="mx-2" href="{% url 'forum:eliminar' tema p.slug %}">
                     <button class="boton">Eliminar</button>
                 </a>
                 {% endif %}

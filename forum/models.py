@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 from django.utils import timezone
 from django.db import models
 
@@ -17,7 +18,8 @@ class Publicacion(models.Model):
     )
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     tema = models.CharField(max_length=15, choices=opcionesTema)
-    titulo = models.CharField(max_length=60)
+    titulo = models.CharField(max_length=60, unique=True)
+    slug = models.SlugField(max_length=60)
     contenido = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
     sync= models.BooleanField(default=False)
@@ -28,6 +30,11 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return "Usuario: " + self.autor.username + " tema: " + self.tema +  " título: " + self.titulo
+    
+    def save(self, *args, **kwargs):
+        value = self.titulo
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
 class Comentario(models.Model):
     publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
