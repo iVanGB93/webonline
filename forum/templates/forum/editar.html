@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row gy-4">
             <h3 class="text-center p-2">Editar publicación</h3>
-            <form id="myform" action="{% url 'forum:editar' tema p.id %}" method="POST" enctype="multipart/form-data">
+            <form id="myform" action="{% url 'forum:editar' tema p.slug %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Tema</label>

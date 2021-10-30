@@ -242,7 +242,7 @@ def editar(request, tema, slug):
         mensaje = 'Publicación modificada con éxito'
         content = {'p': publicacion, 'tema': tema, 'color': color}
         content['mensaje'] =  mensaje    
-        return redirect('forum:detalles', tema, pk)
+        return redirect('forum:detalles', tema, slug)
     else:
         return render(request, 'forum/editar.html', content) 
 

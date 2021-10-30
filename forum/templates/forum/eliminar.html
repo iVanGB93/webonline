@@ -4,7 +4,7 @@
 <section class="primera">
     <div class="container-xl">
         <div class="row gy-4 text-center">
-            <form id="myform" action="{% url 'forum:eliminar' tema p.id %}" method="POST">
+            <form id="myform" action="{% url 'forum:eliminar' tema p.slug %}" method="POST">
                 <h4 class="p-3">¿Seguro desea eliminar la publicación?</h4>
                 {% csrf_token %}
                 <button id="boton" class="boton" type="submit">
