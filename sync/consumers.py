@@ -369,8 +369,13 @@ class SyncWSConsumer(WebsocketConsumer):
                     respuesta['mensaje'] = 'Existe una publicación con este título.'
                     self.responder(respuesta)
         if self.usuario_existe(data):            
-            autor = User.objects.get(username=data['usuario'])
-            publicacion = Publicacion(autor=autor, tema=data['tema'], titulo=data['titulo'], contenido=data['contenido'])
+            if Publicacion.objects.filter(titulo=data['titulo']).exists():
+                publicacion = Publicacion.objects.get(titulo=data['titulo'])
+                publicacion.tema=data['tema']
+                publicacion.contenido=data['contenido']
+            else:
+                autor = User.objects.get(username=data['usuario'])
+                publicacion = Publicacion(autor=autor, tema=data['tema'], titulo=data['titulo'], contenido=data['contenido'])
             publicacion.sync = True
             publicacion.save()
             respuesta['mensaje'] = 'Publicación guardada con éxito.'

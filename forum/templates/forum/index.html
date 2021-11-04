@@ -6,29 +6,25 @@
     <div class="container-xl">
         <div class="row gy-4">
             <div class="col-lg-8">
-                {% for p in publicaciones %}
-                {% if p.id == 16 %}
                 <div class="post featured-post-lg">
                     <div class="details clearfix">
-                        <a href="{% url 'forum:index' p.tema %}" class="category-badge">{{ p.tema }}</a>
+                        <a href="{% url 'forum:index' publicacion.tema %}" class="category-badge">{{ publicacion.tema }}</a>
                         <h2 class="post-title">
-                            <a href="{{ p.slug }}">{{ p.titulo }}</a>
+                            <a href="{{ publicacion.slug }}">{{ publicacion.titulo }}</a>
                         </h2>
                         <ul class="meta list-inline mb-0">
                             <li class="list-inline-item">
-                                <a href="{{ p.slug }}">{{ p.autor }}</a>
+                                <a href="{{ publicacion.slug }}">{{ publicacion.autor }}</a>
                             </li>
-                            <li class="list-inline-item">{{ p.fecha }}</li>
+                            <li class="list-inline-item">{{ publicacion.fecha }}</li>
                         </ul>
                     </div>
-                    <a href="{{ p.slug }}">
+                    <a href="{{ publicacion.slug }}">
                         <div class="thumb rounded">
-                            <img class="inner" src="{{ p.imagen1.url }}" alt="">
+                            <img class="inner" src="{{ publicacion.imagen1.url }}" alt="">
                         </div>
                     </a>
                 </div>
-                {% endif %}
-                {% endfor %}
             </div>
             <div class="col-lg-4">
                 <div class="post-tabs rounded bordered">

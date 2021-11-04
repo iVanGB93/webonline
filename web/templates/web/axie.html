@@ -87,6 +87,19 @@
             <td><span id="ultimo-pago1"></span></td>
             <td><span id="proximo-pago1"></span></td>
           </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td><span id="jugador2"></span></br><span id="jugador-nombre2" class="fs-6" style="display: none;">tsunami</span></td>
+            <td><span id="mmr2"></span> <i class="fas fa-trophy" id="copa2" style="display: none;"></i></br><span class="fs-6" id="copas2"></span></td>
+            <td><span id="slp-hoy2"></span></br><span class="fs-6" id="ganancia-hoy2"></span></td>
+            <td><span id="slp-ayer2"></span></br><span class="fs-6" id="ganancia-ayer2"></span></td>
+            <td><span id="slp-total2"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader2"></span></span></br><span class="fs-6"  id="ganancia-total2"></span></td>
+            <td><span id="average2"></span></br><span class="fs-6" id="ganancia-average2"></span></td>
+            <td><span id="rendimiento2"></span></td>
+            <td><span id="ganancia2"></span></br><span class="fs-6" id="ganancia-ganancia2"></span></td>
+            <td><span id="ultimo-pago2"></span></td>
+            <td><span id="proximo-pago2"></span></td>
+          </tr>
         </tbody>
       </table>     
       <h3 class="text-warning text-center m-4">Otras cuentas:</h3>
@@ -118,7 +131,6 @@
       <h3>Lista de espera:</h3>
       <ol class="fs-4">
         <li>yanky</li>
-        <li>tsunami</li>
       </ol>
       <h4>Pronto más...</h4>
     </div>      
@@ -140,7 +152,7 @@
     .then(data => {
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-      const wallets = ["0x03ae674003626b4082e430f3820b67baf4062e11", "0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664"];
+      const wallets = ["0x03ae674003626b4082e430f3820b67baf4062e11", "0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664", "0x852b26a2674c9947941a50716a06d67eb97ddfca"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",

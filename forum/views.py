@@ -41,10 +41,11 @@ def color_tema(color):
 
 def index(request, tema):
     publicaciones = Publicacion.objects.filter(tema=tema).order_by('-fecha')
+    publicacion = Publicacion.objects.get(id=16)
     recientes = Publicacion.objects.all().order_by('-fecha')[:10]
     populares = Publicacion.objects.all().order_by('-visitas')[:10]
     color = tema_color(tema)
-    data = {'publicaciones': publicaciones, 'recientes': recientes, 'populares': populares , 'color': color, 'tema': tema}
+    data = {'publicacion': publicacion, 'publicaciones': publicaciones, 'recientes': recientes, 'populares': populares , 'color': color, 'tema': tema}
     return render(request, 'forum/index.html', data)
 
 def detalles(request, tema, slug):
@@ -68,18 +69,20 @@ def detalles(request, tema, slug):
                 voto = 'opcion5'
     if Comentario.objects.filter(publicacion=publicacion).exists():
         comentarios = Comentario.objects.filter(publicacion=publicacion).all().order_by('-fecha')
-    content = {'p': publicacion, 'voto': voto, 'encuesta': encuesta, 'comentarios': comentarios, 'color': color, 'tema': tema}
+    content = {'p': publicacion, 'voto': voto, 'encuesta': encuesta, 'comentarios': comentarios, 'color': color, 'tema': tema, 'icon': 'error'}
     if request.method == 'POST':  
         if request.POST.get('eliminar'):
             comentario = Comentario.objects.get(id=request.POST['eliminar'])
             comentario.delete()      
             comentarios = Comentario.objects.filter(publicacion=publicacion).all().order_by('-fecha')
+            content['icon'] = 'success'
             content['mensaje'] = 'Comentario eliminado con éxito.'        
             return render(request, 'forum/detalles.html', content)
         if request.POST.get('comentario'):
             comentario = Comentario(publicacion=publicacion, autor=request.user, contenido=request.POST['comentario'])
             comentario.save()
             comentarios = Comentario.objects.filter(publicacion=publicacion).all().order_by('-fecha')
+            content['icon'] = 'success'
             content['mensaje'] = 'Comentario agregado con éxito.'
             content['comentarios'] = comentarios
             return render(request, 'forum/detalles.html', content)
@@ -99,6 +102,7 @@ def detalles(request, tema, slug):
             else:    
                 encuesta.voto5.add(request.user)
             encuesta.save()
+            content['icon'] = 'success'
             content['mensaje'] = 'Su voto a sido guardado, gracias por participar.'
             content['voto'] = opcion
             return render(request, 'forum/detalles.html', content)
@@ -113,10 +117,11 @@ def detalles(request, tema, slug):
 
 @login_required(login_url='/users/login/')
 def crear(request, tema):
+    print(request)
     color = tema_color(tema)
     voto = 'no'
     comentarios = 'no'
-    content = {'voto': voto, 'comentarios': comentarios, 'tema': tema, 'color': color}    
+    content = {'voto': voto, 'comentarios': comentarios, 'tema': tema, 'color': color, 'icon': 'error'}    
     if request.method == 'POST':      
         usuario = User.objects.get(username=request.user)
         tema = request.POST['tema']
@@ -133,7 +138,7 @@ def crear(request, tema):
                     content['mensaje'] =  resultado['mensaje']
                     return render(request, 'forum/crear.html', content)
             else:
-                content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intentne más tarde.'
+                content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intente más tarde.'
                 return render(request, 'forum/crear.html', content)
         contenido = request.POST['contenido']       
         nueva = Publicacion(autor=usuario, tema=tema, titulo=titulo, contenido=contenido)
@@ -168,9 +173,9 @@ def crear(request, tema):
         dato = f"Publicación de { nueva.tema } guardada"
         notificacion = Notificacion(usuario=usuario, tipo="REGISTRO", contenido=dato)
         notificacion.save()
-        mensaje = 'Artículo publicado con éxito'
+        content['icon'] = 'success'
         content['p'] = nueva
-        content['mensaje'] = mensaje    
+        content['mensaje'] = 'Artículo publicado con éxito'    
         return render(request, 'forum/detalles.html', content)
     else:
         return render(request, 'forum/crear.html', content)
@@ -183,7 +188,7 @@ def editar(request, tema, slug):
     encuesta = 'nada'
     if Encuesta.objects.filter(publicacion=publicacion).exists():
         encuesta = Encuesta.objects.get(publicacion=publicacion)
-    content = {'p': publicacion, 'encuesta': encuesta, 'tema': tema, 'color': color}    
+    content = {'p': publicacion, 'encuesta': encuesta, 'tema': tema, 'color': color, 'icon': 'error'}    
     if request.method == 'POST':
         tema = request.POST['tema']
         publicacion.tema = tema
@@ -203,7 +208,7 @@ def editar(request, tema, slug):
                             content['mensaje'] =  resultado['mensaje']
                             return render(request, 'forum/crear.html', content)
                     else:
-                        content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intentne más tarde.'
+                        content['mensaje'] =  'Publicaciones deshabilitadas en este momento, intente más tarde.'
                         return render(request, 'forum/crear.html', content)
                 publicacion.titulo = titulo
         if request.POST['contenido'] != '':
@@ -241,7 +246,8 @@ def editar(request, tema, slug):
         notificacion.save()
         mensaje = 'Publicación modificada con éxito'
         content = {'p': publicacion, 'tema': tema, 'color': color}
-        content['mensaje'] =  mensaje    
+        content['mensaje'] =  mensaje
+        content['icon'] = 'success'
         return redirect('forum:detalles', tema, slug)
     else:
         return render(request, 'forum/editar.html', content) 
