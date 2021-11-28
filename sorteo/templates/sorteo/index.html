@@ -1,87 +1,71 @@
 {% extends "sorteo/baseSorteo.html" %}
 {% load static %}
 {% block title %} - Sorteo{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'sorteo/style.css' %}">
-<div class="fondo" style="background-image: url({% static 'sorteo/background-explicacion.jpg' %})"></div>
-<div class="contenedor text-center">
-    <h1 class="letras">Bienvenidos al Sorteo de QbaRed</h1>
-    <div class="row align-items-center" style="margin-bottom: 35px;">
-        <div class="col-1 col-md-2 col-lg-3 d-none d-md-block">
-            <a href="{% url 'sorteo:running' %}">
-                <button type="submit" class="btn btn-success mb-3">               
-                    Vamos al sorteo!!!
+{% block contenido %}
+<div class="fondo"></div>
+<div class="contenedor" style="background-image: url({% static 'sorteo/images/middlebackgroundpaper.jpg' %})">
+    <div class="cartel">
+        <div class="anuncio">
+            <h1 class="titulo">Sorteo de QbaRed</h1>
+            <h5 class="letra">¿Como funciona?</h5>
+        </div>    
+        <div class="explicacion letra">            
+            <p>Hey!!! vamos a probar tu suerte y ponerle un poco de emoción a la red. Aquí te dejo la explicación de como participar
+                en el sorteo mensual, lee atentamente y sigue los pasos, vamos!!!
+            </p>
+            <p>Tomando como ejemplo a Joaquín, en el mes de abril digamos que él paga por FileZilla, cuando completa el pago se le envía
+                un correo que contiene un código, tambien puede verlo en últimas operaciones (code), ese código es el que se usa para los
+                pasos que vienen a continuación. Joaquín obtiene un código por cada servicio que paga, si es solo FileZilla sería uno, 
+                pero si tambien pagó por Emby tendría otro código y así tendría otra oportunidad de ganar. Solo cuentan los códigos de pagos,
+                no de envíos ni recargas, etc; y en caso de que sea internet por horas solo se puede usar si la compra es de más de 10 horas.
+            </p>
+            <ol style="text-align: left;">
+                <li>Escribir el código en el formulario al final de esta página.</li>
+                <li>Si el código es aceptado se le enviará un correo con la confirmación.</li>
+                <li>Esperar el día del sorteo, para ver en tiempo real las eliminaciones y si se lo lleva usted :-O</li>
+            </ol>
+            <p>El sorteo tendrá en cuenta todos los participantes activos y seleccionará a uno aleatoriamente y será eliminado,
+                quedando fuera para la próxima ronda, y así se irán eliminando uno a uno hasta que solo queden 2, y en esa última 
+                ronda el próximo en salir será el afortunado que recibirá una recarga de 200 coins en su correo.
+            </p>
+            <p><strong>Importante: </strong>Su dirección de correo debe ser real. No puede usar correos de cubava porque no tienen salida
+                internacional. Usted puede editar su correo en el <a class="text-dark" href="{% url 'portal:dashboard' %}">Portal del Usuario</a> en la sección de perfil.
+            </p>
+        </div>      
+        <div style="margin: auto; width: 250px;">
+            <form id="myform" action="{% url 'sorteo:index' %}" method="post">
+                {% if message %}
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    {% else %} 
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endif %}       
+                {% endif %}
+                {% for field in form %}
+                {% csrf_token %}        
+                <div>
+                    {{ field.label_tag }} 
+                </div>
+                <div style="margin-top: 10px">
+                    {{ field }}
+                </div>
+                <button id="boton" type="submit" class="botonSorteo" style="padding: 5px;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='margin: auto; display: none'></span>
+                    Enviar
                 </button>
-            </a>
+                {% endfor %}
+            </form>
         </div>
-        <div class="col-10 col-md-8 col-lg-6 m-auto">            
-            <div class="cartel">            
-                <h5>¿Como funciona?</h5>
-                <p>Hey!!! vamos a probar tu suerte y ponerle un poco de emoción a la red. Aquí te dejo la explicación de como participar
-                    en el sorteo mensual, lee atentamente y sigue los pasos, vamos!!!
-                </p>
-                <p>Tomando como ejemplo a Joaquín, en el mes de abril digamos que él paga por FileZilla, cuando completa el pago se le envía
-                    un correo que contiene un código, tambien puede verlo en últimas operaciones (code), ese código es el que se usa para los
-                    pasos que vienen a continuación. Joaquín obtiene un código por cada servicio que paga, si es solo FileZilla sería uno, 
-                    pero si tambien pagó por Emby tendría otro código y así tendría otra oportunidad de ganar. Solo cuentan los códigos de pagos,
-                    no de envíos ni recargas, etc; y en caso de que sea internet por horas solo se puede usar si la compra es de más de 10 horas.
-                </p>
-                <ol style="text-align: left;">
-                    <li>Escribir el código en el formulario al final de esta página.</li>
-                    <li>Si el código es aceptado se le enviará un correo con la confirmación.</li>
-                    <li>Esperar el día del sorteo, para ver en tiempo real las eliminaciones y si se lo lleva usted :-O</li>
-                </ol>
-                <p>El sorteo tendrá en cuenta todos los participantes activos y seleccionará a uno aleatoriamente y será eliminado,
-                    quedando fuera para la próxima ronda, y así se irán eliminando uno a uno hasta que solo queden 2, y en esa última 
-                    ronda el próximo en salir será el afortunado que recibirá una recarga de 200 coins en su correo.
-                </p>
-                <p><strong>Importante: </strong>Su dirección de correo debe ser real. No puede usar correos de cubava porque no tienen salida
-                    internacional. Usted puede editar su correo en el <a href="{% url 'portal:dashboard' %}">Portal del Usuario</a> en la sección de perfil.
-                </p>
-            </div>
-        </div>
-        <div class="col-1 col-md-2 col-lg-3 d-none d-md-block">
-            <a href="{% url 'sorteo:running' %}">
-                <button type="submit" class="btn btn-success mb-3">               
-                    Vamos al sorteo!!!
-                </button>
-            </a>
-        </div>
-    </div>
-    <div class="cartel" style="margin: auto; width: 250px;">
-        <form id="myform" action="{% url 'sorteo:index' %}" method="post">
-            {% if message %}
-                {% if success %}
-                    <div class="alert alert-success" role="alert">
-                        {{ message }}
-                    </div>
-                {% else %} 
-                    <div class="alert alert-danger" role="alert">
-                        {{ message }}
-                    </div>
-                {% endif %}       
-            {% endif %}
-            {% for field in form %}
-            {% csrf_token %}        
-            <div>
-                {{ field.label_tag }} 
-            </div>
-            <div style="margin-top: 10px">
-                {{ field }}
-            </div>
-            <button id="boton" type="submit" class="btn btn-primary w-100" style="margin-top: 30px;">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='margin: auto; display: none'></span>
-                Enviar
+        <a href="{% url 'sorteo:running' %}">
+            <button type="submit" class="botonSorteo">               
+                Vamos al sorteo!!!
             </button>
-            {% endfor %}
-        </form>
-    </div>
-    <br><br>
-    <a href="{% url 'sorteo:running' %}">
-        <button type="submit" class="btn btn-success mb-3">               
-            Vamos al sorteo!!!
-        </button>
-    </a>
+        </a> 
+    </div> 
 </div>
 <script>
     const myform = document.getElementById("myform");
@@ -89,4 +73,4 @@
         document.getElementById('spinner').style.display = 'inline-block';        
     });
 </script>
-{% endblock content %}
+{% endblock contenido %}

@@ -49,7 +49,10 @@ def index(request, tema):
     return render(request, 'forum/index.html', data)
 
 def detalles(request, tema, slug):
-    publicacion = Publicacion.objects.get(slug=slug)
+    if Publicacion.objects.filter(slug=slug).exists():
+        publicacion = Publicacion.objects.get(slug=slug)
+    else:
+        return render(request, 'forum/notFound.html', {"tema": tema})
     encuesta = 'nada'
     color = tema_color(tema)
     voto = 'no'

@@ -16,7 +16,6 @@ def index(request):
             resultado = participacion(code)
             if resultado['estado']:
                 content['success'] = 'success'
-            print(resultado)
             content['message'] = resultado['mensaje']
             return render(request, 'sorteo/index.html', content)
         else:

@@ -10,7 +10,8 @@
     <div class="col-12 col-lg-8 order-md-2 d-flex" data-aos="fade-left">
         <p class="text-white text-center fs-4 p-2">
           Relacion de rendimiendo y ganancia en axie-infinity según promedio diario:</br></br>
-          0-130 SLP : 30%</br>
+          0-100 SLP : 20%</br>
+          101-130 SLP : 30%</br>
           131-160 SLP : 35%</br>
           161-190 SLP : 40%</br>
           191-220 SLP : 45%</br>
@@ -100,6 +101,19 @@
             <td><span id="ultimo-pago2"></span></td>
             <td><span id="proximo-pago2"></span></td>
           </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td><span id="jugador3"></span></br><span id="jugador-nombre3" class="fs-6" style="display: none;">Danilo</span></td>
+            <td><span id="mmr3"></span> <i class="fas fa-trophy" id="copa3" style="display: none;"></i></br><span class="fs-6" id="copas3"></span></td>
+            <td><span id="slp-hoy3"></span></br><span class="fs-6" id="ganancia-hoy3"></span></td>
+            <td><span id="slp-ayer3"></span></br><span class="fs-6" id="ganancia-ayer3"></span></td>
+            <td><span id="slp-total3"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader3"></span></span></br><span class="fs-6"  id="ganancia-total3"></span></td>
+            <td><span id="average3"></span></br><span class="fs-6" id="ganancia-average3"></span></td>
+            <td><span id="rendimiento3"></span></td>
+            <td><span id="ganancia3"></span></br><span class="fs-6" id="ganancia-ganancia3"></span></td>
+            <td><span id="ultimo-pago3"></span></td>
+            <td><span id="proximo-pago3"></span></td>
+          </tr>
         </tbody>
       </table>     
       <h3 class="text-warning text-center m-4">Otras cuentas:</h3>
@@ -152,7 +166,7 @@
     .then(data => {
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-      const wallets = ["0x03ae674003626b4082e430f3820b67baf4062e11", "0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664", "0x852b26a2674c9947941a50716a06d67eb97ddfca"];
+      const wallets = ["0x03ae674003626b4082e430f3820b67baf4062e11", "0xe1abb6d52183d5f4ae6bc15f71b2f14a21b7d664", "0x852b26a2674c9947941a50716a06d67eb97ddfca", "0x9ddf75c370996ba50b9073a0f1f5528a287a1ab9"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",
@@ -201,7 +215,7 @@
           var diferencia = (fecha - saco) / (1000 * 60 * 60 *24);
           var dias = Math.round(diferencia);
           total = slp["total"] - slp["claimableTotal"];
-          document.querySelector('#slp-total'+i).innerHTML = total + " ( " + dias + " dias )";
+          document.querySelector('#slp-total'+i).innerHTML = total + " (" + dias + " dias)";
           document.querySelector('#ganancia-total'+i).innerHTML = "≈" + Number(total * slp_price).toFixed(2) + " USD";
           if (dias != 0) {
             var promedio = Math.round(total / dias)
@@ -210,7 +224,9 @@
           }
           document.querySelector('#average'+i).innerHTML = promedio + " SLP x día";
           document.querySelector('#ganancia-average'+i).innerHTML = "≈" + Number(promedio * slp_price).toFixed(2) + " USD";
-          if (promedio <= 130) {
+          if (promedio <= 100) {
+            var porciento = 20;
+          } else if (promedio <= 130) {
             var porciento = 30;
           } else if (promedio <= 160) {
             var porciento = 35;
@@ -270,7 +286,7 @@
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
       console.log(slp_price);
-      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043"];
+      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",
@@ -313,7 +329,7 @@
           var saco = new Date(slp["lastClaimedItemAt"] * 1000);
           var diferencia = (fecha - saco) / (1000 * 60 * 60 *24);
           var dias = Math.round(diferencia);
-          slp_total.innerHTML = total + " ( " + dias + " dias )";
+          slp_total.innerHTML = total + " (" + dias + " dias)";
           if (dias != 0) {
             var promedio = Math.round(total / dias)
           } else {

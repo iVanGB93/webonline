@@ -1,0 +1,19 @@
+{% extends "forum/baseForum.html" %}
+{% load static %}
+{% block contenido %}   
+<section class="primera">
+    <div class="container-xl">
+        <div class="row gy-4 m-auto" style="height: calc(100vh/1.5);">
+            <div class="m-auto">
+                <h3 class="text-center">Upps esta publicación no se encuentra.</h3>
+            </div>            
+            <div class="col-12 text-end fs-6">                
+                <a class="mx-2" href="{% url 'forum:index' tema %}">
+                    <button class="boton">Atrás</button>
+                </a>
+            </div> 
+            <hr class="featurette-divider mx-4">
+        </div>
+    </div>
+</section>
+{% endblock contenido %}

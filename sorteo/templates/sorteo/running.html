@@ -1,63 +1,28 @@
 {% extends "sorteo/baseSorteo.html" %}
 {% load static %}
 {% block title %} - Sorteo{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'sorteo/style.css' %}">
-<div class="fondo" style="background-image: url({% static 'sorteo/background-explicacion.jpg' %})"></div>
-<div class="contenedor">    
-    <div class="row align-items-center">
-        <div class="col-2 d-none d-md-block">
-            <h2 class="letras">QbaRed</h2>
-            <img id="medio" class="rounded-circle" width="30%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>
-            <img id="medio" class="rounded-circle" width="40%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">coins</h2>
-            <img id="medio" class="rounded-circle" width="50%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>
-            <img id="medio" class="rounded-circle" width="20%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">coins</h2>
-            <img id="medio" class="rounded-circle" width="40%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>
+{% block contenido %}
+<div class="fondo"></div>
+<div class="contenedor" style="background-image: url({% static 'sorteo/images/middlebackgroundpaper.jpg' %})"> 
+    <div class="bigFrame">
+        <div class="mainframe stopped">
+            <h1 class="titulo">Participantes</h1>
+            <div class="participants-frame">  
+                <ul class="participants-list">
+                </ul>         
+            </div>            
+        </div>    
+        <div class="spinner">
+            <img class="rounded-circle" src="{% static 'sorteo/images/coin.gif' %}" alt="coins"/>
         </div>
-        <div class="col-12 col-md-8 mainframe">
-            <div class="row align-items-center ">
-                <div class="col-12 order-2 col-md-8 order-md-1">
-                    <h1 class="letras">Participantes</h1>
-                    <div class="participants-frame">  
-                        <div class="spinner-grow text-dark" role="status" aria-hidden="true" id="spinner"></div>          
-                        <ul class="participants-list">
-                        </ul>         
-                    </div>
-                </div>
-                <div class="col-12 order-1 col-md-4 order-md-2 frame">
-                    <h1 class="letras">Suerte!!!</h1>
-                    <h3 class="letras">Los verdes están activos</h3>                    
-                    <img class="img-fluid" src="{% static 'sorteo/middle.gif' %}" alt="mmmm"/>
-                    <h3 class="letras">Los rojos están eliminados</h3>
-                </div>
-            </div> 
-            <div class="row result">
-                <h1 id="resultado">Sorteo Finalizado, suerte el siguiente mes!!!{{ text }}</h1>
-            </div>
-        </div>
-        <div class="col-2 d-none d-md-block">
-            <h2 class="letras">QbaRed</h2>
-            <img id="medio" class="rounded-circle" width="30%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>
-            <img id="medio" class="rounded-circle" width="20%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">coins</h2>
-            <img id="medio" class="rounded-circle" width="50%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>
-            <img id="medio" class="rounded-circle" width="40%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">coins</h2>
-            <img id="medio" class="rounded-circle" width="30%" src="{% static 'sorteo/coin.gif' %}" alt="coins"/>
-            <h2 class="letras">200</h2>            
-        </div>        
+        <div class="result stopped">
+            <h1 class="letra" id="resultado">Sorteo Finalizado, suerte el siguiente mes!!!{{ text }}</h1>
+        </div>    
     </div>
 </div>
 {{ activo|json_script:"activo" }}
 {{ finalizado|json_script:"finalizado" }}
-<script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script> 
+<script src="{% static 'web/js/reconnecting-websocket.js' %}"></script> 
 <script>
     const activos = [];
     const eliminados = [];
@@ -75,9 +40,11 @@
             }))
         };
         if (finalizado === true) {
-            resultado.classList.add("letras")
-            document.querySelector('.frame').classList.add("playframe");
-            document.querySelector('.result').classList.add("playresult");
+            document.querySelector('.spinner').classList.add("stopped");
+            document.querySelector('.mainframe').classList.remove("stopped");
+            document.querySelector('.mainframe').classList.add("playing");
+            document.querySelector('.result').classList.remove("stopped");
+            document.querySelector('.result').classList.add("playing");
         }   
     }
     socketSorteo.onmessage = function(e){
@@ -87,22 +54,22 @@
             while (list.firstChild) {
                 list.removeChild(list.firstChild);
             }
-            document.getElementById('spinner').style.display = 'none';
-            document.querySelector('.frame').classList.remove("playframe");
-            document.querySelector('.result').classList.remove("playresult");
+            document.querySelector('.spinner').classList.add("stopped");
+            document.querySelector('.mainframe').classList.remove("playing");
+            document.querySelector('.result').classList.remove("playing");
             var participants = data['participantes']
             var participants = participants.map(participants => {                   
                 var parListTag = document.createElement('li');
                 if (participants['eliminado']) {
                     var delTag = document.createElement('del');
-                    delTag.textContent = participants['usuario'] + ", servicio: " + participants['servicio'] + " code: " + participants['code'];
+                    delTag.textContent = participants['usuario'] + " por " + participants['servicio'] + " (" + participants['code'] + ")";
                     parListTag.appendChild(delTag);
                     parListTag.className = "dead";
                     parListTag.id = participants.id
                     eliminados.push(participants.id);
                 } else {
                     var pTag = document.createElement('p');
-                    pTag.textContent = participants['usuario'] + ", servicio: " + participants['servicio'] + " code: " + participants['code'];
+                    pTag.textContent = participants['usuario'] + " por " + participants['servicio'] + " (" + participants['code'] + ")";
                     parListTag.appendChild(pTag);
                     parListTag.className = "alive";
                     parListTag.id = participants.id
@@ -113,13 +80,12 @@
         } else {
             var resultado = document.querySelector('#resultado');
             resultado.innerText = data.mensaje;
-            resultado.classList.add("letras")
-            document.querySelector('.frame').classList.add("playframe");
-            document.querySelector('.result').classList.add("playresult");
+            document.querySelector('.mainframe').classList.add("playing");
+            document.querySelector('.result').classList.add("playing");
         }
     }
     socketSorteo.onclose = function(e) {
         console.error('socketSorteo cerrado');
     }
 </script>
-{% endblock content %}
+{% endblock contenido %}
