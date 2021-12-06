@@ -66,7 +66,7 @@
             <th scope="row">1</th>
             <td><span id="jugador0"></span></br><span id="jugador-nombre0" class="fs-6" style="display: none;">iVan</span></td>
             <td><span id="mmr0"></span> <i class="fas fa-trophy" id="copa0" style="display: none;"></i></br><span class="fs-6" id="copas0"></span></td>
-            <td><span id="slp-hoy0"></span></br><span class="fs-6" id="ganancia-hoy0"></span></td>
+            <td><i class="fas fa-khanda" id="arenaIcon0" style="display: none;"></i> <!-- <span id="slp-hoy0"></span> --><span id="arena0"></span> <i class="fas fa-map-marked-alt" id="aventuraIcon0" style="display: none;"></i> <span id="aventura0"></span></br><span class="fs-6" id="ganancia-hoy0"></span></td>
             <td><span id="slp-ayer0"></span></br><span class="fs-6" id="ganancia-ayer0"></span></td>
             <td><span id="slp-total0"></span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader0"></span></br><span class="fs-6" id="ganancia-total0"></span></td>
             <td><span id="average0"></span></br><span class="fs-6" id="ganancia-average0"></span></td>
@@ -79,7 +79,7 @@
             <th scope="row">2</th>
             <td><span id="jugador1"></span></br><span id="jugador-nombre1" class="fs-6" style="display: none;">zsayel</span></td>
             <td><span id="mmr1"></span> <i class="fas fa-trophy" id="copa1" style="display: none;"></i></br><span class="fs-6" id="copas1"></span></td>
-            <td><span id="slp-hoy1"></span></br><span class="fs-6" id="ganancia-hoy1"></span></td>
+            <td><i class="fas fa-khanda" id="arenaIcon1" style="display: none;"></i> <!-- <span id="slp-hoy1"></span> --><span id="arena1"></span> <i class="fas fa-map-marked-alt" id="aventuraIcon1" style="display: none;"></i> <span id="aventura1"></span></br><span class="fs-6" id="ganancia-hoy1"></span></td>
             <td><span id="slp-ayer1"></span></br><span class="fs-6" id="ganancia-ayer1"></span></td>
             <td><span id="slp-total1"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader1"></span></span></br><span class="fs-6"  id="ganancia-total1"></span></td>
             <td><span id="average1"></span></br><span class="fs-6" id="ganancia-average1"></span></td>
@@ -92,7 +92,7 @@
             <th scope="row">3</th>
             <td><span id="jugador2"></span></br><span id="jugador-nombre2" class="fs-6" style="display: none;">tsunami</span></td>
             <td><span id="mmr2"></span> <i class="fas fa-trophy" id="copa2" style="display: none;"></i></br><span class="fs-6" id="copas2"></span></td>
-            <td><span id="slp-hoy2"></span></br><span class="fs-6" id="ganancia-hoy2"></span></td>
+            <td><i class="fas fa-khanda" id="arenaIcon2" style="display: none;"></i> <!-- <span id="slp-hoy2"></span> --><span id="arena2"></span> <i class="fas fa-map-marked-alt" id="aventuraIcon2" style="display: none;"></i> <span id="aventura2"></span></br><span class="fs-6" id="ganancia-hoy2"></span></td>
             <td><span id="slp-ayer2"></span></br><span class="fs-6" id="ganancia-ayer2"></span></td>
             <td><span id="slp-total2"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader2"></span></span></br><span class="fs-6"  id="ganancia-total2"></span></td>
             <td><span id="average2"></span></br><span class="fs-6" id="ganancia-average2"></span></td>
@@ -105,7 +105,7 @@
             <th scope="row">4</th>
             <td><span id="jugador3"></span></br><span id="jugador-nombre3" class="fs-6" style="display: none;">Danilo</span></td>
             <td><span id="mmr3"></span> <i class="fas fa-trophy" id="copa3" style="display: none;"></i></br><span class="fs-6" id="copas3"></span></td>
-            <td><span id="slp-hoy3"></span></br><span class="fs-6" id="ganancia-hoy3"></span></td>
+            <td><i class="fas fa-khanda" id="arenaIcon3" style="display: none;"></i> <!-- <span id="slp-hoy3"></span> --><span id="arena3"></span> <i class="fas fa-map-marked-alt" id="aventuraIcon3" style="display: none;"></i> <span id="aventura3"></span></br><span class="fs-6" id="ganancia-hoy3"></span></td>
             <td><span id="slp-ayer3"></span></br><span class="fs-6" id="ganancia-ayer3"></span></td>
             <td><span id="slp-total3"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loader3"></span></span></br><span class="fs-6"  id="ganancia-total3"></span></td>
             <td><span id="average3"></span></br><span class="fs-6" id="ganancia-average3"></span></td>
@@ -144,7 +144,7 @@
     <div class="col-md-8">
       <h3>Lista de espera:</h3>
       <ol class="fs-4">
-        <li>yanky</li>
+        <li>maku</li>
       </ol>
       <h4>Pronto más...</h4>
     </div>      
@@ -183,6 +183,7 @@
             leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
           };
           slp = data["slp"];
+          aventura = data["adventure"];
           document.querySelector('#jugador'+i).innerHTML = leaderboard["name"];
           mmr = leaderboard["elo"];
           document.querySelector('#mmr'+i).innerHTML = mmr;
@@ -206,7 +207,9 @@
             slp_victoria = 21;
           };
           document.querySelector('#copas'+i).innerHTML = slp_victoria + " X victoria";
-          document.querySelector('#slp-hoy'+i).innerHTML = slp["todaySoFar"];
+          /* document.querySelector('#slp-hoy'+i).innerHTML = slp["todaySoFar"]; */
+          document.querySelector('#arena'+i).innerHTML = (slp["todaySoFar"] - aventura["gained_slp"]);
+          document.querySelector('#aventura'+i).innerHTML = aventura["gained_slp"];
           document.querySelector('#ganancia-hoy'+i).innerHTML = "≈" + Number(slp["todaySoFar"] * slp_price).toFixed(2) + " USD";
           document.querySelector('#slp-ayer'+i).innerHTML = slp["yesterdaySLP"];
           document.querySelector('#ganancia-ayer'+i).innerHTML = "≈" + Number(slp["yesterdaySLP"] * slp_price).toFixed(2) + " USD";
@@ -259,6 +262,8 @@
           }, 1000);     
           document.querySelector('#jugador-nombre'+i).style.display = "";    
           document.querySelector('#copa'+i).style.display = "";    
+          document.querySelector('#arenaIcon'+i).style.display = "";
+          document.querySelector('#aventuraIcon'+i).style.display = "";    
           document.querySelector('#loader'+i).style.display = "none";    
           document.querySelector('#slp-manager').innerHTML = Math.round(slp_manager);
           document.querySelector('#ganancia-manager').innerHTML = " ≈" + Number(slp_manager * slp_price).toFixed(2) + " USD";
@@ -285,7 +290,6 @@
     .then(data => {
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-      console.log(slp_price);
       const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
@@ -303,8 +307,6 @@
             leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
           };
           slp = data["slp"];
-          console.log(leaderboard);
-          console.log(slp);
           var tabla = document.querySelector('#tabla');
           var fila = document.createElement('tr'); 
           var numero = document.createElement('th');
