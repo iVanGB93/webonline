@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap'); */
 
-@import url('https://fonts.googleapis.com/css2?family=Mate+SC&family=Rock+Salt&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,500;1,300&display=swap');
 
 .notificaciones {
   position: absolute;
@@ -159,7 +156,7 @@
   font-family: 'Mate SC', serif;
 }
 .texto {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 .contenido {
   position: absolute;

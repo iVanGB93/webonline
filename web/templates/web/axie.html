@@ -274,7 +274,17 @@
       }
     })
     .catch(err => {
-    console.error(err);
+      console.error(err);
+      Swal.fire({
+        title: "Upss!!",
+        text: "Ocurrió un error en la conexión y no se pudieron obtener sus datos",
+        icon: "error",
+        confirmButtonColor: '#d33',
+      });
+      document.querySelector('#loader0').style.display = "none";
+      document.querySelector('#loader1').style.display = "none";
+      document.querySelector('#loader2').style.display = "none";
+      document.querySelector('#loader3').style.display = "none";      
     });
   };
   
