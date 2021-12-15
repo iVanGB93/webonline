@@ -45,7 +45,7 @@
         </div>  
       </div>
       <h3 class="text-warning text-center m-4">Becas QbaRed:</h3>
-      <table class="table text-white text-center texto fs-4" style="cursor: default;">
+      <table class="table text-white text-center texto fs-4" style="cursor: default; white-space: nowrap;">
         <thead>
           <tr class="text-warning">
             <th scope="col">#</th>
@@ -117,7 +117,7 @@
         </tbody>
       </table>     
       <h3 class="text-warning text-center m-4">Otras cuentas:</h3>
-      <table class="table text-white text-center texto fs-4" style="cursor: default;">
+      <table class="table text-white text-center texto fs-4" style="cursor: default; white-space: nowrap;">
         <thead>
           <tr class="text-warning">
             <th scope="col">#</th>
@@ -300,7 +300,7 @@
     .then(data => {
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd"];
+      const wallets = ["0xd1f38ea0af0dc0956754ad3af377fff6d2c66c41", "0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0x6c6aabce4fd20ddb9d946f2fe82d1f4bb8379043", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd", "0x387adb845d87dda2cfae205ca10aaad7e31d269c"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",

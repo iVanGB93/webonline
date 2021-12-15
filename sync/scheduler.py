@@ -3,18 +3,20 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django.utils import timezone
 from .models import EstadoConexion
 
+from .syncs import actualizacion_remota
+
 def chequeo_conexion_online():
     servidores = EstadoConexion.objects.all()
     for servidor in servidores:
-        tiempo = timezone.now() - timezone.timedelta(seconds=185)
         print(f"CHEQUEANDO A { servidor.servidor }")
-        if servidor.fecha_chequeo < tiempo:
-            servidor.online = False
-            servidor.save()
-            print(f"EL SERVIDOR { servidor.servidor } ESTA CAIDO DESDE { servidor.fecha_chequeo }.")
+        respuesta = actualizacion_remota('saludo', {'identidad': servidor.servidor})
+        if respuesta['estado']:
+            print("SERVIDOR ONLINE")
+            servidor.online = True
         else:
-            print(f"EL SERVIDOR { servidor.servidor } ESTA ONLINE.")
-
+            print("NO TIENE INTERNET EL SERVIDOR", respuesta['mensaje'])
+            servidor.online = False
+        servidor.save()
 
 def chequeo_conexiones():
     scheduler = BackgroundScheduler()
