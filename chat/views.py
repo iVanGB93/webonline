@@ -13,7 +13,7 @@ def index(request):
 def room(request, username=None):
     if username == None:
         content = {'usuarios': User.objects.all()}
-        return render(request, 'chat/room.html', content)
+        return render(request, 'chat/index.html', content)
     if User.objects.filter(username=username).exists():
         usuario2 = User.objects.get(username=username)
         chats = request.user.chat_set.all()
@@ -31,10 +31,10 @@ def room(request, username=None):
         img_url = usuario2.profile.imagen.url
         if not request.user in chat.participantes.all():
             return redirect('chat:index')
-        return render(request, 'chat/room.html', {
+        return render(request, 'chat/index.html', {
             'chat_id': chat_id,
             'img_url': img_url,
-            'usuarios': User.objects.all()
+            'usuario2': usuario2,
         })
     else:
         return redirect('chat:index')

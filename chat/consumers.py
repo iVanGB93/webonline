@@ -65,9 +65,53 @@ class ChatConsumer(WebsocketConsumer):
             respuesta['estado'] = True
             self.responder_grupo(respuesta)
     
+    def usuario_to_json(self, usuario):        
+        return {
+            'id': usuario.id,
+            'username': usuario.username,
+            'last_login': str(usuario.last_login),
+            'img_url': usuario.profile.imagen.url,
+        }
+
+    def usuarios_to_json(self, usuarios):
+        result = []
+        for usuario in usuarios:
+            result.append(self.usuario_to_json(usuario))
+        return result
+    
+    def usuarios(self, data):
+        respuesta = {'estado': False}
+        usuarios = User.objects.all().exclude(username=data['usuario'])
+        respuesta['accion'] = 'usuarios'
+        username = data['usuario']
+        respuesta['usuarios'] = self.usuarios_to_json(usuarios)      
+        respuesta['estado'] = True
+        self.responder(respuesta)
+
+    def mensajes_no_vistos(self, data):
+        respuesta = {'estado': False}
+        usuario = User.objects.get(username=data['usuario'])
+        chats = usuario.chat_set.all()
+        if chats:
+            for chat in chats:
+                cantidad = 0        
+                chatID = chat.id                           
+                mensajes = chat.mensajes.all()
+                for mensaje in mensajes:
+                    if mensaje.autor != usuario:
+                        cantidad = cantidad + 1
+            print(chatID, cantidad)
+            respuesta['chatID'] = chatID
+            respuesta['accion'] = 'mensajes_no_vistos'
+            respuesta['mensajes_no_vistos'] = cantidad
+            respuesta['estado'] = True
+            self.responder(respuesta)        
+
     acciones = {
         'mensajes': mensajes,
-        'mensaje_nuevo': mensaje_nuevo,   
+        'mensaje_nuevo': mensaje_nuevo,
+        'usuarios': usuarios,
+        'mensajes_no_vistos': mensajes_no_vistos,
     }
 
     # Receive message from WebSocket

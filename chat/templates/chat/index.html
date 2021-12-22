@@ -1,79 +1,460 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% block title %} - Chating{% endblock %}
+
+{% block title %} - Chat{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
+{% endblock %}
+
 {% block header %}
-<header>
-  <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'web:index' %}">QbaRed</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
-          </li>
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
-          </li>   
-          {% if user.is_staff %}
-          <li class="nav-item">
-            <a class="navtop-link" href="{% url 'sync:control' %}">Control</a>
-          </li>              
-          {% endif %}
-          <li class="nav-item">
-            <a class="navtop-link mx-3" href="https://login.qbared.com">Internet</a>
-          </li>              
-        </ul>
-        {% if user.is_authenticated %}    
-          <a class="mx-2" style="text-decoration: none" href="{% url 'portal:dashboard' %}">
-            <p class="text-white mx-2 fs-5 fst-italic m-auto">{{ user}}, {{ user.profile.coins }} coins</p>
-          </a>              
-          <img id="boton_notificaciones" class="img-fluid rounded mx-2" style="width: 50px; height: 50px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-            <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
-            </span>
-          </img>                
-          <a class="btn btn-sm btn-outline-danger mx-2" href="{% url 'users:logout' %}">Salir</a>
-        {% else %}
-          <a class="btn btn-sm btn-outline-warning mx-2" href="{% url 'users:login' %}">Entrar</a>
-          <a class="btn btn-sm btn-outline-info mx-2" href="{% url 'users:register' %}">Registrarse</a>
-        {% endif %}
-      </div>
-    </div>
-  </nav>      
+<header class="header-default">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-xl">
+            <a href="{% url 'web:index' %}" class="navbar-brand"><i class="fab fa-quinscape"></i> QbaRed</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i id="navbar-toggler-icon" class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a href="{% url 'web:index' %}" class="nav-link">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sorteo:index' %}" class="nav-link">Sorteo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'portal:dashboard' %}" class="nav-link">Portal</a>
+                    </li>                       
+                </ul>
+            </div>
+            <div class="header-right">
+                <ul class="social-icons list-unstyled list-inline mb-0"> 
+                    <li class="list-inline-item">
+                        <a href="https://www.youtube.com/channel/UC3eLYmYuNWN89CxTPJXcR2g" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="https://www.twitch.tv/qbared" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitch"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="https://t.me/joinchat/MSKtLdbfoDBiMjRh" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="https://discord.gg/s5QGCarBHd" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i></a>
+                    </li>
+                </ul>
+                <div class="header-buttons">                        
+                    <button class="search icon-button">
+                        <span class="search-icon"><i class="fas fa-search"></i></span>
+                    </button>
+                    {% if user.is_authenticated %}    
+                    <a class="icon-button" href="#">
+                        <img id="boton_notificaciones" src="{{ user.profile.imagen.url }}" alt="">
+                        <span id="notificaciones_nuevas" style="display: none; font-size: small;"></span>
+                        </img>
+                    </a>
+                    <a class="icon-button" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+                    <button id="login-icon" style="display: none;" class="fas fa-user"></button>
+                    {% else %}
+                    <a class="icon-button" href="{% url 'users:login' %}" id="login-icon"><i class="fas fa-user"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
 </header>
 {% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'chat/style.css' %}">
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="container bootstrap snippets bootdey m-auto p-4">
+<div class="contenedor">
     <div class="row">
-		<div class="col-md-4 bg-white">
-            <div class=" row border-bottom padding-sm" style="height: 40px;">
-            	Usuarios
+        <div class="col-none col-md-4 panel-lateral order-2 order-md-1">            
+            <div class="searchBox my-2">
+              <div class="col-sm-12 searchBox-inner">
+                <div class="form-group has-feedback">
+                  <input id="searchText" type="text" class="form-control" name="searchText" placeholder="Buscar...">
+                </div>
+              </div>
             </div>
-            <ul class="friend-list">
-                {% for usuario in usuarios %}        
-                {% if usuario != request.user %}
-                <li class="active bounceInDown">
-                	<a href="{% url 'chat:room' usuario.id %}" class="clearfix">
-                		<img src="{{ usuario.profile.imagen.url }}" alt="" class="img-circle">
-                		<div class="friend-name">	
-                			<strong>{{ usuario.username}}</strong>
-                		</div>
-                		<div class="last-message text-muted">Hello, Are you there?</div>
-                		<small class="time text-muted">Just now</small>
-                		<small class="chat-alert label label-danger">1</small>
-                	</a>
+            <div class="usuarios">              
+              <div class="d-flex justify-content-center align-middle">
+                <div id="user-loader" class="spinner-border" role="status">
+                </div>
+              </div>
+              <ul class="friend-list">
+              </ul>
+            </div>
+        </div>
+        <div class="col-12 col-md-8 contenedor-chat order-1 order-md-2">
+            <div class="nuevo-chat">
+              <button id="usuarios-btn"><i class="fas fa-plus"></i></button>
+              <button id="minimenu-btn"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="small-link-bar">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="{% url 'web:index' %}" class="nav-link">Inicio QbaRed</a>
                 </li>
-                {% endif %}
-                {% endfor %}                
+                <li class="nav-item">
+                    <a href="{% url 'sorteo:index' %}" class="nav-link">Sorteo</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'portal:dashboard' %}" class="nav-link">Portal</a>
+                </li>                       
             </ul>
-		</div>
-	</div>
+            </div>
+            {% if chat_id %}
+            <div class="otro-usuario">
+              <span><img src="{{ img_url }}" alt=""></span>
+              <div class="datos">
+                <p>{{ usuario2.username}}</p>
+                <span>última vez en línea {{usuario2.last_login | date:"P" }}</span>
+              </div>
+            </div>
+            <div class="caja-chat">
+                <div class="d-flex justify-content-center align-middle">
+                  <div id="chat-loader" class="spinner-border" role="status">
+                  </div>
+                </div>
+                <ul class="chat">                      
+                </ul>
+            </div>
+            <div class="chat-box">
+                <div class="input-group">
+                    <input id="chat-message-input" class="form-control border no-shadow no-rounded mx-2" placeholder="Escriba su mensaje...">
+                    <span class="input-group-btn">
+                        <button id="chat-message-submit" class="btn btn-success no-rounded" type="button">Enviar</button>
+                    </span>
+                </div>
+            </div>     
+            {% else %}
+            <div class="vacio text-center fs-4"><i class="fas fa-arrow-up"></i> Seleccione en el + con quiere chatear <i class="fas fa-arrow-up"></i></div>       
+            {% endif %}
+        </div>
+    </div>   
 </div>
+<script src="{% static 'web/js/reconnecting-websocket.js' %}"></script>
+{% if chat_id %}
+{{ request.user.username|json_script:"username" }}
+{{ chat_id|json_script:"chat_id" }}
+{{ request.user.profile.imagen.url|json_script:"img_src" }}
+{{ img_url|json_script:"img_url" }}
+
+<script>
+  const chat_id = JSON.parse(document.getElementById('chat_id').textContent);
+  const img_src = JSON.parse(document.getElementById('img_src').textContent);
+  const img_url = JSON.parse(document.getElementById('img_url').textContent);
+  const username = JSON.parse(document.getElementById('username').textContent);
+
+  var receivedAudio = new Audio('https://qbared.com/media/chat/starcraft_chat_sound.mp3');
+
+  const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/' + chat_id + '/');
+
+  const userList = []
+
+  function crearMensaje(mensaje) {      
+    var parListTag = document.createElement('li');
+    var contenido = document.createElement('p');
+    var p = document.createElement('p');
+    if (mensaje.autor === usuario) {
+        parListTag.className = "right clearfix chat-message";
+        contenido.className = 'text-end';
+        p.className = 'text-end text-muted';
+    } else {
+        parListTag.className = "left clearfix chat-message";
+        contenido.className = 'text-start';      
+        p.className = 'text-start text-muted';
+    }      
+    var div = document.createElement('div');
+    div.className = 'chat-body clearfix';      
+    p.textContent = new Date(mensaje.fecha).getHours() + ":" + new Date(mensaje.fecha).getMinutes();
+    contenido.textContent = mensaje.contenido;
+    div.appendChild(contenido);
+    div.appendChild(p);
+    parListTag.appendChild(div);
+    document.querySelector('.chat').appendChild(parListTag);
+    function scrolldown() {
+      var objDiv = document.querySelector('.caja-chat');
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
+    scrolldown();
+  };
+
+  function crearUsuarios(usuario) {
+    var userLi = document.createElement('li');
+    var userA = document.createElement('a');
+    userA.href = "/chat/" + usuario.username + "/";
+    var userImg = document.createElement('img');
+    userImg.className = 'img-circle';
+    userImg.src = usuario.img_url;
+    var div1 = document.createElement('div');
+    div1.className = 'friend-name';
+    var strong = document.createElement('strong');
+    strong.textContent = usuario.username;
+    div1.appendChild(strong);
+    var div2 = document.createElement('div');
+    div2.className = 'last-message text-muted';
+    div2.textContent = "Ultimo mensaje enviado";
+    var small1 = document.createElement('small');
+    small1.className = 'time text-muted';
+    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    var small2 = document.createElement('small');
+    small2.className = 'chat-alert label label-danger';
+    small2.id = usuario.id + " mensajes_no_leidos";
+    small2.textContent = "-";      
+    userA.appendChild(userImg);
+    userA.appendChild(div1);
+    userA.appendChild(div2);
+    userA.appendChild(small1);
+    userA.appendChild(small2);
+    userLi.appendChild(userA);
+    var list = document.querySelector('.friend-list').appendChild(userLi);
+  };
+
+  chatSocket.onopen = function(e) {
+    console.log("CHAT_SOCKET CONECTADO");
+    chatSocket.send(JSON.stringify({      
+        'accion': 'mensajes',
+        'data': {
+            'usuario': username,
+            'id': chat_id,
+        }
+    }));
+    chatSocket.send(JSON.stringify({
+      'accion': 'usuarios',
+      'data': {
+        'usuario': username
+      }
+    }));
+    chatSocket.send(JSON.stringify({
+      'accion': 'mensajes_no_vistos',
+      'data': {
+        'usuario': username
+      }
+    }));
+  };
+
+  chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data['accion'] === 'mensajes') {
+      var mensajes = data['mensajes'];
+      var list = document.querySelector('.chat');
+      while (list.firstChild) {
+          list.removeChild(list.firstChild);
+      };
+      var mensajes = mensajes.map(mensajes => {
+        crearMensaje(mensajes);
+      });
+      document.getElementById('chat-loader').style.display = 'none';
+    } else if (data['accion'] === 'mensaje_nuevo') {
+      crearMensaje(data['mensaje']);
+      if (data['mensaje'].autor != usuario) {
+        receivedAudio.play();
+      };
+    } else if (data['accion'] === 'usuarios') {
+      var usuarios = data['usuarios'];
+      var list = document.querySelector('.friend-list');
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = usuarios.map(usuarios => {
+        userList.push(usuarios);
+        crearUsuarios(usuarios);
+      });
+      document.getElementById('user-loader').style.display = 'none';
+    } else if (data['accion'] === 'mensajes_no_vistos') {
+      console.log(data);
+    }
+  };
+
+  const searchBar = document.querySelector('#searchText');
+
+  searchBar.addEventListener('keyup', (e) => {
+    const searchString = e.target.value.toLowerCase();
+    var list = document.querySelector('.friend-list');
+    if (searchString != '') {
+      const filteredUsers = userList.filter((character) => {
+        return (
+          character.username.toLowerCase().includes(searchString)
+        )
+      });
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = filteredUsers.map(usuario => {
+        crearUsuarios(usuario);
+      });
+    } else {
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = userList.map(usuario => {
+        crearUsuarios(usuario);
+      });
+    }
+  });
+
+  chatSocket.onclose = function(e) {
+      console.error('Chat socket closed unexpectedly');
+  };
+
+  document.querySelector('#chat-message-input').focus();
+  document.querySelector('#chat-message-input').onkeyup = function(e) {
+      if (e.keyCode === 13) {  // enter, return
+          document.querySelector('#chat-message-submit').click();
+      }
+  };
+
+  document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        if (message !== '') {
+          chatSocket.send(JSON.stringify({
+            'accion': 'mensaje_nuevo',
+            'data': {
+                'usuario': usuario,
+                'id': chat_id,
+                'mensaje': message
+            }
+          }));
+        };        
+        messageInputDom.value = '';
+    };
+</script>
+{% else %}
+{{ request.user.username|json_script:"username" }}
+<script>
+  const username = JSON.parse(document.getElementById('username').textContent);
+  const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/usuarios/');
+  const userList = []
+
+  function crearUsuarios(usuario) {
+    var userLi = document.createElement('li');
+    var userA = document.createElement('a');
+    userA.href = "/chat/" + usuario.username + "/";
+    var userImg = document.createElement('img');
+    userImg.className = 'img-circle';
+    userImg.src = usuario.img_url;
+    var div1 = document.createElement('div');
+    div1.className = 'friend-name';
+    var strong = document.createElement('strong');
+    strong.textContent = usuario.username;
+    div1.appendChild(strong);
+    var div2 = document.createElement('div');
+    div2.className = 'last-message text-muted';
+    div2.textContent = "Ultimo mensaje enviado";
+    var small1 = document.createElement('small');
+    small1.className = 'time text-muted';
+    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    var small2 = document.createElement('small');
+    small2.className = 'chat-alert label label-danger';
+    small2.id = usuario.id + "mensajes_no_leidos";
+    small2.textContent = "-";      
+    userA.appendChild(userImg);
+    userA.appendChild(div1);
+    userA.appendChild(div2);
+    userA.appendChild(small1);
+    userA.appendChild(small2);
+    userLi.appendChild(userA);
+    var list = document.querySelector('.friend-list').appendChild(userLi);
+  };
+
+  chatSocket.onopen = function(e) {
+      console.log("CHAT_SOCKET CONECTADO");      
+      chatSocket.send(JSON.stringify({
+        'accion': 'usuarios',
+        'data': {
+          'usuario': username
+        }
+      }));
+    };
+
+  chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data['accion'] === 'usuarios') {
+      var usuarios = data['usuarios'];
+      var list = document.querySelector('.friend-list');
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = usuarios.map(usuarios => {
+        userList.push(usuarios);
+        crearUsuarios(usuarios);
+      });
+      document.getElementById('user-loader').style.display = 'none';
+    }
+  };
+
+  const searchBar = document.querySelector('#searchText');
+
+  searchBar.addEventListener('keyup', (e) => {
+    const searchString = e.target.value.toLowerCase();
+    var list = document.querySelector('.friend-list');
+    if (searchString != '') {
+      const filteredUsers = userList.filter((character) => {
+        return (
+          character.username.toLowerCase().includes(searchString)
+        )
+      });
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = filteredUsers.map(usuario => {
+        crearUsuarios(usuario);
+      });
+    } else {
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = userList.map(usuario => {
+        crearUsuarios(usuario);
+      });
+    }
+  });
+
+  chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+  };
+</script>
+{% endif %}
+
+{% if mensaje %}
+{{ mensaje|json_script:"mensaje" }}
+{{ icon|json_script:"icon" }}
+<script>
+    var mensaje = JSON.parse(document.getElementById('mensaje').textContent);
+    var icon = JSON.parse(document.getElementById('icon').textContent);
+    var resultado = 'Upss!';
+    var botonColor = '#d33';
+    if (icon === 'success') {
+        var resultado = 'Listo!';
+        var botonColor = '#007000';
+    }
+    window.onload = function(){
+        Swal.fire({
+            title: resultado,
+            text: mensaje,
+            icon: icon,
+            confirmButtonColor: botonColor,
+        }) 
+    };                 
+</script>
+{% endif %}
+{% endblock content %}
+
+{% block footer %}
+
 {% endblock %}
+
+{% block script %}
+<script src="{% static 'chat/js/main.js' %}"></script>
+<script src="{% static 'web/js/swiper-bundle.min.js' %}"></script>
+<!-- custom js file links  -->
+<script src="{% static 'web/js/aos.js' %}"></script>
+<script>
+  AOS.init({
+      delay:400,
+      duration:800
+  });
+</script>
+{% endblock script %}
