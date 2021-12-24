@@ -231,18 +231,55 @@ button:focus {
 .panel-lateral {
     padding: 0;
 }
+.tab-usuarios {
+    position: fixed;
+    display: none;
+    padding: 10px;
+}
+.tab-usuarios.active {
+    display: block;
+}
+.tab-contactos {
+    position: fixed;
+    display: none;
+    padding: 10px;
+}
+.tab-contactos.active {
+    display: block;
+}
+.menu-chat {
+    position: fixed;
+    display: flex;
+    right: 20px;
+    z-index: 250;
+    height: 35px;
+}
+.menu-chat button {
+    border: hidden;
+    margin: 5px;
+    background: transparent;
+    font-size: 14px;
+}
+.menu-chat button.active {
+    border-radius: 50%;
+    border: 1px black;
+    background: #3c8dbc;
+}
+#minimenu-btn {
+    display: none;
+}
 .usuarios {
     height: 500px;
     overflow: auto;
 }
-.friend-list {
+.friend-list, .chating-list {
     list-style: none;
     margin-left: -40px;
 }
-.friend-list li {
+.friend-list li, .chating-list li {
     border-bottom: 1px solid #f0f0f0;
 }
-.friend-list li a {
+.friend-list li a, .chating-list li a {
     position: relative;
     text-decoration: none;
     color: #222;
@@ -255,26 +292,26 @@ button:focus {
     -ms-transition: all .2s ease;
     -o-transition: all .2s ease;
 }
-.friend-list li a:hover {
+.friend-list li a:hover, .chating-list li a:hover {
     color: #fff;
     background-color: rgba(119, 119, 119, 0.692);
 }
-.friend-list li a img {
+.friend-list li a img, .chating-list li a img {
     float: left;
     width: 45px;
     height: 45px;
     margin-right: 10px;
 }  
-.friend-list li.active a {
+.friend-list li.active a, .chating-list li.active a {
     background-color: #777;
 }
-.friend-list li a .last-message {
+.friend-list li a .last-message, .chating-list li a .last-message {
     width: 65%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.friend-list li a .time {
+.friend-list li a .time, .chating-list li a .time {
     position: absolute;
     top: 10px;
     right: 8px;
@@ -282,7 +319,7 @@ button:focus {
 small, .small {
     font-size: 85%;
 }  
-.friend-list li a .chat-alert {
+.friend-list li a .chat-alert, .chating-list li a .chat-alert {
     position: absolute;
     right: 8px;
     top: 27px;
@@ -291,16 +328,17 @@ small, .small {
 }
 
 .contenedor-chat {
-    padding: 0;
+    padding: 10px;
     margin: auto;
-}
-.nuevo-chat {
-    visibility: hidden;
-    position: fixed;
 }
 .small-link-bar {
     visibility: hidden;
     position: fixed;
+}
+.vacio {
+    margin-top: 200px;
+    padding: 20px;
+    font-size: 16px;
 }
 .otro-usuario {
     height: 50px;
@@ -447,8 +485,17 @@ a:hover, a:active, a:focus {
     .panel-lateral {
         visibility: hidden;
     }
+    .tab-usuarios {
+        width: 100%;
+    }
+    .tab-contactos {
+        width: 100%;
+    }
     .header-default {
         visibility: hidden;
+    }
+    #minimenu-btn {
+        display: block;
     }
     .usuarios {
         height: calc(100vh - 150px);
@@ -472,30 +519,16 @@ a:hover, a:active, a:focus {
         visibility: visible;        
         margin-left: 60px;
     }
-    .nuevo-chat {
-        position: absolute;
-        z-index: 200;
+    .menu-chat {
         top: 20px;
-        right: 20px;
-        visibility: visible;
-    }
-    .nuevo-chat button {
-        border: hidden;
-        margin: 5px;
-        background: transparent;
-        font-size: 14px;
-    }
+    }    
     .otro-usuario {
         position: fixed;
         top: 10px;
         left: 10px;
         right: 0;
         height: 60px;
-    }
-    .vacio {
-        margin-top: 200px;
-        padding: 20px;
-    }
+    }    
     .caja-chat {
         position: fixed;
         top: 60px;

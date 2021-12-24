@@ -83,7 +83,6 @@ class ChatConsumer(WebsocketConsumer):
         respuesta = {'estado': False}
         usuarios = User.objects.all().exclude(username=data['usuario'])
         respuesta['accion'] = 'usuarios'
-        username = data['usuario']
         respuesta['usuarios'] = self.usuarios_to_json(usuarios)      
         respuesta['estado'] = True
         self.responder(respuesta)
@@ -105,13 +104,43 @@ class ChatConsumer(WebsocketConsumer):
             respuesta['accion'] = 'mensajes_no_vistos'
             respuesta['mensajes_no_vistos'] = cantidad
             respuesta['estado'] = True
-            self.responder(respuesta)        
+            self.responder(respuesta)     
+
+    def chats(self, data):
+        respuesta = {'estado': False}
+        usuario = User.objects.get(username=data['usuario'])
+        chats = usuario.chat_set.all()
+        if chats:
+            chats_list = []
+            cantidad = 0        
+            for chat in chats:
+                contacto = chat.participantes.all().exclude(username=usuario.username)
+                contacto = contacto.values('username')[0]
+                mensajes = chat.mensajes.all()
+                ultimo_mensaje = 'sin mensajes :-('
+                if mensajes:
+                    contacto_mensajes = chat.mensajes.all().exclude(autor=usuario.id).order_by('-fecha')
+                    ultimo_mensaje_try = contacto_mensajes[:1]
+                    if ultimo_mensaje_try:
+                        ultimo_mensaje = ultimo_mensaje_try[0].contenido
+                    mensajes_nuevos = contacto_mensajes.count()               
+                new_chat = {'numero': cantidad, 'id': chat.id, 'contacto': contacto['username'], 'ultimo_mensaje': ultimo_mensaje, 'mensajes_nuevos': mensajes_nuevos}
+                cantidad = cantidad + 1
+                chats_list.append(new_chat)
+            respuesta['accion'] = 'chats'
+            respuesta['chats_list'] = chats_list
+            respuesta['estado'] = True
+            self.responder(respuesta)
+        else:
+            respuesta['mensaje'] = 'ningún chat creado aún'
+            self.responder(respuesta)
 
     acciones = {
         'mensajes': mensajes,
         'mensaje_nuevo': mensaje_nuevo,
         'usuarios': usuarios,
         'mensajes_no_vistos': mensajes_no_vistos,
+        'chats': chats,
     }
 
     # Receive message from WebSocket

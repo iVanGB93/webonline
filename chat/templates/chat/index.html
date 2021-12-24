@@ -66,72 +66,96 @@
 {% endblock %}
 
 {% block content %}
-<div class="contenedor">
-    <div class="row">
-        <div class="col-none col-md-4 panel-lateral order-2 order-md-1">            
-            <div class="searchBox my-2">
-              <div class="col-sm-12 searchBox-inner">
-                <div class="form-group has-feedback">
-                  <input id="searchText" type="text" class="form-control" name="searchText" placeholder="Buscar...">
-                </div>
-              </div>
+<div class="contenedor">  
+  <div class="menu-chat">
+    <button id="contactos-btn" class="active"><i class="fas fa-search"></i></button>
+    <button id="usuarios-btn"><i class="fas fa-plus"></i></button>
+    <button id="minimenu-btn"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="row">
+    <div class="col-none col-md-4 panel-lateral order-2 order-md-1">
+      <div class="tab-usuarios">
+        <div class="searchBox my-2">
+          <div class="col-sm-12 searchBox-inner">
+            <div class="form-group has-feedback">
+              <input id="searchText" type="text" class="form-control" name="searchText" placeholder="Buscar...">
             </div>
-            <div class="usuarios">              
-              <div class="d-flex justify-content-center align-middle">
-                <div id="user-loader" class="spinner-border" role="status">
-                </div>
-              </div>
-              <ul class="friend-list">
-              </ul>
-            </div>
+          </div>
         </div>
-        <div class="col-12 col-md-8 contenedor-chat order-1 order-md-2">
-            <div class="nuevo-chat">
-              <button id="usuarios-btn"><i class="fas fa-plus"></i></button>
-              <button id="minimenu-btn"><i class="fas fa-bars"></i></button>
+        <div class="usuarios">              
+          <div class="d-flex justify-content-center align-middle">
+            <div id="user-loader" class="spinner-border" role="status">
             </div>
-            <div class="small-link-bar">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a href="{% url 'web:index' %}" class="nav-link">Inicio QbaRed</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'sorteo:index' %}" class="nav-link">Sorteo</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'portal:dashboard' %}" class="nav-link">Portal</a>
-                </li>                       
-            </ul>
-            </div>
-            {% if chat_id %}
-            <div class="otro-usuario">
-              <span><img src="{{ img_url }}" alt=""></span>
-              <div class="datos">
-                <p>{{ usuario2.username}}</p>
-                <span>última vez en línea {{usuario2.last_login | date:"P" }}</span>
-              </div>
-            </div>
-            <div class="caja-chat">
-                <div class="d-flex justify-content-center align-middle">
-                  <div id="chat-loader" class="spinner-border" role="status">
-                  </div>
-                </div>
-                <ul class="chat">                      
-                </ul>
-            </div>
-            <div class="chat-box">
-                <div class="input-group">
-                    <input id="chat-message-input" class="form-control border no-shadow no-rounded mx-2" placeholder="Escriba su mensaje...">
-                    <span class="input-group-btn">
-                        <button id="chat-message-submit" class="btn btn-success no-rounded" type="button">Enviar</button>
-                    </span>
-                </div>
-            </div>     
-            {% else %}
-            <div class="vacio text-center fs-4"><i class="fas fa-arrow-up"></i> Seleccione en el + con quiere chatear <i class="fas fa-arrow-up"></i></div>       
-            {% endif %}
+          </div>
+          <ul class="friend-list">
+          </ul>
         </div>
-    </div>   
+      </div>
+      <div class="tab-contactos active">
+        <div class="searchBox my-2">
+          <div class="col-sm-12 searchBox-inner">
+            <div class="form-group has-feedback">
+              <input id="searchTextContacts" type="text" class="form-control" name="searchTextContacts" placeholder="Buscar...">
+            </div>
+          </div>
+        </div>
+        <div class="usuarios chats">              
+          <div class="d-flex justify-content-center align-middle">
+            <div id="user-chats-loader" class="spinner-border" role="status"></div>
+          </div>
+          <ul class="chating-list">
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-8 contenedor-chat order-1 order-md-2">      
+      <div class="small-link-bar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+              <a href="{% url 'web:index' %}" class="nav-link">Inicio QbaRed</a>
+          </li>
+          <li class="nav-item">
+              <a href="{% url 'sorteo:index' %}" class="nav-link">Sorteo</a>
+          </li>
+          <li class="nav-item">
+              <a href="{% url 'portal:dashboard' %}" class="nav-link">Portal</a>
+          </li>                       
+        </ul>
+      </div>      
+      {% if chat_id %}
+      <div class="otro-usuario">
+        <span><img src="{{ img_url }}" alt=""></span>
+        <div class="datos">
+          <p>{{ usuario2.username}}</p>
+          <span>última vez en línea {{usuario2.last_login | date:"P" }}</span>
+        </div>
+      </div>
+      <div class="caja-chat">
+          <div class="d-flex justify-content-center align-middle">
+            <div id="chat-loader" class="spinner-border" role="status">
+            </div>
+          </div>
+          <ul class="chat">                      
+          </ul>
+      </div>
+      <div class="chat-box">
+          <div class="input-group">
+              <input id="chat-message-input" class="form-control border no-shadow no-rounded mx-2" placeholder="Escriba su mensaje...">
+              <span class="input-group-btn">
+                  <button id="chat-message-submit" class="btn btn-success no-rounded" type="button">Enviar</button>
+              </span>
+          </div>
+      </div>     
+      {% else %}
+      <div class="vacio text-center">
+        <ul>
+          <li>Use el + para iniciar una nuevo chat</li>
+          <li>Use la <i class="fas fa-search"></i> para continuar un chat</li>
+        </ul> 
+      </div>       
+      {% endif %}
+    </div>
+  </div>   
 </div>
 <script src="{% static 'web/js/reconnecting-websocket.js' %}"></script>
 {% if chat_id %}
@@ -140,17 +164,19 @@
 {{ request.user.profile.imagen.url|json_script:"img_src" }}
 {{ img_url|json_script:"img_url" }}
 
-<script>
+<script type="text/javascript">
   const chat_id = JSON.parse(document.getElementById('chat_id').textContent);
   const img_src = JSON.parse(document.getElementById('img_src').textContent);
   const img_url = JSON.parse(document.getElementById('img_url').textContent);
   const username = JSON.parse(document.getElementById('username').textContent);
 
-  var receivedAudio = new Audio('https://qbared.com/media/chat/starcraft_chat_sound.mp3');
+  var audioPath = "{% static 'chat/starcraft_chat_sound.mp3' %}";
+  var receivedAudio = new Audio(audioPath);
 
   const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/' + chat_id + '/');
 
   const userList = []
+  const contactosList = []
 
   function crearMensaje(mensaje) {      
     var parListTag = document.createElement('li');
@@ -197,11 +223,11 @@
     div2.textContent = "Ultimo mensaje enviado";
     var small1 = document.createElement('small');
     small1.className = 'time text-muted';
-    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    small1.textContent = "";
+    /* small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes(); */
     var small2 = document.createElement('small');
     small2.className = 'chat-alert label label-danger';
-    small2.id = usuario.id + " mensajes_no_leidos";
-    small2.textContent = "-";      
+    small2.textContent = "";      
     userA.appendChild(userImg);
     userA.appendChild(div1);
     userA.appendChild(div2);
@@ -209,6 +235,36 @@
     userA.appendChild(small2);
     userLi.appendChild(userA);
     var list = document.querySelector('.friend-list').appendChild(userLi);
+  };
+
+  function crearContactos(usuario) {
+    var userLi = document.createElement('li');
+    var userA = document.createElement('a');
+    userA.href = "/chat/" + usuario.contacto + "/";
+    var userImg = document.createElement('img');
+    userImg.className = 'img-circle';
+    userImg.src = "/none/";
+    var div1 = document.createElement('div');
+    div1.className = 'friend-name';
+    var strong = document.createElement('strong');
+    strong.textContent = usuario.contacto;
+    div1.appendChild(strong);
+    var div2 = document.createElement('div');
+    div2.className = 'last-message text-muted';
+    div2.textContent = usuario.ultimo_mensaje;
+    var small1 = document.createElement('small');
+    small1.className = 'time text-muted';
+    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    var small2 = document.createElement('small');
+    small2.className = 'chat-alert label label-danger';
+    small2.textContent = usuario.mensajes_nuevos;      
+    userA.appendChild(userImg);
+    userA.appendChild(div1);
+    userA.appendChild(div2);
+    userA.appendChild(small1);
+    userA.appendChild(small2);
+    userLi.appendChild(userA);
+    var list = document.querySelector('.chating-list').appendChild(userLi);
   };
 
   chatSocket.onopen = function(e) {
@@ -220,23 +276,17 @@
             'id': chat_id,
         }
     }));
-    chatSocket.send(JSON.stringify({
-      'accion': 'usuarios',
-      'data': {
-        'usuario': username
-      }
-    }));
-    chatSocket.send(JSON.stringify({
-      'accion': 'mensajes_no_vistos',
-      'data': {
-        'usuario': username
-      }
-    }));
   };
 
   chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     if (data['accion'] === 'mensajes') {
+      chatSocket.send(JSON.stringify({
+        'accion': 'chats',
+        'data': {
+          'usuario': username
+        }
+      }));
       var mensajes = data['mensajes'];
       var list = document.querySelector('.chat');
       while (list.firstChild) {
@@ -262,12 +312,53 @@
         crearUsuarios(usuarios);
       });
       document.getElementById('user-loader').style.display = 'none';
-    } else if (data['accion'] === 'mensajes_no_vistos') {
-      console.log(data);
+    } else if (data['accion'] === 'chats') {
+      chatSocket.send(JSON.stringify({
+        'accion': 'usuarios',
+        'data': {
+          'usuario': username
+        }
+      }));
+      var chats = data['chats_list'];
+      var list = document.querySelector('.chating-list');
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var chats = chats.map(chats => {
+        contactosList.push(chats);
+        crearContactos(chats);
+      });
+      document.getElementById('user-chats-loader').style.display = 'none';
     }
   };
 
   const searchBar = document.querySelector('#searchText');
+  const searchBarContacts = document.querySelector('#searchTextContacts');
+
+  searchBarContacts.addEventListener('keyup', (e) => {
+    var searchString = e.target.value.toLowerCase();
+    var list = document.querySelector('.chating-list');
+    if (searchString != '') {
+      var filteredUsers = contactosList.filter((character) => {
+        return (
+          character.contacto.toLowerCase().includes(searchString)
+        )
+      });
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = filteredUsers.map(usuario => {
+        crearContactos(usuario);
+      });
+    } else {
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = contactosList.map(usuario => {
+        crearContactos(usuario);
+      });
+    }
+  });
 
   searchBar.addEventListener('keyup', (e) => {
     const searchString = e.target.value.toLowerCase();
@@ -327,6 +418,7 @@
   const username = JSON.parse(document.getElementById('username').textContent);
   const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/usuarios/');
   const userList = []
+  const contactosList = []
 
   function crearUsuarios(usuario) {
     var userLi = document.createElement('li');
@@ -342,14 +434,15 @@
     div1.appendChild(strong);
     var div2 = document.createElement('div');
     div2.className = 'last-message text-muted';
-    div2.textContent = "Ultimo mensaje enviado";
+    div2.textContent = "hola, algo que decirme?";
     var small1 = document.createElement('small');
     small1.className = 'time text-muted';
-    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    small1.textContent = "";
+    /* small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes(); */
     var small2 = document.createElement('small');
     small2.className = 'chat-alert label label-danger';
     small2.id = usuario.id + "mensajes_no_leidos";
-    small2.textContent = "-";      
+    small2.textContent = "";      
     userA.appendChild(userImg);
     userA.appendChild(div1);
     userA.appendChild(div2);
@@ -359,10 +452,40 @@
     var list = document.querySelector('.friend-list').appendChild(userLi);
   };
 
+  function crearContactos(usuario) {
+    var userLi = document.createElement('li');
+    var userA = document.createElement('a');
+    userA.href = "/chat/" + usuario.contacto + "/";
+    var userImg = document.createElement('img');
+    userImg.className = 'img-circle';
+    userImg.src = "/none/";
+    var div1 = document.createElement('div');
+    div1.className = 'friend-name';
+    var strong = document.createElement('strong');
+    strong.textContent = usuario.contacto;
+    div1.appendChild(strong);
+    var div2 = document.createElement('div');
+    div2.className = 'last-message text-muted';
+    div2.textContent = usuario.ultimo_mensaje;
+    var small1 = document.createElement('small');
+    small1.className = 'time text-muted';
+    small1.textContent = new Date(usuario.last_login).getHours() + ":" + new Date(usuario.last_login).getMinutes();
+    var small2 = document.createElement('small');
+    small2.className = 'chat-alert label label-danger';
+    small2.textContent = usuario.mensajes_nuevos;      
+    userA.appendChild(userImg);
+    userA.appendChild(div1);
+    userA.appendChild(div2);
+    userA.appendChild(small1);
+    userA.appendChild(small2);
+    userLi.appendChild(userA);
+    var list = document.querySelector('.chating-list').appendChild(userLi);
+  };
+
   chatSocket.onopen = function(e) {
       console.log("CHAT_SOCKET CONECTADO");      
       chatSocket.send(JSON.stringify({
-        'accion': 'usuarios',
+        'accion': 'chats',
         'data': {
           'usuario': username
         }
@@ -382,13 +505,57 @@
         crearUsuarios(usuarios);
       });
       document.getElementById('user-loader').style.display = 'none';
+    } else if (data['accion'] === 'chats') {
+      chatSocket.send(JSON.stringify({
+        'accion': 'usuarios',
+        'data': {
+          'usuario': username
+        }
+      }));
+      var chats = data['chats_list'];
+      var list = document.querySelector('.chating-list');
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var chats = chats.map(chats => {
+        contactosList.push(chats);
+        crearContactos(chats);
+      });
+      document.getElementById('user-chats-loader').style.display = 'none';
+
     }
   };
 
   const searchBar = document.querySelector('#searchText');
+  const searchBarContacts = document.querySelector('#searchTextContacts');
+
+  searchBarContacts.addEventListener('keyup', (e) => {
+    var searchString = e.target.value.toLowerCase();
+    var list = document.querySelector('.chating-list');
+    if (searchString != '') {
+      var filteredUsers = contactosList.filter((character) => {
+        return (
+          character.contacto.toLowerCase().includes(searchString)
+        )
+      });
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = filteredUsers.map(usuario => {
+        crearContactos(usuario);
+      });
+    } else {
+      while (list.firstChild) {
+        list.removeChild(list.firstChild);
+      };
+      var usuarios = contactosList.map(usuario => {
+        crearContactos(usuario);
+      });
+    }
+  });
 
   searchBar.addEventListener('keyup', (e) => {
-    const searchString = e.target.value.toLowerCase();
+    var searchString = e.target.value.toLowerCase();
     var list = document.querySelector('.friend-list');
     if (searchString != '') {
       const filteredUsers = userList.filter((character) => {
