@@ -1,3 +1,16 @@
+#navbarCollapse ul li a {
+    text-decoration: none;
+    color: blanchedalmond;
+    margin-inline: 10px;
+}
+
+.usuarios-list li a {
+    text-decoration: none;
+}
+.usuarios-list li a:hover {
+    text-decoration: underline;
+}
+
 .contenido {
     min-height: 70vh;
     width: 100%;

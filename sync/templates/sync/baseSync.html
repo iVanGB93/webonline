@@ -1,17 +1,45 @@
 {% extends 'web/base.html' %}
 {% load static %}
 {% block title %} - Control{% endblock title %}
-{% block content %}
+{% block head %}
 <link rel="stylesheet" href="{% static 'sync/style.css' %}">
+{% endblock %}
+{% block header %}
+<header>
+    <nav class="navtop navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'web:index' %}">QbaRed</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav m-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
+                    </li>  
+                    <li class="nav-item m-auto iconos">
+                        <img id="boton_notificaciones" class="img-fluid rounded" style="width: 30px; height: 30px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
+                          <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                          </span>
+                        </img>                
+                    </li>               
+                </ul>        
+            </div>
+        </div>
+    </nav>      
+</header>
+{% endblock %}
+{% block content %}
 <div style="background-color: rgba(20, 126, 187, 0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
 <div class="row contenido">
     <div class="col-10 col-md-9 order-2 order-md-1 m-auto p-0 mt-4">
-        <div class="col-12 col-md-10 m-auto">
-            {% if mensaje %}
-                <div class="alert alert-warning text-center my-2" role="alert">                   
-                    {{ mensaje }}                
-                </div> 
-            {% endif %}
+        <div class="col-12 col-md-10 m-auto">            
             {% block contenido %}
             {% endblock contenido %}
         </div>
@@ -26,7 +54,7 @@
                     <li class="my-1">
                         <a href="{% url 'sync:control' %}">
                             <button class="form-control btn btn-info">
-                                Detalles
+                                Buscar
                             </button>
                         </a>
                     </li>
@@ -77,4 +105,26 @@
         </div>
     </div>
 </div>
+{% if mensaje %}
+{{ mensaje|json_script:"mensaje" }}
+{{ icon|json_script:"icon" }}
+<script>
+    var mensaje = JSON.parse(document.getElementById('mensaje').textContent);
+    var icon = JSON.parse(document.getElementById('icon').textContent);
+    var resultado = 'Upss!';
+    var botonColor = '#d33';
+    if (icon === 'success') {
+        var resultado = 'Listo!';
+        var botonColor = '#007000';
+    }
+    window.onload = function(){
+        Swal.fire({
+            title: resultado,
+            text: mensaje,
+            icon: icon,
+            confirmButtonColor: botonColor,
+        }) 
+    }             
+</script>
+{% endif %}
 {% endblock content %}

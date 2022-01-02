@@ -58,21 +58,21 @@
 </div>
 <script src="{% static 'sorteo/reconnecting-websocket.js' %}"></script>
 <script>
-    var socket = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
+    var socketControlSorteo = new ReconnectingWebSocket('wss://qbared.com/ws/sorteo/running/');
     var resultado = document.querySelector('#resultado');
     var activo = false
     var finalizado = true
 
-    socket.onopen = function(e) {
+    socketControlSorteo.onopen = function(e) {
         console.log('socket conectado');
-        socket.send(JSON.stringify({
+        socketControlSorteo.send(JSON.stringify({
             'accion': 'saludo',
             'data': {
                 'identidad': 'primera'
             }
         })); 
     }
-    socket.onmessage = function(e){
+    socketControlSorteo.onmessage = function(e){
         var data = JSON.parse(e.data);
         if (data['estado'] === true) {
             if (data['finalizado'] === true) {
@@ -106,7 +106,7 @@
                 if (activo === true && finalizado === false) {
                     setTimeout(roll, 3000);
                     function roll() {
-                        socket.send(JSON.stringify({
+                        socketControlSorteo.send(JSON.stringify({
                             'accion': 'sortear',
                             'data': 'nada'
                         }))
@@ -117,7 +117,7 @@
                 if (activo === true && finalizado === false) {
                     setTimeout(roll, 3000);
                     function roll() {
-                        socket.send(JSON.stringify({
+                        socketControlSorteo.send(JSON.stringify({
                             'accion': 'participantes',
                             'data': {
                                 'desde': 'control'
@@ -130,11 +130,11 @@
             resultado.innerText = "Error de conexión!!!";
         }
     }
-    socket.onclose = function(e) {
+    socketControlSorteo.onclose = function(e) {
         console.error('socket cerrado');
     }
     document.querySelector('#boton_saludo').onclick = function(e) {
-        socket.send(JSON.stringify({
+        socketControlSorteo.send(JSON.stringify({
             'accion': 'saludo',
             'data': {
                 'identidad': 'primera'
@@ -142,19 +142,19 @@
         }));
     }
     document.querySelector('#boton_empezar').onclick = function(e) {
-        socket.send(JSON.stringify({
+        socketControlSorteo.send(JSON.stringify({
             'accion': 'empezar',
             'data': 'nada'
         }));
     }
     document.querySelector('#boton_sortear').onclick = function(e) {
-        socket.send(JSON.stringify({
+        socketControlSorteo.send(JSON.stringify({
             'accion': 'sortear',
             'data': 'nada'
         }));
     }
     document.querySelector('#boton_participantes').onclick = function(e) {
-        socket.send(JSON.stringify({
+        socketControlSorteo.send(JSON.stringify({
             'accion': 'participantes',
             'data': {
                 'desde': 'control'

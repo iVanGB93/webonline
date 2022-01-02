@@ -1,0 +1,98 @@
+{% extends 'sync/baseSync.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Buscar usuario:</h5>
+        </div>
+        <div class="card-body m-auto my-3">
+            <form id="form_buscar" action="{% url 'sync:control' %}" method="POST" style="max-width: 300px;">
+                {% csrf_token%}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingUsuario" required name="usuario" placeholder="nombre de usuario">
+                    <label for="floatingUsuario">nombre de usuario</label>
+                </div>                
+                <button id="boton_buscar" type="submit" class="form-control btn btn-info">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner_buscar" style='display: none;'></span>
+                    Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Detalles:</h5>
+        </div>
+        <div class="card-body m-auto my-3">
+            <div class="row">
+                <strong>Usuario:</strong>{{ usuario.username }}, saldo: {{ usuario.profile.coins }}coins.
+            </div>
+            <div class="row">
+                <strong>Servicios:</strong>
+                <ul>
+                    <li>Internet ----> {% if usuario.estadoservicio.internet %} Activado, hasta {{ usuario.estadoservicio.int_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>Joven Club --> {% if usuario.estadoservicio.jc %} Activado, hasta {{ usuario.estadoservicio.jc_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>Emby --------> {% if usuario.estadoservicio.emby %} Activado, hasta {{ usuario.estadoservicio.emby_time }} {% else %} Desactivado {% endif %}</li>
+                    <li>FTP ---------> {% if usuario.estadoservicio.ftp %} Activado, hasta {{ usuario.estadoservicio.ftp_time }} {% else %} Desactivado {% endif %}</li>
+                </ul>
+            </div>            
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Funciones:</h5>
+        </div>
+        <div class="card-body m-auto my-3">
+            <ul>
+                <li><a class="text-dark" href="{% url 'sync:funcion' usuario.id 'des_internet' %}">Desactivar internet</a></li>                
+                <li><a class="text-dark" href="{% url 'sync:funcion' usuario.id 'des_emby' %}">Desactivar emby</a></li>                
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="col-12 m-auto overflow-scroll">
+    <table class="table table-light table-hover text-center">
+        <thead class="table-dark text-white">
+            <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Servicio</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Código Recarga</th>
+            <th scope="col">Destino</th>
+            <th scope="col">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in opers %}
+            <tr>
+                <th scope="row">{{ o.code }}</th>
+                <td>{{ o.tipo }}</td>
+                {% if o.servicio %}
+                    <td>{{ o.servicio }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}            
+                <td>{{ o.cantidad }}</td>
+                {% if o.codRec %}
+                    <td>{{ o.codRec }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}    
+                {% if o.haciaDesde %}
+                    <td>{{ o.haciaDesde }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %} 
+                <td>{{ o.fecha }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>   
+    </table>
+</div>
+{% endblock contenido %}
