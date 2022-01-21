@@ -304,7 +304,7 @@
     .then(data => {
       slp_price = data["smooth-love-potion"]["usd"];
       document.querySelector('#slp_precio').innerHTML = "≈" + slp_price + " USD"
-      const wallets = ["0xee1982d1875148dee9e0aa28083a0161e6e724e5", "0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd"];
+      const wallets = ["0x632ba8b593d19190a5df2f72b80825f450af957a", "0x441d21b7b3db676551c41ecf02d7fcfc0f08906a", "0xfdbb86c8ccb57b47d201645900da4f9c6a0edffd", "0x58d7038e436951b45b99d9aa7eb3623336e5e80f"];
       for (let i = 0; i < wallets.length; i++) {
         fetch("https://axie-infinity.p.rapidapi.com/get-update/" + wallets[i] + "?id=" + wallets[i], {
           "method": "GET",
