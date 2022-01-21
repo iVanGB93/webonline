@@ -5,8 +5,10 @@ from django.utils import timezone
 
 class Mensaje(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    destinos = models.ManyToManyField(User, related_name='destinos')
     contenido = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
+    entregado = models.BooleanField(default=False)
     visto = models.BooleanField(default=False)
     sync = models.BooleanField(default=False)
 
