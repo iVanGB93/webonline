@@ -8,6 +8,7 @@ from django.utils import timezone
 from servicios.models import EstadoServicio, Recarga, Oper
 from users.models import Profile, Notificacion
 from sorteo.models import Sorteo, SorteoDetalle
+import datetime
 
 import time
 
@@ -25,7 +26,7 @@ def control(request):
 @login_required(login_url='/users/login/')
 def detalles(request, id):
     usuario = User.objects.get(id=id)
-    opers = Oper.objects.filter(usuario=usuario)
+    opers = Oper.objects.filter(usuario=usuario).order_by('-fecha')
     content = {"usuario": usuario, "opers": opers}
     return render(request, 'sync/detalle_usuario.html', content)
 
@@ -46,8 +47,8 @@ def funcion(request, id, funcion):
         servicio.emby = False
         servicio.emby_time = None
         servicio.emby_auto = False        
-        content['mensaje'] = "Emby desactivado con éxito."  
-    content['icon'] = 'success' 
+        content['mensaje'] = "Emby desactivado con éxito."
+    content['icon'] = 'success'
     servicio.sync = False
     servicio.save()       
     return render(request, 'sync/detalle_usuario.html', content)
@@ -240,13 +241,12 @@ def actualizar_servicio(request, id):
 
 @login_required(login_url='/users/login/')
 def control_recargas(request):
-    empieza = time.time()
     if request.method == 'POST':
         if request.POST.get('code'):
             code = request.POST['code']
             if Recarga.objects.filter(code=code).exists():
-                recargas = Recarga.objects.filter(code=code)
-                content = {'recarga': recargas}
+                recarga = Recarga.objects.get(code=code)
+                content = {'recarga': recarga}
                 return render(request, 'sync/control_recargas.html', content)
             else:            
                 data = {'usuario': str(request.user), 'check': True, 'code': code}
@@ -268,8 +268,6 @@ def control_recargas(request):
                 recarga.save()      
             mensaje = 'Recargas guardadas'
             content = {'recargas': recargas, 'mensaje': mensaje}
-            termina = time.time() - empieza
-            print(f"DEMORO {termina} sec")
             return render(request, 'sync/control_recargas.html', content)
         else:
             mensaje = 'Algo salio mal con el POST'
@@ -404,3 +402,30 @@ def control_avanzado(request):
                 return render(request, 'sync/control_avanzado.html', content)
     else:
         return render(request, 'sync/control_avanzado.html')
+
+
+def control_finanzas(request):
+    month = timezone.now().month
+    year = timezone.now().year
+    days = timezone.now().day
+    if month == 2:
+        day = 28
+    elif month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
+        day = 31
+    else:
+        day = 30
+    start = datetime.date(year, month, 1)
+    end = datetime.date(year, month, day)
+    operaciones = Oper.objects.filter(fecha__range=[start, end])
+    opers = []
+    earnings = 0
+    spended = days * 600
+    for oper in operaciones:
+        if oper.tipo == 'PAGO':
+            if oper.fecha.day == days:
+                opers.append(oper)
+            earnings = earnings + oper.cantidad
+    net = earnings - spended
+    half = net / 2
+    content = {'month': month, 'days': days, 'opers': opers, 'earnings': earnings, 'spended': spended, 'net': net, 'half': half}
+    return render(request, 'sync/control_finanzas.html', content)

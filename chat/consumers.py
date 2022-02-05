@@ -28,9 +28,12 @@ class ChatConsumer(WebsocketConsumer):
     def mensaje_to_json(self, mensaje):
         return {
             'id': mensaje.id,
+            'chatId': mensaje.chat_set.all()[0].id,
             'autor': mensaje.autor.username,
             'contenido': mensaje.contenido,
-            'fecha': str(mensaje.fecha)
+            'fecha': str(mensaje.fecha),
+            'entregado': mensaje.entregado,
+            'visto': mensaje.visto,
         }
     
     def mensajes_to_json(self, mensajes):
@@ -54,16 +57,29 @@ class ChatConsumer(WebsocketConsumer):
         respuesta = {'estado': False}
         chat_id = data['id']
         usuario = User.objects.get(username=data['usuario'])
+        destino = User.objects.get(username=data['destino'])
         contenido = data['mensaje']
         mensaje = Mensaje(autor=usuario, contenido=contenido)
         if Chat.objects.filter(id=chat_id).exists():
             chat = Chat.objects.get(id=chat_id)
+            mensaje.sync = True
+            mensaje.save()
+            mensaje.destinos.add(destino)
             mensaje.save()
             chat.mensajes.add(mensaje)
             respuesta['accion'] = 'mensaje_nuevo'
-            respuesta['mensaje'] = self.mensaje_to_json(mensaje)      
+            respuesta['mensaje'] = self.mensaje_to_json(mensaje)
             respuesta['estado'] = True
             self.responder_grupo(respuesta)
+
+    def mensajes_no_vistos(self, data):
+        respuesta = {'estado': False}
+        usuario = User.objects.get(username=data['usuario'])
+        mensajes = usuario.destinos.all().filter(visto=False)
+        respuesta['accion'] = 'mensajes_no_vistos'
+        respuesta['mensajes'] = self.mensajes_to_json(mensajes)   
+        respuesta['estado'] = True
+        self.responder(respuesta)
     
     def usuario_to_json(self, usuario):        
         return {
@@ -85,26 +101,7 @@ class ChatConsumer(WebsocketConsumer):
         respuesta['accion'] = 'usuarios'
         respuesta['usuarios'] = self.usuarios_to_json(usuarios)      
         respuesta['estado'] = True
-        self.responder(respuesta)
-
-    def mensajes_no_vistos(self, data):
-        respuesta = {'estado': False}
-        usuario = User.objects.get(username=data['usuario'])
-        chats = usuario.chat_set.all()
-        if chats:
-            for chat in chats:
-                cantidad = 0        
-                chatID = chat.id                           
-                mensajes = chat.mensajes.all()
-                for mensaje in mensajes:
-                    if mensaje.autor != usuario:
-                        cantidad = cantidad + 1
-            print(chatID, cantidad)
-            respuesta['chatID'] = chatID
-            respuesta['accion'] = 'mensajes_no_vistos'
-            respuesta['mensajes_no_vistos'] = cantidad
-            respuesta['estado'] = True
-            self.responder(respuesta)     
+        self.responder(respuesta) 
 
     def chats(self, data):
         respuesta = {'estado': False}
@@ -135,12 +132,46 @@ class ChatConsumer(WebsocketConsumer):
             respuesta['mensaje'] = 'ningún chat creado aún'
             self.responder(respuesta)
 
+    def informe_entrega(self, data):
+        respuesta = {'estado': False}
+        if Mensaje.objects.filter(id=data['id']).exists():
+            mensaje = Mensaje.objects.get(id=data['id'])
+            mensaje.entregado = True
+            mensaje.sync = False
+            mensaje.save
+            respuesta['accion'] = 'informe_entrega'
+            respuesta['estado'] = True
+            respuesta['id'] = data['id']
+            self.responder_grupo(respuesta)
+        else:
+            respuesta['accion'] = 'informe_entrega'
+            respuesta['id'] = data['id']
+            self.responder_grupo(respuesta)
+    
+    def informe_visto(self, data):
+        respuesta = {'estado': False}
+        if Mensaje.objects.filter(id=data['id']).exists():
+            mensaje = Mensaje.objects.get(id=data['id'])
+            mensaje.visto = True
+            mensaje.sync = False
+            mensaje.save
+            respuesta['accion'] = 'informe_visto'
+            respuesta['estado'] = True
+            respuesta['id'] = data['id']
+            self.responder_grupo(respuesta)
+        else:
+            respuesta['accion'] = 'informe_visto'
+            respuesta['id'] = data['id']
+            self.responder_grupo(respuesta)
+
     acciones = {
         'mensajes': mensajes,
+        'mensajes_no_vistos': mensajes_no_vistos,
         'mensaje_nuevo': mensaje_nuevo,
         'usuarios': usuarios,
-        'mensajes_no_vistos': mensajes_no_vistos,
         'chats': chats,
+        'informe_entrega': informe_entrega,
+        'informe_visto': informe_visto,
     }
 
     # Receive message from WebSocket

@@ -51,19 +51,16 @@
             <h5>Resultado:</h5>
         </div>
         <div class="p-3">
-            {% if code %}
-                <p>Recarga {{ code }} por {{ cantidad }} coins. {% if activa %}
+            {% if recarga %}
+                <p>Recarga {{ recarga.code }} por {{ recarga.cantidad }} coins. {% if recarga.activa %}
                     <button class="btn btn-success">Activa</button>
                     {% else %}
                     <buton class="btn btn-danger">No activa</buton>
-                    {% endif %}, Usuario {{ usuario }}, Fecha: {{ fecha }}</p>
+                    Usuario: {{ recarga.usuario }}, Fecha: {{ recarga.fechaUso }}
+                    {% endif %}</p>
             {% endif %}
             {% for r in recargas %}
-                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. {% if r.activa %}
-                    Activa
-                    {% else %}
-                    No activa
-                    {% endif %}, Usuario: {{ r.usuario }}, Fecha: {{ r.FechaUso }}</p></br>
+                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins.</p>
             {% endfor %}
         </div>
     </div>

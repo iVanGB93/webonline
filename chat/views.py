@@ -28,12 +28,10 @@ def room(request, username=None):
             chat.save()
             chat.participantes.add(request.user, usuario2)
         chat_id = chat.id
-        img_url = usuario2.profile.imagen.url
         if not request.user in chat.participantes.all():
             return redirect('chat:index')
         return render(request, 'chat/index.html', {
             'chat_id': chat_id,
-            'img_url': img_url,
             'usuario2': usuario2,
         })
     else:

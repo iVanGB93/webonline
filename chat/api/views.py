@@ -19,7 +19,7 @@ class ContactView(APIView):
                 chats_list.append(new_chat)
             return Response(data={'chats_list': chats_list}, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data = {'chats_list': []}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AllUsersView(APIView):
@@ -53,4 +53,4 @@ class AllUsersView(APIView):
             img_url = contact.profile.imagen.url
             return Response(data={'chat_id': chat_id, 'img_url': img_url, 'contact': contact.username}, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data = {}, status=status.HTTP_404_NOT_FOUND)

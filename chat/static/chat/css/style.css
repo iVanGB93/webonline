@@ -224,7 +224,7 @@ button:focus {
 }
 
 .contenedor {
-    width: 50%;
+    width: 60%;
     padding-top: 100px;
     margin: auto;
 }
@@ -232,17 +232,13 @@ button:focus {
     padding: 0;
 }
 .tab-usuarios {
-    position: fixed;
     display: none;
-    padding: 10px;
 }
 .tab-usuarios.active {
     display: block;
 }
 .tab-contactos {
-    position: fixed;
     display: none;
-    padding: 10px;
 }
 .tab-contactos.active {
     display: block;
@@ -327,10 +323,6 @@ small, .small {
     padding: 3px 5px;
 }
 
-.contenedor-chat {
-    padding: 10px;
-    margin: auto;
-}
 .small-link-bar {
     visibility: hidden;
     position: fixed;
@@ -459,13 +451,13 @@ a:hover, a:active, a:focus {
 
 @media(max-width: 1200px) {
     .contenedor {
-        width: 60%;
+        width: 70%;
     }
 }
 
 @media(max-width: 992px) {
     .contenedor {
-        width: 70%;
+        width: 80%;
     }    
 }
 

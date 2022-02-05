@@ -19,4 +19,5 @@ urlpatterns = [
     path('control/recargas/', views.control_recargas, name='control_recargas'),
     path('control/sorteos/', views.control_sorteos, name='control_sorteos'),
     path('control/avanzado/', views.control_avanzado, name='control_avanzado'),
+    path('control/finanzas/', views.control_finanzas, name='control_finanzas'),
 ]

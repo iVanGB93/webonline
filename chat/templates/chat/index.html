@@ -124,7 +124,7 @@
       </div>      
       {% if chat_id %}
       <div class="otro-usuario">
-        <span><img src="{{ img_url }}" alt=""></span>
+        <span><img src="{{ usuario2.profile.imagen.url }}" alt=""></span>
         <div class="datos">
           <p>{{ usuario2.username}}</p>
           <span>última vez en línea {{usuario2.last_login | date:"P" }}</span>
@@ -162,18 +162,20 @@
 {{ request.user.username|json_script:"username" }}
 {{ chat_id|json_script:"chat_id" }}
 {{ request.user.profile.imagen.url|json_script:"img_src" }}
-{{ img_url|json_script:"img_url" }}
+{{ usuario2.profile.imagen.url|json_script:"img_url" }}
+{{ usuario2.username|json_script:"contact" }}
 
 <script type="text/javascript">
   const chat_id = JSON.parse(document.getElementById('chat_id').textContent);
   const img_src = JSON.parse(document.getElementById('img_src').textContent);
   const img_url = JSON.parse(document.getElementById('img_url').textContent);
   const username = JSON.parse(document.getElementById('username').textContent);
+  const contact = JSON.parse(document.getElementById('contact').textContent);
 
   var audioPath = "{% static 'chat/starcraft_chat_sound.mp3' %}";
   var receivedAudio = new Audio(audioPath);
 
-  const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/' + chat_id + '/');
+  const chatSocket = new ReconnectingWebSocket('ws://172.20.24.10:8000/ws/chat/' + chat_id + '/');
 
   const userList = []
   const contactosList = []
@@ -183,13 +185,21 @@
     var contenido = document.createElement('p');
     var p = document.createElement('p');
     if (mensaje.autor === usuario) {
-        parListTag.className = "right clearfix chat-message";
-        contenido.className = 'text-end';
-        p.className = 'text-end text-muted';
+      parListTag.className = "right clearfix chat-message";
+      contenido.className = 'text-end';
+      p.className = 'text-end text-muted';
     } else {
-        parListTag.className = "left clearfix chat-message";
-        contenido.className = 'text-start';      
-        p.className = 'text-start text-muted';
+      if (mensaje.entregado != true) {
+        chatSocket.send(JSON.stringify({
+          'accion': 'informe_entrega',
+          'data': {
+            'id': mensaje.id
+          }
+        }));
+      }
+      parListTag.className = "left clearfix chat-message";
+      contenido.className = 'text-start';      
+      p.className = 'text-start text-muted';
     }      
     var div = document.createElement('div');
     div.className = 'chat-body clearfix';      
@@ -272,10 +282,10 @@
     chatSocket.send(JSON.stringify({      
         'accion': 'mensajes',
         'data': {
-            'usuario': username,
-            'id': chat_id,
+          'usuario': username,
+          'id': chat_id,
         }
-    }));
+    }));    
   };
 
   chatSocket.onmessage = function(e) {
@@ -300,6 +310,12 @@
       crearMensaje(data['mensaje']);
       if (data['mensaje'].autor != usuario) {
         receivedAudio.play();
+        chatSocket.send(JSON.stringify({
+          'accion': 'informe_entrega',
+          'data': {
+            'id': data['mensaje'].id
+          }
+        }));
       };
     } else if (data['accion'] === 'usuarios') {
       var usuarios = data['usuarios'];
@@ -405,7 +421,8 @@
             'data': {
                 'usuario': usuario,
                 'id': chat_id,
-                'mensaje': message
+                'mensaje': message,
+                'destino': contact,
             }
           }));
         };        
