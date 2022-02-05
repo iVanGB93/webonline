@@ -152,8 +152,21 @@ def recargar(code, usuario):
                 result['mensaje'] = 'Cuenta Recargada con éxito'
                 return result
             else:
-                result['mensaje'] = respuesta['mensaje']
-                return result
+                if respuesta['mensaje'] == 'Esta recarga no existe.':
+                    profile.sync = False                 
+                    profile.save()
+                    recarga.activa = False
+                    recarga.fechaUso = timezone.now()
+                    recarga.usuario = usuario
+                    recarga.save()
+                    oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
+                    oper.save()
+                    result['correcto'] = True
+                    result['mensaje'] = 'Cuenta Recargada con éxito'
+                    return result
+                else:
+                    result['mensaje'] = respuesta['mensaje'] 
+                    return result
         else:
             result['mensaje'] = 'Recarga usada'
             return result
