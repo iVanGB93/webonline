@@ -192,10 +192,8 @@ def recarga(request):
         result = recargar(code, usuario)
         if result['correcto']:
             content['icon'] = 'success'
-        content['mensaje'] = result['mensaje']
-        return render(request, 'portal/recarga.html', content)
-    else:        
-        return render(request, 'portal/recarga.html', content)
+        content['mensaje'] = result['mensaje']              
+    return render(request, 'portal/recarga.html', content)
 
 @login_required(login_url='/users/login/')
 def transferencia(request):
@@ -206,11 +204,9 @@ def transferencia(request):
         cantidad = request.POST['cantidad']     
         result = transferir(usuario, hacia, cantidad)
         if result['correcto']:
-            content['icon'] = 'success'  
-        content['mensaje'] = result['mensaje']
-        return render(request, 'portal/transferencia.html', content)        
-    else:
-        return render(request, 'portal/transferencia.html', content)
+            content['icon'] = 'success'
+        content['mensaje'] = result['mensaje']        
+    return render(request, 'portal/transferencia.html', content)
 
 @login_required(login_url='/users/login/')
 def operaciones(request):

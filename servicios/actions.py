@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from users.models import Profile
 from sync.syncs import actualizacion_remota
 from sync.models import EstadoConexion
+from django.core.mail import EmailMessage
+from sync.actions import EmailSending
 from decouple import config
-import requests
 
 
 def comprar_internet(usuario, tipo, contra, duracion, horas, velocidad):
@@ -14,7 +15,7 @@ def comprar_internet(usuario, tipo, contra, duracion, horas, velocidad):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
@@ -39,7 +40,7 @@ def comprar_jc(usuario):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
@@ -67,7 +68,7 @@ def comprar_emby(usuario):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario.id)
@@ -95,7 +96,7 @@ def comprar_filezilla(usuario, contraseña):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Compra de servicios deshabilitado, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     usuario = User.objects.get(username=usuario)
     servicio = EstadoServicio.objects.get(usuario=usuario)
@@ -123,7 +124,7 @@ def recargar(code, usuario):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Recarga deshabilitada, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     usuario = User.objects.get(username=usuario)
     profile = Profile.objects.get(usuario=usuario.id)
@@ -139,34 +140,24 @@ def recargar(code, usuario):
             cantidad = recarga.cantidad                   
             profile.coins = profile.coins + cantidad
             respuesta = actualizacion_remota('usar_recarga', {'usuario': usuario.username, 'code': code})
-            if respuesta['estado']:
-                profile.sync = False                 
-                profile.save()
-                recarga.activa = False
-                recarga.fechaUso = timezone.now()
-                recarga.usuario = usuario
-                recarga.save()
-                oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
-                oper.save()
-                result['correcto'] = True
-                result['mensaje'] = 'Cuenta Recargada con éxito'
-                return result
-            else:
-                if respuesta['mensaje'] == 'Esta recarga no existe.':
-                    profile.sync = False                 
-                    profile.save()
-                    recarga.activa = False
-                    recarga.fechaUso = timezone.now()
-                    recarga.usuario = usuario
-                    recarga.save()
-                    oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
-                    oper.save()
-                    result['correcto'] = True
-                    result['mensaje'] = 'Cuenta Recargada con éxito'
-                    return result
+            if not respuesta['estado']:
+                if respuesta['mensaje'] == 'Esta recarga no existe.':                    
+                    email = EmailMessage(f'{ usuario.username } ha recargado desde internet', f'El usuario { usuario.username } recargo su cuenta con { cantidad } coins. Recarga: { code }.', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+                    EmailSending(email).start()                   
                 else:
                     result['mensaje'] = respuesta['mensaje'] 
                     return result
+            profile.sync = False             
+            profile.save()
+            recarga.activa = False
+            recarga.fechaUso = timezone.now()
+            recarga.usuario = usuario
+            recarga.save()
+            oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
+            oper.save()
+            result['correcto'] = True
+            result['mensaje'] = 'Cuenta Recargada con éxito'
+            return result
         else:
             result['mensaje'] = 'Recarga usada'
             return result
@@ -180,7 +171,7 @@ def transferir(desde, hacia, cantidad):
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
-            result['mensaje'] = "Transferencias deshabilitado, intente más tarde."
+            result['mensaje'] = "Sistema sin conexión, intente más tarde."
             return result
     if User.objects.filter(username=hacia).exists():
         envia = User.objects.get(username=desde)        
