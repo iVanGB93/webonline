@@ -176,38 +176,38 @@
         })
         .then(response => response.json())
         .then(data => {
+          console.log(data);
           if (data.hasOwnProperty("leaderboard")) {
             leaderboard = data["leaderboard"]
           } else {
             leaderboard = {"name": wallets[i], "elo": "No Encontrado"}
           };
           slp = data["slp"];
-          aventura = data["adventure"];
+          /* aventura = data["adventure"]; */
           document.querySelector('#jugador'+i).innerHTML = leaderboard["name"];
           mmr = leaderboard["elo"];
           document.querySelector('#mmr'+i).innerHTML = mmr;
-          if (mmr < 800) {
-            slp_victoria = 0;
-          } else if (mmr <1000) {
+          if (mmr < 999) {
             slp_victoria = 1;
           } else if (mmr <1100) {
             slp_victoria = 3;
           } else if (mmr <1300) {
-            slp_victoria = 6;
+            slp_victoria = 5;
           } else if (mmr <1500) {
-            slp_victoria = 9;
+            slp_victoria = 6;        
           } else if (mmr <1800) {
-            slp_victoria = 12;
+            slp_victoria = 8;
           } else if (mmr <2000) {
-            slp_victoria = 15;
-          } else if (mmr <2200) {
-            slp_victoria = 18;
+            slp_victoria = 10;
+          } else if (mmr <2500) {
+            slp_victoria = 12;
           } else {
-            slp_victoria = 21;
+            slp_victoria = 14;
           };
           document.querySelector('#copas'+i).innerHTML = slp_victoria + " X victoria";
-          document.querySelector('#arena'+i).innerHTML = (slp["todaySoFar"] - aventura["gained_slp"]);
-          document.querySelector('#aventura'+i).innerHTML = aventura["gained_slp"];
+          document.querySelector('#arena'+i).innerHTML = slp["todaySoFar"];
+          /* document.querySelector('#arena'+i).innerHTML = (slp["todaySoFar"] - aventura["gained_slp"]);
+          document.querySelector('#aventura'+i).innerHTML = aventura["gained_slp"]; */
           document.querySelector('#ganancia-hoy'+i).innerHTML = "≈" + Number(slp["todaySoFar"] * slp_price).toFixed(2) + " USD";
           document.querySelector('#slp-ayer'+i).innerHTML = slp["yesterdaySLP"];
           document.querySelector('#ganancia-ayer'+i).innerHTML = "≈" + Number(slp["yesterdaySLP"] * slp_price).toFixed(2) + " USD";
@@ -266,7 +266,7 @@
           document.querySelector('#jugador-nombre'+i).style.display = "";
           document.querySelector('#copa'+i).style.display = "";    
           document.querySelector('#arenaIcon'+i).style.display = "";
-          document.querySelector('#aventuraIcon'+i).style.display = "";    
+          /* document.querySelector('#aventuraIcon'+i).style.display = ""; */    
           var loader = document.querySelector('#loader'+ i);
           if (loader != null) {
             loader.style.display = "none";
