@@ -252,7 +252,7 @@ def control_recargas(request):
                 data = {'usuario': str(request.user), 'check': True, 'code': code}
                 respuesta = actualizacion_remota('usar_recarga', data)
                 if respuesta['estado']:
-                    recarga = {'mensaje': respuesta['mensaje'], 'code': respuesta['code'], 'cantidad': respuesta['cantidad'], 'activa': respuesta['activa'], 'usuario': respuesta['usuario'], 'fecha': respuesta['fecha']}
+                    recarga = {'mensaje': respuesta['mensaje'], 'code': respuesta['code'], 'cantidad': respuesta['cantidad'], 'activa': respuesta['activa'], 'usuario': respuesta['usuario'], 'fecha': respuesta['fecha'], 'icon': 'success'}
                     return render(request, 'sync/control_recargas.html', recarga)
                 else:
                     mensaje = respuesta['mensaje']
@@ -267,7 +267,7 @@ def control_recargas(request):
                 recargas.append(recarga)     
                 recarga.save()      
             mensaje = 'Recargas guardadas'
-            content = {'recargas': recargas, 'mensaje': mensaje}
+            content = {'recargas': recargas, 'mensaje': mensaje, 'icon': 'success'}
             return render(request, 'sync/control_recargas.html', content)
         else:
             mensaje = 'Algo salio mal con el POST'

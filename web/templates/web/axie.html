@@ -10,12 +10,12 @@
     <div class="col-12 col-lg-8 order-md-2 d-flex" data-aos="fade-left">
         <p class="text-white text-center fs-4 p-2">
           Relacion de rendimiendo y ganancia en axie-infinity según promedio diario:</br></br>
-          0-100 SLP : 20%</br>
-          101-130 SLP : 30%</br>
-          131-160 SLP : 35%</br>
-          161-190 SLP : 40%</br>
-          191-220 SLP : 45%</br>
-          +221 SLP : 50%</br>
+          0-40 SLP : 20%</br>
+          41-60 SLP : 30%</br>
+          61-80 SLP : 35%</br>
+          81-100 SLP : 40%</br>
+          101-120 SLP : 45%</br>
+          +121 SLP : 50%</br>
         </p>
     </div>      
   </div>
@@ -225,15 +225,15 @@
           }
           document.querySelector('#average'+i).innerHTML = promedio + " SLP x día";
           document.querySelector('#ganancia-average'+i).innerHTML = "≈" + Number(promedio * slp_price).toFixed(2) + " USD";
-          if (promedio <= 100) {
+          if (promedio <= 40) {
             var porciento = 20;
-          } else if (promedio <= 130) {
+          } else if (promedio <= 60) {
             var porciento = 30;
-          } else if (promedio <= 160) {
+          } else if (promedio <= 80) {
             var porciento = 35;
-          } else if (promedio <= 190) {
+          } else if (promedio <= 100) {
             var porciento = 40;
-          } else if (promedio <= 220) {
+          } else if (promedio <= 120) {
             var porciento = 45;
           } else {
             var porciento = 50;
