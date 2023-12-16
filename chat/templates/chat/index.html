@@ -175,7 +175,7 @@
   var audioPath = "{% static 'chat/starcraft_chat_sound.mp3' %}";
   var receivedAudio = new Audio(audioPath);
 
-  const chatSocket = new ReconnectingWebSocket('ws://172.20.24.10:8000/ws/chat/' + chat_id + '/');
+  const chatSocket = new ReconnectingWebSocket('wss://qbared.com/ws/chat/' + chat_id + '/');
 
   const userList = []
   const contactosList = []
@@ -500,7 +500,7 @@
   };
 
   chatSocket.onopen = function(e) {
-      console.log("CHAT_SOCKET CONECTADO");      
+      console.log("CHAT_SOCKET CONECTADO2");      
       chatSocket.send(JSON.stringify({
         'accion': 'chats',
         'data': {
