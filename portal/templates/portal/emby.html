@@ -84,7 +84,7 @@
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
             <h5 class="titulo my-auto">Mensual</h5>
-            <h5 class="texto my-auto">100 coins</h5>
+            <h5 class="texto my-auto">{{ embyPrice }} coins</h5>
         </div>               
         <hr class="dropdown-divider" />
         <div>
@@ -119,6 +119,7 @@
         </div>
     </div>
 </div>
+{{ embyPrice|json_script:"embyPrice" }}
 {% if user.estadoservicio.emby %}
 {{ user.estadoservicio.emby_time|json_script:"fecha" }}
 <script>
@@ -140,8 +141,9 @@
 </script>
 {% endif %}
 <script>
+    const embyPrice = JSON.parse(document.getElementById('embyPrice').textContent);
     const myform_sync = document.getElementById("myform_sync");
-    myform_sync.addEventListener("submit", (e) => {       
+    myform_sync.addEventListener("submit", (e) => {
         document.getElementById('spinner_sync').style.display = 'inline-block';
         document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
@@ -166,7 +168,7 @@
             e.preventDefault();        
             Swal.fire({
                 title: '¡Confirme su pago!',
-                text: "¿Seguro que desea pagar 100 coins por 30 días de acceso al Emby?",
+                text: `¿Seguro que desea pagar ${embyPrice} coins por 30 días de acceso al Emby?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#007000',

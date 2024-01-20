@@ -84,7 +84,7 @@
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
             <h5 class="titulo my-auto">Mensual</h5>
-            <h5 class="texto my-auto">50 coins</h5>
+            <h5 class="texto my-auto">{{ ftpPrice }} coins</h5>
         </div>      
         <hr class="dropdown-divider" />
         <div>
@@ -117,6 +117,7 @@
         </div>
     </div>
 </div>
+{{ ftpPrice|json_script:"ftpPrice" }}
 {% if user.estadoservicio.ftp %}
 {{ user.estadoservicio.ftp_time|json_script:"fecha" }}
 <script>
@@ -138,6 +139,7 @@
 </script>
 {% endif %}
 <script>
+    const ftpPrice = JSON.parse(document.getElementById('ftpPrice').textContent);
     const myform_sync = document.getElementById("myform_sync");
     myform_sync.addEventListener("submit", (e) => {       
         document.getElementById('spinner_sync').style.display = 'inline-block';
@@ -164,7 +166,7 @@
             e.preventDefault();        
             Swal.fire({
                 title: '¡Confirme su pago!',
-                text: "¿Seguro que desea pagar 50 coins por 30 días de acceso FileZilla?",
+                text: `¿Seguro que desea pagar ${ ftpPrice } coins por 30 días de acceso FileZilla?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#007000',

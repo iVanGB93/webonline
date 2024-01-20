@@ -82,18 +82,13 @@
         </div>
         <hr class="dropdown-divider" />        
         <div class="d-flex justify-content-between">
-            <h6 class="titulo my-auto">16 horas(11am a 3am):</h6>
-            <h6 class="texto my-auto">300 coins</h6>
-        </div>   
-        <hr class="dropdown-divider" />
-        <div class="d-flex justify-content-between">
-            <h6 class="titulo my-auto">24 horas:</h6>
-            <h6 class="texto my-auto">400 coins</h6>
+            <h6 class="titulo my-auto">Semanal:</h6>
+            <h6 class="texto my-auto">{{ internetSemanalPrice }} coins</h6>
         </div>
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
             <h6 class="titulo my-auto">Por horas:</h6>
-            <h6 class="texto my-auto">10 coins X hora</h6>
+            <h6 class="texto my-auto">{{ internetHorasPrice }} coins X hora</h6>
         </div>                      
         <hr class="dropdown-divider" />
         <h6 class="text-center titulo my-auto">*costos a 1mb</h6>
@@ -115,8 +110,6 @@
         <div class="cardHeader titulo my-auto">
             <h3 class="titulo m-1 p-1">Velocidad</h3>           
         </div>    
-        <hr class="dropdown-divider" />
-        <h6 class="text-center titulo my-auto">512kb</h6>
         <hr class="dropdown-divider" />
         <h6 class="text-center titulo my-auto">1mb</h6>
         <hr class="dropdown-divider" />
@@ -147,7 +140,6 @@
             <h4 class="texto" id="costo">¿Qué tipo de internet?</h4>
             <select class="form-select mb-3" name="tipo">
                 <option selected>Seleccione el tipo</option>
-                <option value="16h">16 horas</option>
                 <option value="24h">24 horas</option>
                 <option value="horas">Horas</option>
             </select>
@@ -158,7 +150,6 @@
             </select>
             <select class="form-select mb-3" name="velocidad">
                 <option selected>Seleccione la velocidad</option>
-                <option value="512kb">512kb</option>
                 <option value="1mb">1mb</option>
                 <option value="2mb">2mb</option>
                 <option value="3mb">3mb</option>
@@ -188,12 +179,15 @@
             <ul class="list-group text-start">
                 <li class="list-group-item">Si escoge la duración mensual sería el costo de 4 semanas y tendría 30 días, 2 extras.</li>
                 <li class="list-group-item">El tipo por horas es conexión a internet cuando usted desee usar el tiempo que tenga disponible.</li>
+                <li class="list-group-item">Si desea una velocidad mayor a las que se ofrecen no dude en preguntar.</li>
                 <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, más información <a href="{% url 'sorteo:index' %}">-->aquí<--</a>.</li>
                 <li class="list-group-item">Duda y sugerencias, escribir a la administración.</li>
             </ul>
         </div>
     </div>
 </div>
+{{ internetSemanalPrice|json_script:"internetSemanalPrice" }}
+{{ internetHorasPrice|json_script:"internetHorasPrice" }}
 {% if user.estadoservicio.internet and user.estadoservicio.int_tipo != 'internetHoras' %}
 {{ user.estadoservicio.int_time|json_script:"fecha" }}
 <script>
@@ -237,82 +231,49 @@
         document.getElementById('boton_sync').disabled=true;
         document.getElementById('boton_auto').disabled=true;
     });
+    const internetSemanalPrice = JSON.parse(document.getElementById('internetSemanalPrice').textContent);
+    const internetHorasPrice = JSON.parse(document.getElementById('internetHorasPrice').textContent);
     function saberCosto() {
         var texto = "¿Qué tipo de internet?";
         document.querySelector('#duracion_form').style.display = 'flex';
         document.querySelector('#horas_form').style.display = 'none';
-        if (myform.tipo.value === '16h') {
+        if (myform.tipo.value === '24h') {
             texto = "¿Qué duración?";
             if (myform.duracion.value === 'semanal') {
                 texto = "¿Qué velocidad?";
-                if (myform.velocidad.value === '512kb') {
-                    costo = 180;
-                } else if (myform.velocidad.value === '1mb') {
-                    costo = 300;
+                if (myform.velocidad.value === '1mb') {
+                    costo = internetSemanalPrice;
                 } else if (myform.velocidad.value === '2mb') {
-                    costo = 600;
+                    costo = internetSemanalPrice * 2;
                 } else if (myform.velocidad.value === '3mb') {
-                    costo = 900;
+                    costo = internetSemanalPrice * 3;
                 } else if (myform.velocidad.value === '4mb') {
-                    costo = 1200;
+                    costo = internetSemanalPrice * 4;
                 };
             } else if (myform.duracion.value === 'mensual') {
                 texto = "¿Qué velocidad?";
-                if (myform.velocidad.value === '512kb') {
-                    costo = 700;
-                } else if (myform.velocidad.value === '1mb') {
-                    costo = 1200;
+                if (myform.velocidad.value === '1mb') {
+                    costo = internetSemanalPrice * 4;
                 } else if (myform.velocidad.value === '2mb') {
-                    costo = 2400;
+                    costo = internetSemanalPrice * 4 * 2;
                 } else if (myform.velocidad.value === '3mb') {
-                    costo = 3600;
+                    costo = internetSemanalPrice * 4 * 3;
                 } else if (myform.velocidad.value === '4mb') {
-                    costo = 4800;
-                };
-            }
-        } else if (myform.tipo.value === '24h') {
-            texto = "¿Qué duración?";
-            if (myform.duracion.value === 'semanal') {
-                texto = "¿Qué velocidad?";
-                if (myform.velocidad.value === '512kb') {
-                    costo = 250;
-                } else if (myform.velocidad.value === '1mb') {
-                    costo = 400;
-                } else if (myform.velocidad.value === '2mb') {
-                    costo = 800;
-                } else if (myform.velocidad.value === '3mb') {
-                    costo = 1200;
-                } else if (myform.velocidad.value === '4mb') {
-                    costo = 1600;
-                };
-            } else if (myform.duracion.value === 'mensual') {
-                texto = "¿Qué velocidad?";
-                if (myform.velocidad.value === '512kb') {
-                    costo = 1000;
-                } else if (myform.velocidad.value === '1mb') {
-                    costo = 1600;
-                } else if (myform.velocidad.value === '2mb') {
-                    costo = 3200;
-                } else if (myform.velocidad.value === '3mb') {
-                    costo = 4800;
-                } else if (myform.velocidad.value === '4mb') {
-                    costo =6400;
+                    costo =internetSemanalPrice * 4 * 4;
                 };
             }
         } else if (myform.tipo.value === 'horas') {
             document.querySelector('#duracion_form').style.display = 'none';
             document.querySelector('#horas_form').style.display = 'flex';
             texto = "¿Qué velocidad?";
-            if (myform.velocidad.value === '512kb') {
-                    costo = myform.cantidad_horas.value * 8;
-                } else if (myform.velocidad.value === '1mb') {
-                    costo = myform.cantidad_horas.value * 10;
+            if (myform.velocidad.value === '1mb') {
+                    costo = myform.cantidad_horas.value * internetHorasPrice;
                 } else if (myform.velocidad.value === '2mb') {
-                    costo = myform.cantidad_horas.value * 20;
+                    costo = myform.cantidad_horas.value * internetHorasPrice * 2;
                 } else if (myform.velocidad.value === '3mb') {
-                    costo = myform.cantidad_horas.value * 30;
+                    costo = myform.cantidad_horas.value * internetHorasPrice * 3;
                 } else if (myform.velocidad.value === '4mb') {
-                    costo = myform.cantidad_horas.value * 40;
+                    costo = myform.cantidad_horas.value * internetHorasPrice * 4;
                 };
         };
         if (costo != "") {
@@ -351,23 +312,15 @@
                     icon: 'warning',
                     confirmButtonColor: '#d33',
                 })
+            } else if (myform.tipo.value === 'horas' && myform.cantidad_horas.value < 5) {
+                Swal.fire({
+                    title: "¡La cantidad mínima es 5 horas!",
+                    icon: 'warning',
+                    confirmButtonColor: '#d33',
+                })
             } else {
                 if (myform.tipo.value === 'horas') {
-                    if (myform.cantidad_horas.value < 5) {
-                        Swal.fire({
-                            title: "¡La cantidad mínima es 5 horas!",
-                            icon: 'warning',
-                            confirmButtonColor: '#d33',
-                        })
-                    } else {
-                        texto = costo + " coins por " + myform.cantidad_horas.value + " horas a " + myform.velocidad.value + "."
-                    }
-                } else if (myform.tipo.value === '16h') {
-                    if (myform.duracion.value === 'semanal') {
-                        texto = costo + " coins por una semana con 16 horas diarias de conexion a " + myform.velocidad.value + "."
-                    } else {
-                        texto = costo + " coins por 30 días con 16 horas diarias de conexión a " + myform.velocidad.value + "."
-                    }
+                    texto = costo + " coins por " + myform.cantidad_horas.value + " horas a " + myform.velocidad.value + "."
                 } else if (myform.tipo.value === '24h') {
                     if (myform.duracion.value === 'semanal') {
                         texto = costo + " coins por una semana con 24 horas de conexión a " + myform.velocidad.value + "."

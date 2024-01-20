@@ -65,6 +65,7 @@ def comprar_jc(usuario):
 def comprar_emby(usuario):
     result = {'correcto': False}
     online = config('APP_MODE')
+    embyPrice = int(config('EMBY_PRICE'))
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
@@ -79,7 +80,7 @@ def comprar_emby(usuario):
         result['mensaje'] = 'Debe tener los servicios sincronizados para comprar.'
         return result
     profile = Profile.objects.get(usuario=usuario)
-    if profile.coins >= 100:
+    if profile.coins >= embyPrice:
         data = {'usuario': usuario.username, 'servicio': 'emby'}
         respuesta = actualizacion_remota('comprar_servicio', data=data)
         if respuesta['estado']:
@@ -93,6 +94,7 @@ def comprar_emby(usuario):
 def comprar_filezilla(usuario, contraseña):
     result = {'correcto': False}
     online = config('APP_MODE')
+    ftpPrice = int(config('FTP_PRICE'))
     if online == 'online':
         conexion = EstadoConexion.objects.get(id=1)
         if not conexion.online:
@@ -107,7 +109,7 @@ def comprar_filezilla(usuario, contraseña):
         result['mensaje'] = 'Debe tener los servicios sincronizados para comprar.'
         return result
     profile = Profile.objects.get(usuario=usuario)
-    if profile.coins >= 50:
+    if profile.coins >= ftpPrice:
         data = {'usuario': usuario.username, 'servicio': 'ftp', 'contraseña': contraseña}
         respuesta = actualizacion_remota('comprar_servicio', data=data)
         if respuesta['estado']:

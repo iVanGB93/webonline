@@ -110,7 +110,9 @@ def contra(request):
 @login_required(login_url='/users/login/')
 def internet(request):
     usuario = request.user
-    content = {'icon': 'error'} 
+    internetSemanalPrice = config('INTERNET_PRICE_SEMANAL')
+    internetHorasPrice = config('INTERNET_PRICE_HORAS')
+    content = {'icon': 'error',  'internetSemanalPrice': internetSemanalPrice, 'internetHorasPrice': internetHorasPrice} 
     if request.method == 'POST':
         tipo = request.POST['tipo']
         duracion = request.POST['duracion']
@@ -150,7 +152,8 @@ def jovenclub(request):
 @login_required(login_url='/users/login/')
 def emby(request):
     usuario = request.user
-    content = {'icon': 'error'} 
+    embyPrice = config('EMBY_PRICE')
+    content = {'icon': 'error', 'embyPrice': embyPrice} 
     if request.method == 'POST':
         contra = request.POST['contra']
         if usuario.check_password(contra):
@@ -168,7 +171,8 @@ def emby(request):
 @login_required(login_url='/users/login/')
 def filezilla(request):
     usuario = request.user
-    content = {'icon': 'error'}
+    ftpPrice = config('FTP_PRICE')
+    content = {'icon': 'error', 'ftpPrice': ftpPrice}
     if request.method == 'POST':
         contra = request.POST['contra']        
         if usuario.check_password(contra):                    
