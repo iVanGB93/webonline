@@ -19,7 +19,7 @@ def crearProfile(sender, instance, **kwargs):
         profile.save()
         email = EmailMessage('Usuario nuevo', f'El usuario { usuario.username } se ha registrado.', None, ['ivanguachbeltran@gmail.com'])
         EmailSending(email).start()
-        email = (f'Bienvenido { usuario.username } a QbaRed', f'Hola { usuario.username }, usted se ha registrado en QbaRed, le damos todos la bienvenida y esperamos que sea de su agrado nuestra red. Puede informarse en --> https://www.qbared.com/  Saludos', None, [usuario.email,])
+        email = EmailMessage(f'Bienvenido { usuario.username } a QbaRed', f'Hola { usuario.username }, usted se ha registrado en QbaRed, le damos todos la bienvenida y esperamos que sea de su agrado nuestra red. Puede informarse en --> https://www.qbared.com/  Saludos', None, [usuario.email,])
         EmailSending(email).start()
 
 @receiver(post_save, sender=Profile)
