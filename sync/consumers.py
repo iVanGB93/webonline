@@ -12,6 +12,7 @@ from sorteo.actions import crear_participacion
 class SyncWSConsumer(WebsocketConsumer):
     def connect(self):
         #self.room_name
+        print("CLIENTE CONECTADO")
         self.accept()
         """ usuario = self.scope['user']
         if usuario.is_authenticated:
@@ -26,7 +27,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def usuario_existe(self, data):
         respuesta = {'estado': False}
-        usuario = data['usuario']
+        usuario = data.get('usuario', 'que intenta buscar')
         if User.objects.filter(username=usuario).exists():
             return True
         else:
@@ -35,7 +36,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def saludo(self, data):
         respuesta = {'estado': False}
-        celula = data['identidad']
+        celula = data.get('identidad', 'sin nombre :-(')
         print(f'{ celula } se ha conectado')
         respuesta['estado'] = True
         respuesta['mensaje'] = f'Bienvenido {celula}, está conectado!!!'
@@ -62,7 +63,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def check_usuario(self, data):
         respuesta = {'estado': False}
-        usuario = data['usuario']
+        usuario = data.get('usuario', 'key not found')
         if self.usuario_existe(data):
             respuesta['estado'] = True
             respuesta['mensaje'] = f'El usuario { usuario } esta registrado.'
@@ -381,6 +382,14 @@ class SyncWSConsumer(WebsocketConsumer):
             respuesta['mensaje'] = 'Publicación guardada con éxito.'
             respuesta['estado'] = True
             self.responder(respuesta)
+    
+    def actionError(self, data):
+        response = {'estado': False, 'data': 'Nothing to do...'}
+        self.responder(response)
+    
+    def dataError(self, data):
+        response = {'estado': False, 'data': 'Nothing to work with...'}
+        self.responder(response)
 
     acciones = {
         'saludo': saludo,
@@ -402,13 +411,23 @@ class SyncWSConsumer(WebsocketConsumer):
         'crear_sorteo': crear_sorteo,
         'crear_notificacion': crear_notificacion,
         'sync_publicacion': sync_publicacion,
+        'actionError': actionError,
+        'dataError': dataError
     }  
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        accion = data['accion']
-        data = data['data']
-        self.acciones[accion](self, data)
+        print(data)
+        if isinstance(data, dict):
+            accion = data.get('accion', 'actionError')
+            data = data.get('data', 'dataError')
+            intentedAction = self.acciones.get(accion, 'notpossible')
+            if intentedAction != 'notpossible':
+                self.acciones[accion](self, data)
+            else:
+                self.responder({'message':'not possible'})
+        else:
+            self.responder({'message':'invalid message'})
     
     def responder(self, data):
         data = json.dumps(data)
