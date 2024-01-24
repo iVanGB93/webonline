@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .syncs import actualizacion_remota
+from django.shortcuts import render, redirect
+from sync.syncs import actualizacion_remota
 from django.contrib.auth.decorators import login_required
 from decouple import config
 from servicios.api.serializers import ServiciosSerializer
@@ -8,6 +8,8 @@ from django.utils import timezone
 from servicios.models import EstadoServicio, Recarga, Oper
 from users.models import Profile, Notificacion
 from sorteo.models import Sorteo, SorteoDetalle
+from .models import MonthIncome, Spent
+from . import actions
 import datetime
 
 import time
@@ -19,16 +21,16 @@ def control(request):
         username = request.POST['usuario']
         busqueda = User.objects.filter(username__icontains=username)
         if len(busqueda) == 0:
-            content["nulo"] = f"No se encontró nada relacionado con " + username        
+            content["nulo"] = f"No se encontró nada relacionado con " + username     
         content['usuarios'] = busqueda
-    return render(request, 'sync/index.html', content)
+    return render(request, 'control/index.html', content)
 
 @login_required(login_url='/users/login/')
 def detalles(request, id):
     usuario = User.objects.get(id=id)
     opers = Oper.objects.filter(usuario=usuario).order_by('-fecha')
     content = {"usuario": usuario, "opers": opers}
-    return render(request, 'sync/detalle_usuario.html', content)
+    return render(request, 'control/detalle_usuario.html', content)
 
 @login_required(login_url='/users/login/')
 def funcion(request, id, funcion):
@@ -51,25 +53,25 @@ def funcion(request, id, funcion):
     content['icon'] = 'success'
     servicio.sync = False
     servicio.save()       
-    return render(request, 'sync/detalle_usuario.html', content)
+    return render(request, 'control/detalle_usuario.html', content)
 
 @login_required(login_url='/users/login/')
 def control_usuarios(request):
     usuarios = User.objects.all()
     content = {'usuarios': usuarios}
-    return render(request, 'sync/control_usuarios.html', content)
+    return render(request, 'control/control_usuarios.html', content)
 
 @login_required(login_url='/users/login/')
 def control_perfiles(request):
     perfiles = Profile.objects.all()
     content = {'perfiles': perfiles}
-    return render(request, 'sync/control_perfiles.html', content)
+    return render(request, 'control/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def control_servicios(request):
     servicios = EstadoServicio.objects.all()
     content = {'servicios': servicios}
-    return render(request, 'sync/control_servicios.html', content)
+    return render(request, 'control/control_servicios.html', content)
 
 @login_required(login_url='/users/login/')
 def control_usuario(request, id):
@@ -82,14 +84,14 @@ def control_usuario(request, id):
         mensaje = respuesta['mensaje']       
         if respuesta['estado']:
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/control_usuarios.html', content)
+            return render(request, 'control/control_usuarios.html', content)
         else:
             mensaje = respuesta['mensaje']
             content = {'usuario': usuario.username, 'mensaje': mensaje, 'id': id}
-            return render(request, 'sync/crear_eliminar_usuario.html', content)       
+            return render(request, 'control/crear_eliminar_usuario.html', content)       
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/control_usuarios.html', content)
+        return render(request, 'control/control_usuarios.html', content)
     
 @login_required(login_url='/users/login/')
 def crear_eliminar_usuario(request, id):
@@ -101,14 +103,14 @@ def crear_eliminar_usuario(request, id):
             data = {'usuario': usuario.username, 'email': usuario.email, 'password': usuario.password}
             resultado = actualizacion_remota('nuevo_usuario', data)
             content['mensaje'] = resultado['mensaje']
-            return render(request, 'sync/control_usuarios.html', content)            
+            return render(request, 'control/control_usuarios.html', content)            
         elif request.POST['respuesta'] == 'eliminar':
             usuario.delete()
             content['mensaje'] = "Se eliminó definitivamente el usuario."
-            return render(request, 'sync/control_usuarios.html', content)
+            return render(request, 'control/control_usuarios.html', content)
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/control_usuarios.html', content)
+        return render(request, 'control/control_usuarios.html', content)
 
 @login_required(login_url='/users/login/')
 def control_perfil(request, id):
@@ -124,15 +126,15 @@ def control_perfil(request, id):
             profile.save()
             content['perfiles'] = Profile.objects.all()
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/control_perfiles.html', content)
+            return render(request, 'control/control_perfiles.html', content)
         else:
             mensaje = respuesta['mensaje']
             content = {'usuario': usuario.username, 'mensaje': mensaje, 'id': id}
-            return render(request, 'sync/actualizar_perfil.html', content)
+            return render(request, 'control/actualizar_perfil.html', content)
         
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/control_perfiles.html', content)
+        return render(request, 'control/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def actualizar_perfil(request, id):
@@ -147,7 +149,7 @@ def actualizar_perfil(request, id):
             if respuesta['estado']:
                 content['perfiles'] = Profile.objects.all()    
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/control_perfiles.html', content)            
+            return render(request, 'control/control_perfiles.html', content)            
         elif request.POST['respuesta'] == 'remoto':
             data = {'usuario': usuario.username}
             respuesta = actualizacion_remota('coger_perfil', data)
@@ -157,10 +159,10 @@ def actualizar_perfil(request, id):
                 profile.save()
                 content['perfiles'] = Profile.objects.all()      
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/control_perfiles.html', content)
+            return render(request, 'control/control_perfiles.html', content)
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/control_perfiles.html', content)
+        return render(request, 'control/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def control_servicio(request, id):
@@ -176,15 +178,15 @@ def control_servicio(request, id):
         mensaje = respuesta['mensaje']
         if respuesta['conexion'] and not respuesta['estado']:
             content = {'usuario': usuario.username, 'id': id, 'mensaje': mensaje}
-            return render(request, 'sync/actualizar_servicio.html', content)
+            return render(request, 'control/actualizar_servicio.html', content)
         servicio.sync = True
         servicio.save()
         content['servicios'] = EstadoServicio.objects.all()
         content['mensaje'] = mensaje
-        return render(request, 'sync/control_servicios.html', content)
+        return render(request, 'control/control_servicios.html', content)
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/control_servicios.html', content)
+        return render(request, 'control/control_servicios.html', content)
 
 @login_required(login_url='/users/login/')
 def actualizar_servicio(request, id):
@@ -207,7 +209,7 @@ def actualizar_servicio(request, id):
                 servicio.save()
                 content['servicios'] = EstadoServicio.objects.all()
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/control_servicios.html', content)
+            return render(request, 'control/control_servicios.html', content)
         elif request.POST['respuesta'] == 'remoto':
             data = {'usuario': usuario.username}
             respuesta = actualizacion_remota('coger_servicios', data)
@@ -234,10 +236,10 @@ def actualizar_servicio(request, id):
                 servicio.sync = True
                 servicio.save()
             content['mensaje'] = respuesta['mensaje']
-            return render(request, 'sync/index.html', content)
+            return render(request, 'control/index.html', content)
     else:
         content['mensaje'] = "Aqui no hay GET."
-        return render(request, 'sync/index.html', content)
+        return render(request, 'control/index.html', content)
 
 @login_required(login_url='/users/login/')
 def control_recargas(request):
@@ -247,17 +249,17 @@ def control_recargas(request):
             if Recarga.objects.filter(code=code).exists():
                 recarga = Recarga.objects.get(code=code)
                 content = {'recarga': recarga}
-                return render(request, 'sync/control_recargas.html', content)
+                return render(request, 'control/control_recargas.html', content)
             else:            
                 data = {'usuario': str(request.user), 'check': True, 'code': code}
                 respuesta = actualizacion_remota('usar_recarga', data)
                 if respuesta['estado']:
                     recarga = {'mensaje': respuesta['mensaje'], 'code': respuesta['code'], 'cantidad': respuesta['cantidad'], 'activa': respuesta['activa'], 'usuario': respuesta['usuario'], 'fecha': respuesta['fecha'], 'icon': 'success'}
-                    return render(request, 'sync/control_recargas.html', recarga)
+                    return render(request, 'control/control_recargas.html', recarga)
                 else:
                     mensaje = respuesta['mensaje']
                     content = {'mensaje': mensaje}
-                    return render(request, 'sync/control_recargas.html', content)
+                    return render(request, 'control/control_recargas.html', content)
         elif request.POST.get('numero'):
             numero = request.POST['numero']
             cantidad = request.POST['cantidad']
@@ -268,13 +270,13 @@ def control_recargas(request):
                 recarga.save()      
             mensaje = 'Recargas guardadas'
             content = {'recargas': recargas, 'mensaje': mensaje, 'icon': 'success'}
-            return render(request, 'sync/control_recargas.html', content)
+            return render(request, 'control/control_recargas.html', content)
         else:
             mensaje = 'Algo salio mal con el POST'
             content = {'mensaje': mensaje}
-            return render(request, 'sync/control_recargas.html', content)
+            return render(request, 'control/control_recargas.html', content)
     else:
-        return render(request, 'sync/control_recargas.html')
+        return render(request, 'control/control_recargas.html')
 
 @login_required(login_url='/users/login/')
 def control_sorteos(request):
@@ -296,7 +298,7 @@ def control_sorteos(request):
             sorteo.ganador = None
             sorteo.recarga = None
             sorteo.save()
-    return render(request, 'sync/control_sorteo.html', content)
+    return render(request, 'control/control_sorteo.html', content)
 
 @login_required(login_url='/users/login/')
 def control_avanzado(request):
@@ -308,7 +310,7 @@ def control_avanzado(request):
                 respuesta = actualizacion_remota('saludo', data)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             elif chequeo == 'usuarios':
                 usuarios = User.objects.all()
                 for u in usuarios:
@@ -317,10 +319,10 @@ def control_avanzado(request):
                     if respuesta['estado'] == False:
                         mensaje = respuesta['mensaje']
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)
+                        return render(request, 'control/control_avanzado.html', content)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             elif chequeo == 'perfiles':
                 perfiles = Profile.objects.all()
                 for p in perfiles:
@@ -329,10 +331,10 @@ def control_avanzado(request):
                     if respuesta['estado'] == False:
                         mensaje = respuesta['mensaje']
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)
+                        return render(request, 'control/control_avanzado.html', content)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             elif chequeo == 'servicios':
                 servicios = EstadoServicio.objects.all()
                 for s in servicios:
@@ -343,13 +345,13 @@ def control_avanzado(request):
                     if respuesta['estado'] == False:
                         mensaje = respuesta['mensaje']
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)
+                        return render(request, 'control/control_avanzado.html', content)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             else:
                 content = {'mensaje': 'Seleccione algo'}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
         if request.POST.get('accion'):
             accion = request.POST['accion']
             if accion == 'subir_usuarios':
@@ -365,12 +367,12 @@ def control_avanzado(request):
                             if respuesta['estado'] == False:
                                 mensaje = respuesta['mensaje']
                                 content = {'mensaje': mensaje}
-                                return render(request, 'sync/control_avanzado.html', content)
+                                return render(request, 'control/control_avanzado.html', content)
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)                    
+                        return render(request, 'control/control_avanzado.html', content)                    
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             elif accion == 'subir_perfiles':
                 perfiles = Profile.objects.all()
                 for p in perfiles:
@@ -379,10 +381,10 @@ def control_avanzado(request):
                     if respuesta['estado'] == False:
                         mensaje = respuesta['mensaje']
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)
+                        return render(request, 'control/control_avanzado.html', content)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             elif accion == 'subir_servicios':
                 servicios = EstadoServicio.objects.all()
                 for s in servicios:
@@ -393,39 +395,85 @@ def control_avanzado(request):
                     if respuesta['estado'] == False:
                         mensaje = respuesta['mensaje']
                         content = {'mensaje': mensaje}
-                        return render(request, 'sync/control_avanzado.html', content)
+                        return render(request, 'control/control_avanzado.html', content)
                 mensaje = respuesta['mensaje']
                 content = {'mensaje': mensaje}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
             else:
                 content = {'mensaje': 'Seleccione algo'}
-                return render(request, 'sync/control_avanzado.html', content)
+                return render(request, 'control/control_avanzado.html', content)
     else:
-        return render(request, 'sync/control_avanzado.html')
+        return render(request, 'control/control_avanzado.html')
 
 
 def control_finanzas(request):
     month = timezone.now().month
     year = timezone.now().year
-    days = timezone.now().day
-    if month == 2:
-        day = 28
-    elif month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
-        day = 31
+    day = timezone.now().day
+    monthIncome = actions.get_or_create_monthincome(year, month)
+    monthIncome.gross_income = actions.get_gross_income(year, month)
+    monthIncome.total_spent = actions.get_total_spent(year, month)
+    monthIncome.income = monthIncome.gross_income - monthIncome.total_spent
+    monthIncome.save()
+    spents = Spent.objects.filter(month=monthIncome)
+    months = MonthIncome.objects.all()
+    content = {'monthIncome': monthIncome, 'day': day, 'months': months, 'spents': spents}
+    return render(request, 'control/control_finanzas.html', content)
+    
+def finanza_detalles(request, id):
+    month = timezone.now().month
+    year = timezone.now().year
+    day = timezone.now().day
+    monthIncome = MonthIncome.objects.get(id=id)
+    if request.method == 'POST':
+        service = request.POST['service']
     else:
-        day = 30
-    start = datetime.date(year, month, 1)
-    end = datetime.date(year, month, day)
-    operaciones = Oper.objects.filter(fecha__range=[start, end])
-    opers = []
-    earnings = 0
-    spended = days * 600
-    for oper in operaciones:
-        if oper.tipo == 'PAGO':
-            if oper.fecha.day == days:
-                opers.append(oper)
-            earnings = earnings + oper.cantidad
-    net = earnings - spended
-    half = net / 2
-    content = {'month': month, 'days': days, 'opers': opers, 'earnings': earnings, 'spended': spended, 'net': net, 'half': half}
-    return render(request, 'sync/control_finanzas.html', content)
+        service = 'internet-24h'
+    pays = actions.get_service_pays(year, month, service)
+    income = actions.get_service_income(pays)
+    spents = actions.get_service_spents(year, month, service)
+    spent = actions.get_service_spent(spents)
+    content = {'monthIncome': monthIncome, 'day': day, 'service': service, 'pays': pays, 'income': income, 'spents': spents, 'spent': spent}
+    return render(request, 'control/detalle_finanzas.html', content)
+
+def crear_gasto(request):
+    content = {'icon': 'error'}  
+    if request.method == 'POST':
+        if request.POST['nota'] == '' and request.POST['servicio'] == 'Selecciona si pertenece a un servicio':
+            content['mensaje'] = 'Seleccione un servicio o una nota'
+            return render(request, 'control/gasto_form.html', content)
+        else:
+            month = timezone.now().month
+            year = timezone.now().year
+            monthIncome = MonthIncome.objects.get(year=year, month=month)
+            gasto = request.POST['cantidad']
+            new_spent = Spent(month=monthIncome, spent=gasto)
+            if request.POST.get('nota'):
+                nota = request.POST['nota']
+                new_spent.note = nota
+            if request.POST['servicio'] != 'Selecciona si pertenece a un servicio':
+                servicio = request.POST['servicio']
+                new_spent.service = servicio
+            new_spent.save()
+            content['mensaje'] = 'Gasto guardado'
+            content['icon'] = 'success'
+            content['day'] = timezone.now().day
+            content['spents'] = Spent.objects.filter(month=monthIncome)
+            content['months'] = MonthIncome.objects.all()
+            content['monthIncome'] = monthIncome
+            return render(request, 'control/control_finanzas.html', content)
+    return render(request, 'control/gasto_form.html')
+
+def cerrar_mes(request):
+    if request.method == 'POST':
+        print(request.POST)
+        if request.POST.get('cerrar'):
+            month = timezone.now().month
+            year = timezone.now().year
+            monthIncome = MonthIncome.objects.get(year=year, month=month)
+            monthIncome.closed = False
+            monthIncome.save()
+            return redirect('control:control_finanzas')
+        else:
+            return redirect('control:control_finanzas')
+    return render(request, 'control/cerrar_mes.html')

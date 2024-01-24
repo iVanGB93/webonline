@@ -1,4 +1,4 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %} 
 <h4 class="text-center text-white">Usuarios:</h4>
@@ -17,7 +17,7 @@
             <th scope="row">{{ u.id }}</th>
             <td>{{ u.username }}</td>
             <td>{{ u.email }}</td>
-            <td><form action="{% url 'sync:control_usuario' u.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td>
+            <td><form action="{% url 'control:control_usuario' u.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td>
         </tr>  
         {% endfor %}         
     </tbody>

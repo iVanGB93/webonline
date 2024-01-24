@@ -1,4 +1,4 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %}
 <div class="col-12 col-md-10 m-auto my-3">
@@ -16,7 +16,7 @@
                 {% if sorteo.ganador %}Ganador: {{ sorteo.ganador }},{% endif %} 
                 {% if sorteo.recarga %}Recarga: {{ sorteo.recarga }}{% endif %}
             {% endif %}
-            <button class="btn btn-info" onclick=location.assign("{% url 'sync:control_sorteos' %}")>Actualizar</button>
+            <button class="btn btn-info" onclick=location.assign("{% url 'control:control_sorteos' %}")>Actualizar</button>
         </div>
         <div class="col-10 col-md-8 card-body m-auto my-3">
             <button id="boton_saludo" class="form-control btn btn-info mb-3">
@@ -25,7 +25,7 @@
             <button id="boton_empezar" class="form-control btn btn-info mb-3">
                 Empezar
             </button>
-            <form action="{% url 'sync:control_sorteos' %}" method="POST">
+            <form action="{% url 'control:control_sorteos' %}" method="POST">
                 {% csrf_token %}
                 <input type="text" name="accion" value="reiniciar" class="d-none">
                 <button type="submit" class="form-control btn btn-info mb-3">

@@ -1,0 +1,56 @@
+{% extends 'control/baseControl.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Resumen:</h5>
+        </div>
+        <div class="card-body m-auto">
+            <div class="container text-center">
+                <div class="row">
+                  <div class="col-3">
+                    <div class="p-3">{{ day }} días del mes {{ monthIncome.month }}</div>
+                  </div>
+                  <div class="col-3">
+                    <div class="p-3">Ganancia Total: {{ monthIncome.gross_income }}</div>
+                  </div>
+                  <div class="col-3">
+                    <div class="p-3">Gasto: {{ monthIncome.total_spent }}</div>
+                  </div>
+                  <div class="col-3">
+                    <div class="p-3">Ganancia neta: {{ monthIncome.income }}</div>
+                  </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="card-header bg-dark text-white">
+            {% if spents %}
+            <div class="w-100">
+                <p>Gastos:</p>
+            {% for i in spents %}
+                <p>Se gasto{% if i.service %} en {{ i.service }}{% endif %} {{ i.spent }} coins.{% if i.note %} {{ i.note }} {% endif %}</p>
+            {% endfor %}
+            </div>
+            {% endif %}
+            <div class="w-100 d-flex justify-content-between">
+                {% if monthIncome.closed %}<a href="{% url 'control:cerrar_mes' %}" class="btn btn-danger disabled" aria-disabled="true" role="button">Cerrado</a>{% else %}<a href="{% url 'control:cerrar_mes' %}" class="btn btn-danger"  role="button">Cerrar mes</a>{% endif %}
+                <a href="{% url 'control:crear_gasto' %}" class="btn btn-secondary"  role="button">Agregar gasto</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Meses:</h5>
+        </div>
+        <div class="card-body m-auto" style="max-height:400px; overflow: auto">
+            {% for month in months %}
+            <a href="{% url 'control:finanza_detalles' month.id %}" class="btn btn-primary" role="button">Mes {{ month.month }} del {{ month.year}}, ganacia neta {{ month.income }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

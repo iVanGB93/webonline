@@ -1,4 +1,4 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %}
 <div class="col-12 col-md-10 m-auto my-3">
@@ -7,7 +7,7 @@
             <h5>Chequeos:</h5>
         </div>
         <div class="card-body m-auto">
-            <form id="form_chequeos" action="{% url 'sync:control_avanzado' %}" method="POST" style="max-width: 300px;">
+            <form id="form_chequeos" action="{% url 'control:control_avanzado' %}" method="POST" style="max-width: 300px;">
                 {% csrf_token%}                
                 <select class="form-select my-3" name="chequeo" aria-label="Default select example">
                     <option selected>Seleccione...</option>
@@ -30,7 +30,7 @@
             <h5>Acciones:</h5>
         </div>
         <div class="card-body m-auto">
-            <form id="form_acciones" action="{% url 'sync:control_avanzado' %}" method="POST" style="max-width: 300px;">
+            <form id="form_acciones" action="{% url 'control:control_avanzado' %}" method="POST" style="max-width: 300px;">
                 {% csrf_token%}  
                 <select class="form-select my-3" name="accion" aria-label="Default select example">
                     <option selected>Seleccione...</option>

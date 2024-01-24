@@ -39,7 +39,7 @@ class SyncWSConsumer(WebsocketConsumer):
         celula = data.get('identidad', 'sin nombre :-(')
         print(f'{ celula } se ha conectado')
         respuesta['estado'] = True
-        respuesta['mensaje'] = f'Bienvenido {celula}, está conectado!!!'
+        respuesta['mensaje'] = f'Bienvenido {celula}, está conectado a QbaRed Online!!!'
         self.responder(respuesta)
     
     def chequeo_conexion(self, data):
@@ -416,18 +416,23 @@ class SyncWSConsumer(WebsocketConsumer):
     }  
 
     def receive(self, text_data):
-        data = json.loads(text_data)
-        print(data)
-        if isinstance(data, dict):
-            accion = data.get('accion', 'actionError')
-            data = data.get('data', 'dataError')
-            intentedAction = self.acciones.get(accion, 'notpossible')
-            if intentedAction != 'notpossible':
-                self.acciones[accion](self, data)
-            else:
-                self.responder({'message':'not possible'})
+        if text_data:
+            try:
+                data = json.loads(text_data)
+                if isinstance(data, dict):
+                    accion = data.get('accion', 'actionError')
+                    data = data.get('data', 'dataError')
+                    intentedAction = self.acciones.get(accion, 'notpossible')
+                    if intentedAction != 'notpossible':
+                        self.acciones[accion](self, data)
+                    else:
+                        self.responder({'message':'not possible'})
+                else:
+                    self.responder({'message':'invalid message'})
+            except json.JSONDecodeError as e:
+                self.responder({'message':'json format error'})
         else:
-            self.responder({'message':'invalid message'})
+            self.responder({'message':'empty message'})
     
     def responder(self, data):
         data = json.dumps(data)

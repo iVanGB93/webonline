@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'sorteo.apps.SorteoConfig',
     'sync.apps.SyncConfig',
     'chat.apps.ChatConfig',
+    'control.apps.ControlConfig',
 ]
 
 SITE_ID = 1

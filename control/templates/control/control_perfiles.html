@@ -1,4 +1,4 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %} 
 <h4 class="text-center text-white">Perfiles:</h4>
@@ -18,9 +18,9 @@
             <td>{{ p.usuario.username }}</td>
             <td>{{ p.coins }}</td>
             {% if p.sync %}
-            <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
+            <td scope="col"><form action="{% url 'control:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Chequear sync</button></form></td> 
             {% else %}
-            <td scope="col"><form action="{% url 'sync:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
+            <td scope="col"><form action="{% url 'control:control_perfil' p.usuario.id %}" method="POST">{% csrf_token%}<button class="form-control btn btn-info" type="submit">Sync</button></form></td>
             {% endif %}
         </tr>
         {% endfor %}

@@ -1,0 +1,75 @@
+{% extends 'control/baseControl.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="row">
+        <div class="col-3">
+            <form action="{% url 'control:finanza_detalles' monthIncome.id %}" method="post">
+                {% csrf_token %}
+                <button name="service" value="internet-24h" type="submit" class="btn btn-primary">Internet 24h</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="{% url 'control:finanza_detalles' monthIncome.id %}" method="post">
+                {% csrf_token %}
+                <button name="service" value="internetHoras" type="submit" class="btn btn-secondary">Internet Horas</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="{% url 'control:finanza_detalles' monthIncome.id %}" method="post">
+                {% csrf_token %}
+                <button name="service" value="Emby" type="submit" class="btn btn-success">Emby</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="{% url 'control:finanza_detalles' monthIncome.id %}" method="post">
+                {% csrf_token %}
+                <button name="service" value="FileZilla" type="submit" class="btn btn-danger">FileZilla</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Pagos de {{ service }}</h5>
+        </div>
+        <div class="card-body m-auto w-100" style="max-height: 300px; overflow: auto">
+            {% for p in pays %}
+            <p>
+                {{ p.usuario }} pagó {{ p.cantidad }} coins {{ p.servicio }}
+            </p>
+            {% endfor %}
+        </div>
+        <div class="card-header bg-dark text-white">
+            <h5 class="text-end">Ganacia total: {{ income }}coins</h5>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Gastos de {{ service }}</h5>
+        </div>
+        <div class="card-body m-auto w-100" style="max-height: 300px; overflow: auto">
+            {% if spents %}
+            {% for i in spents %}
+            <p>Se gasto en {{ i.service }} {{ i.spent }} coins. {{ i.note }}</p>
+            {% endfor %}
+            {% else %}
+            <p>No hubieron gastos</p>
+            {% endif %}
+        </div>
+        <div class="card-header bg-dark text-white">
+            <div class="row">
+                <div class="col-6">
+                    <a href="{% url 'control:crear_gasto' %}" class="btn btn-secondary"  role="button">Agregar gasto</a>
+                </div>
+                <div class="col-6">
+                    <h5 class="text-end">Gasto total: {{ spent }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

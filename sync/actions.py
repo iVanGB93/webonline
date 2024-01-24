@@ -3,12 +3,14 @@ from servicios.models import EstadoServicio, Oper, Recarga
 from sorteo.models import Sorteo
 from users.models import Profile, Notificacion
 from forum.models import Publicacion
+from decouple import config
 import threading
 
 from django.core.mail import EmailMessage
 
 from .syncs import actualizacion_remota
 
+emailAlerts = config('EMAIL_ALERTS', cast=lambda x: x.split(','))
 
 class EmailSending(threading.Thread):
     def __init__(self, email):
@@ -32,7 +34,7 @@ class UpdateThreadServicio(threading.Thread):
             servicio.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar el servicio', f'El servicio del usuario {servicio.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar el servicio', f'El servicio del usuario {servicio.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadOper(threading.Thread):
@@ -48,7 +50,7 @@ class UpdateThreadOper(threading.Thread):
             operacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar la operación', f'La operación de { operacion.tipo } del usuario { operacion.usuario.username }, cantidad { operacion.cantidad }, no se pudo sincronizar con la local, mensaje: { mensaje }. Fecha: { operacion.fecha}.', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar la operación', f'La operación de { operacion.tipo } del usuario { operacion.usuario.username }, cantidad { operacion.cantidad }, no se pudo sincronizar con la local, mensaje: { mensaje }. Fecha: { operacion.fecha}.', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadPerfil(threading.Thread):
@@ -65,7 +67,7 @@ class UpdateThreadPerfil(threading.Thread):
             perfil.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadNotificacion(threading.Thread):
@@ -81,7 +83,7 @@ class UpdateThreadNotificacion(threading.Thread):
             notificacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadRecarga(threading.Thread):
@@ -98,13 +100,13 @@ class UpdateThreadRecarga(threading.Thread):
                 recarga.save()
             else:
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al guardar recarga usada', f'Recarga del usuario {recarga.usuario.username} código { recarga.code }, que usó no se pudo sincronizar con local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])
+                email = EmailMessage(f'Falló al guardar recarga usada', f'Recarga del usuario {recarga.usuario.username} código { recarga.code }, que usó no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
                 EmailSending(email).start()
         else:
             respuesta = actualizacion_remota('crear_recarga', self.data)
             if not respuesta['estado']:                 
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al guardar recarga', f'Crear recarga, código { recarga.code } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])
+                email = EmailMessage(f'Falló al guardar recarga', f'Crear recarga, código { recarga.code } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
                 EmailSending(email).start()
 
 class UpdateThreadUsuario(threading.Thread):
@@ -117,7 +119,7 @@ class UpdateThreadUsuario(threading.Thread):
         respuesta =  actualizacion_remota('nuevo_usuario', {'usuario': usuario, 'email': self.data['email'], 'password': self.data['password']})
         if not respuesta['estado']:           
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al crear usuario', f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])
+                email = EmailMessage(f'Falló al crear usuario', f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
                 EmailSending(email).start()
 
 class UpdateThreadSorteo(threading.Thread):
@@ -134,7 +136,7 @@ class UpdateThreadSorteo(threading.Thread):
             participacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar la participacion', f'La participacion del usuario { usuario } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar la participacion', f'La participacion del usuario { usuario } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadForum(threading.Thread):
@@ -152,5 +154,5 @@ class UpdateThreadForum(threading.Thread):
             publicacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar la publicacion', f'La publicacion del usuario { usuario }, titulo: { titulo }, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, ['ivanguachbeltran@gmail.com', 'javymk9026@gmail.com'])    
+            email = EmailMessage(f'Falló al guardar la publicacion', f'La publicacion del usuario { usuario }, titulo: { titulo }, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)    
             EmailSending(email).start()

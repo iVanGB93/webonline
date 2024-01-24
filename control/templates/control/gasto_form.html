@@ -1,0 +1,36 @@
+{% extends 'control/baseControl.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Crear un gasto:</h5>
+        </div>
+        <div class="m-2">
+            <form action="{% url 'control:crear_gasto' %}" method="post">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <select class="form-select" name="servicio" aria-label="Default select example">
+                        <option selected>Selecciona si pertenece a un servicio</option>
+                        <option value="internet">Internet 24h</option>
+                        <option value="internetHoras">Internet horas</option>
+                        <option value="Emby">Emby</option>
+                        <option value="Filezilla">Filezilla</option>
+                      </select>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="nota" placeholder="Nota">
+                    <label for="floatingInput">Escriba nota si desea</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" name="cantidad" placeholder="Cantidad" required>
+                    <label for="floatingInput">Escriba la cantidad</label>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-secondary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %} - Control{% endblock title %}
 {% block head %}
-<link rel="stylesheet" href="{% static 'sync/style.css' %}">
+<link rel="stylesheet" href="{% static 'control/style.css' %}">
 {% endblock %}
 {% block header %}
 <header>
@@ -52,56 +52,56 @@
             <div class="card-body">
                 <ul>
                     <li class="my-1">
-                        <a href="{% url 'sync:control' %}">
+                        <a href="{% url 'control:control' %}">
                             <button class="form-control btn btn-info">
                                 Buscar
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_usuarios' %}">
+                        <a href="{% url 'control:control_usuarios' %}">
                             <button class="form-control btn btn-info">
                                 Usuarios
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_perfiles' %}">
+                        <a href="{% url 'control:control_perfiles' %}">
                             <button class="form-control btn btn-info">
                                 Perfiles
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_servicios' %}">
+                        <a href="{% url 'control:control_servicios' %}">
                             <button class="form-control btn btn-info">
                                 Servicios
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_recargas' %}">
+                        <a href="{% url 'control:control_recargas' %}">
                             <button class="form-control btn btn-info">
                                 Recargas
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_sorteos' %}">
+                        <a href="{% url 'control:control_sorteos' %}">
                             <button class="form-control btn btn-info">
                                 Sorteos
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_avanzado' %}">
+                        <a href="{% url 'control:control_avanzado' %}">
                             <button class="form-control btn btn-info">
                                 Avanzado
                             </button>
                         </a>
                     </li>
                     <li class="my-1">
-                        <a href="{% url 'sync:control_finanzas' %}">
+                        <a href="{% url 'control:control_finanzas' %}">
                             <button class="form-control btn btn-info">
                                 Finanzas
                             </button>

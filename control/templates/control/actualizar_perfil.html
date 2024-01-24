@@ -1,10 +1,10 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %}
-<div class="col-12 col-md-10 m-auto my-3" style="height: 90%;"> 
+<div class="col-12 col-md-10 m-auto my-3" style="height: 90%;">    
     <div class="card align-middle">
         <div class="card-header bg-dark text-white">
-            <h5>Los servicios de internet no coincide con el local, desea guardar este o el de internet?</h5>
+            <h5>El perfil de internet no coincide con el local, desea guardar este o el de internet?</h5>
         </div>
         <div class="card-body">
             <div class="row">        
@@ -12,19 +12,19 @@
             </div>
             <div class="row">
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:actualizar_servicio' id %}" method="POST">
+                    <form action="{% url 'control:actualizar_perfil' id %}" method="POST">
                         {% csrf_token%}
-                        <button class="form-control btn btn-success" name="respuesta" value="local" type="submit">Locales</button>
+                        <button class="form-control btn btn-success" name="respuesta" value="local" type="submit">Local</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:actualizar_servicio' id %}" method="POST">
+                    <form action="{% url 'control:actualizar_perfil' id %}" method="POST">
                         {% csrf_token%}
                         <button class="form-control btn btn-danger" name="respuesta" value="remoto" type="submit">Internet</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <a href="{% url 'sync:control_servicios' %}"><button class="form-control btn btn-info">Cancelar</button></a>
+                    <a href="{% url 'control:control_perfiles' %}"><button class="form-control btn btn-info">Cancelar</button></a>
                 </div>
             </div> 
         </div>

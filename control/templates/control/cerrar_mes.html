@@ -1,0 +1,21 @@
+{% extends 'control/baseControl.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Cerrar el mes</h5>
+        </div>
+        <div class="text-center">
+            <p>Seguro que desea cerrar el mes? Esto ya sera definitivo!!!</p>
+            <form action="{% url 'control:cerrar_mes' %}" method="POST">
+                {% csrf_token %}
+                <button name="atras" value="atras" type="submit" class="btn btn-warning">Atras</button>
+                <button name="cerrar" value="cerrar" type="submit" class="btn btn-danger">Cerrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock contenido %}

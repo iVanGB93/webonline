@@ -1,4 +1,4 @@
-{% extends 'sync/baseSync.html' %}
+{% extends 'control/baseControl.html' %}
 {% load static %}
 {% block contenido %}
 <div class="col-12 col-md-10 m-auto my-3" style="height: 90%;">   
@@ -12,19 +12,19 @@
             </div>
             <div class="row">
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:crear_eliminar_usuario' id %}" method="POST">
+                    <form action="{% url 'control:crear_eliminar_usuario' id %}" method="POST">
                         {% csrf_token%}
                         <button class="form-control btn btn-success" name="respuesta" value="crear" type="submit">Crear</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <form action="{% url 'sync:crear_eliminar_usuario' id %}" method="POST">
+                    <form action="{% url 'control:crear_eliminar_usuario' id %}" method="POST">
                         {% csrf_token%}
                         <button class="form-control btn btn-danger" name="respuesta" value="eliminar" type="submit">Eliminar</button>
                     </form>
                 </div>
                 <div class="col-3 m-auto">
-                    <a href="{% url 'sync:control_usuarios' %}"><button class="form-control btn btn-info">Cancelar</button></a>
+                    <a href="{% url 'control:control_usuarios' %}"><button class="form-control btn btn-info">Cancelar</button></a>
                 </div>
             </div> 
         </div>
