@@ -54,20 +54,19 @@ def get_total_spent(year, month):
     for a in all:
         if a.note == 'compra de horas':
             exists = True
+            internet_spent = a
         else:
             total_spent = total_spent + a.spent
     internet_spent_value = get_internet_spent()
     if not exists:
         internet_spent = Spent(month=month, service='internet', note='compra de horas', spent=internet_spent_value)
     else:
-        internet_spent = Spent.objects.get(note='compra de horas')
         internet_spent.spent = internet_spent_value
     internet_spent.save()
     total_spent = total_spent + internet_spent_value
     return total_spent
 
-def get_pays(year, month):
-    day = timezone.now().day
+def get_pays(year, month, day):
     start = datetime.date(year, month, 1)
     end = datetime.date(year, month, day)
     operations = Oper.objects.filter(fecha__range=[start, end])
@@ -77,8 +76,8 @@ def get_pays(year, month):
             opers.append(oper)
     return opers
 
-def get_service_pays(year, month, service):
-    all_pays = get_pays(year, month)
+def get_service_pays(year, month, day, service):
+    all_pays = get_pays(year, month, day)
     pays = []
     for pay in all_pays:
         if pay.servicio == service:
@@ -91,8 +90,8 @@ def get_service_income(pays):
         income = income + p.cantidad
     return income
 
-def get_gross_income(year, month):
-    all_pays = get_pays(year, month)
+def get_gross_income(year, month, day):
+    all_pays = get_pays(year, month, day)
     month = MonthIncome.objects.get(month=month)
     total = 0
     for pay in all_pays:

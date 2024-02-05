@@ -405,13 +405,12 @@ def control_avanzado(request):
     else:
         return render(request, 'control/control_avanzado.html')
 
-
 def control_finanzas(request):
     month = timezone.now().month
     year = timezone.now().year
     day = timezone.now().day
     monthIncome = actions.get_or_create_monthincome(year, month)
-    monthIncome.gross_income = actions.get_gross_income(year, month)
+    monthIncome.gross_income = actions.get_gross_income(year, month, monthIncome.days)
     monthIncome.total_spent = actions.get_total_spent(year, month)
     monthIncome.income = monthIncome.gross_income - monthIncome.total_spent
     monthIncome.save()
@@ -421,19 +420,16 @@ def control_finanzas(request):
     return render(request, 'control/control_finanzas.html', content)
     
 def finanza_detalles(request, id):
-    month = timezone.now().month
-    year = timezone.now().year
-    day = timezone.now().day
     monthIncome = MonthIncome.objects.get(id=id)
     if request.method == 'POST':
         service = request.POST['service']
     else:
         service = 'internet-24h'
-    pays = actions.get_service_pays(year, month, service)
+    pays = actions.get_service_pays(monthIncome.year, int(monthIncome.month), monthIncome.days, service)
     income = actions.get_service_income(pays)
-    spents = actions.get_service_spents(year, month, service)
+    spents = actions.get_service_spents(monthIncome.year, int(monthIncome.month), service)
     spent = actions.get_service_spent(spents)
-    content = {'monthIncome': monthIncome, 'day': day, 'service': service, 'pays': pays, 'income': income, 'spents': spents, 'spent': spent}
+    content = {'monthIncome': monthIncome, 'service': service, 'pays': pays, 'income': income, 'spents': spents, 'spent': spent}
     return render(request, 'control/detalle_finanzas.html', content)
 
 def crear_gasto(request):

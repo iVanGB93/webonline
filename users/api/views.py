@@ -44,12 +44,39 @@ class UserView(APIView):
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+class UserCheckView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, queryset=None, **kwargs):
+        user = self.kwargs.get('user')
+        if User.objects.filter(username=user).exists():
+            data = {'message': 'Nombre de usuario en uso'}
+            return Response(status=status.HTTP_200_OK, data=data)
+        else:
+            if request.data.get('email'):
+                email = request.data['email']
+                if User.objects.filter(email=email).exists():
+                    data = {'message': 'Email en uso'}
+                    return Response(status=status.HTTP_200_OK, data=data)
+            data = {'message': 'user or email not found'}
+            return Response(status=status.HTTP_200_OK, data=data)
+        
 class EmailCheckView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, queryset=None, **kwargs):
         email = self.kwargs.get('email')
-        print(email)
         if User.objects.filter(email=email).exists():
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class CreateUserView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        if request.data:
+            data = request.data
+            user = User(username=data['username'], email=data['email'])
+            user.set_password(data['password'])
+            user.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

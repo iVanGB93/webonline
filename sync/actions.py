@@ -9,6 +9,7 @@ import threading
 from django.core.mail import EmailMessage
 
 from .syncs import actualizacion_remota
+from users.actions import create_user
 
 emailAlerts = config('EMAIL_ALERTS', cast=lambda x: x.split(','))
 
@@ -116,11 +117,11 @@ class UpdateThreadUsuario(threading.Thread):
 
     def run(self):
         usuario = self.data['usuario']
-        respuesta =  actualizacion_remota('nuevo_usuario', {'usuario': usuario, 'email': self.data['email'], 'password': self.data['password']})
-        if not respuesta['estado']:           
-                mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al crear usuario', f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
-                EmailSending(email).start()
+        respuesta =  create_user(usuario, self.data['email'], self.data['password'])
+        if not respuesta['state']:
+            mensaje = respuesta['message']
+            email = EmailMessage(f'Fallo creando un nuevo usuario', f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
+            EmailSending(email).start()
 
 class UpdateThreadSorteo(threading.Thread):
     def __init__(self, data):

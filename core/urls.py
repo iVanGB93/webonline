@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/servicios/', include('servicios.api.urls')),
     path('users/', include('users.urls')),
     path('api/users/', include('users.api.urls')),
+    path('api/sync/', include('sync.api.urls')),
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="users/password_reset.html"), name="reset_password"),
     path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(template_name="users/password_reset_send.html"), name="password_reset_done"),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="users/password_reset_form.html"), name="password_reset_confirm"),
