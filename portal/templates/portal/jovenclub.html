@@ -1,6 +1,7 @@
 {% extends "portal/basePortal.html" %}
 {% load static %}
 {% block contenido %}
+<div style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 90%; background-color: black; align-items: center; justify-content: center;;"><h1 class="text-white">Fuera de servicio...</h1></div>
 <div class="row m-2 p-1">    
     <div class="col-10 col-md-5 mt-0 mb-4 m-auto caja" style="max-width: 300px; background: #fff;">
         <div class="cardHeader titulo my-auto">
@@ -84,17 +85,17 @@
         <hr class="dropdown-divider" />
         <div class="d-flex justify-content-between">
             <h5 class="titulo my-auto">Mensual</h5>
-            <h5 class="texto my-auto">100 coins</h5>
+            <h5 class="texto my-auto">{{ jcPrice }} coins</h5>
         </div>        
         <hr class="dropdown-divider" />
         <div>
         {% endif %}
             <form class="p-2" id="myform" action="{% url 'portal:jovenclub' %}" method="post">            
                 {% csrf_token %}
-                <div class="input-group mb-3">
+                <!-- <div class="input-group mb-3">
                     <span class="col-auto input-group-text" id="inputGroup-sizing-default">Contraseña</span>
                     <input type="password" name="contra" required class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                </div>
+                </div> -->
                 <button onclick="confirmSubmit(event);" id="boton" type="submit" class="form-control btn btn-outline-primary">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none'></span>
                     Activar
@@ -103,21 +104,21 @@
         </div>        
     </div>      
 </div>
-<div class="row py-5">
+<!-- <div class="row py-5">
     <div class="col-10 col-md-8 m-auto text-center caja" style="background: #fff;">
         <div class="cardHeader titulo">
             <h3 class="titulo m-1 p-1">Información:</h3>            
         </div>
         <div class="p-2 texto">
             <ul class="list-group">
-                <li class="list-group-item">Las instrucciones para usarlo están <a href="{% url 'web:jc' %}">-->aquí<--</a></li>
+                <li class="list-group-item">Las instrucciones para usarlo están <a href="{% url 'web:jc' %}">  aquí</a></li>
                 <li class="list-group-item">Cuando active el servicio por primera vez debe escribirle al Yanky.</li>
-                <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, mas información <a href="{% url 'sorteo:index' %}">-->aquí<--</a>.</li>
+                <li class="list-group-item">No olvide si activa el servicio tiene la oportunidad de ganar el sorteo del mes usando el código, mas información <a href="{% url 'sorteo:index' %}"> aquí </a>.</li>
                 <li class="list-group-item">Duda y sugerencias, escribir a la administración.</li>
             </ul>
         </div>
     </div>
-</div>
+</div> -->
 {% if user.estadoservicio.jc %}
 {{ user.estadoservicio.jc_time|json_script:"fecha" }}
 <script>

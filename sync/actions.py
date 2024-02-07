@@ -2,9 +2,12 @@ from django.contrib.auth.models import User
 from servicios.models import EstadoServicio, Oper, Recarga
 from sorteo.models import Sorteo
 from users.models import Profile, Notificacion
+from users.api.serializers import ProfileSerializer
+from sync.models import EstadoConexion
 from forum.models import Publicacion
 from decouple import config
 import threading
+import requests
 
 from django.core.mail import EmailMessage
 
@@ -21,7 +24,7 @@ class EmailSending(threading.Thread):
     def run(self):
         self.email.send(fail_silently=False)
 
-class UpdateThreadServicio(threading.Thread):
+""" class UpdateThreadServicio(threading.Thread):
     def __init__(self, data):
         self.data = data
         threading.Thread.__init__(self)
@@ -52,7 +55,7 @@ class UpdateThreadOper(threading.Thread):
         else:
             mensaje = respuesta['mensaje']
             email = EmailMessage(f'Falló al guardar la operación', f'La operación de { operacion.tipo } del usuario { operacion.usuario.username }, cantidad { operacion.cantidad }, no se pudo sincronizar con la local, mensaje: { mensaje }. Fecha: { operacion.fecha}.', None, emailAlerts)    
-            EmailSending(email).start()
+            EmailSending(email).start() """
 
 class UpdateThreadPerfil(threading.Thread):
     def __init__(self, data):
@@ -61,14 +64,23 @@ class UpdateThreadPerfil(threading.Thread):
 
     def run(self):
         usuario = User.objects.get(username=self.data['usuario'])
-        perfil = Profile.objects.get(usuario=usuario.id)
-        respuesta = actualizacion_remota('cambio_perfil', self.data)
-        if respuesta['estado']:
-            perfil.sync = True
-            perfil.save()
-        else:
-            mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
+        perfil = Profile.objects.get(usuario=usuario)
+        serializer = ProfileSerializer(perfil)
+        data=serializer.data
+        conexion = EstadoConexion.objects.get(servidor=perfil.subnet)
+        url = f'http://{ conexion.ip_cliente }/api/users/profile/{ usuario.username }/'
+        try:
+            respuesta = requests.put(url, json=data)
+            respuesta = respuesta.json()
+            if respuesta['estado']:
+                perfil.sync = True
+                perfil.save()
+            else:
+                mensaje = respuesta['mensaje']
+                email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
+                EmailSending(email).start()
+        except:
+            email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', None, emailAlerts)    
             EmailSending(email).start()
 
 class UpdateThreadNotificacion(threading.Thread):
@@ -78,16 +90,26 @@ class UpdateThreadNotificacion(threading.Thread):
     
     def run(self):
         notificacion = Notificacion.objects.get(id=self.data['id'])
-        respuesta = actualizacion_remota('crear_notificacion', self.data)
-        if respuesta['estado']:
-            notificacion.sync = True
-            notificacion.save()
-        else:
-            mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
+        usuario = User.objects.get(username=self.data['usuario'])
+        perfil = Profile.objects.get(usuario=usuario)
+        conexion = EstadoConexion.objects.get(servidor=perfil.subnet)
+        url = f'http://{ conexion.ip_cliente }/api/users/notification/{ usuario.username }/'
+        data = self.data
+        try:
+            respuesta = requests.put(url, json=data)
+            respuesta = respuesta.json()
+            if respuesta['estado']:
+                notificacion.sync = True
+                notificacion.save()
+            else:
+                mensaje = respuesta['mensaje']
+                email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
+                EmailSending(email).start()
+        except:
+            email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', None, emailAlerts)    
             EmailSending(email).start()
 
-class UpdateThreadRecarga(threading.Thread):
+""" class UpdateThreadRecarga(threading.Thread):
     def __init__(self, data):
         self.data = data
         threading.Thread.__init__(self)
@@ -108,7 +130,7 @@ class UpdateThreadRecarga(threading.Thread):
             if not respuesta['estado']:                 
                 mensaje = respuesta['mensaje']
                 email = EmailMessage(f'Falló al guardar recarga', f'Crear recarga, código { recarga.code } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
-                EmailSending(email).start()
+                EmailSending(email).start() """
 
 class UpdateThreadUsuario(threading.Thread):
     def __init__(self, data):

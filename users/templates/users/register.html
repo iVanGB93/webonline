@@ -30,6 +30,13 @@
             <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" style="background: transparent; color: white;" placeholder="Contraseña" required>
             <label for="passwordConfirm">Repetir contraseña:</label>
         </div>
+        <div class="form-floating mb-3">
+            <select id="zona" class="form-control" placeholder="A que zona pertenece?" name="subnet" style="background: transparent; color: white;">
+                <option selected value="local_iVan">Centro Habana</option>
+                <option value="local_0n3">Plaza</option >
+            </select>
+            <label for="zona">A que zona pertenece?</label>
+        </div>
         <button id="boton" class="form-control btn btn-outline-warning" type="submit">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
             Registrarme

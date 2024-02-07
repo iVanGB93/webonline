@@ -70,6 +70,13 @@
             <input type="email" placeholder="repetir email" required name="emailConfirm" class="box">
             <input type="password" placeholder="contraseña" required name="password" class="box">
             <input type="password" placeholder="repetir contraseña" required name="passwordConfirm" class="box">
+            <div class="form-floating">
+                <select id="zona" class="box" placeholder="A que zona pertenece?" name="subnet">
+                    <option selected value="local_iVan">Centro Habana</option>
+                    <option value="local_0n3">Plaza</option>
+                </select>
+                <label for="zona">A que zona pertenece?</label>
+            </div>
             <input type="submit" value="registrarme" class="boton">        
             <p>ya tienes cuenta?<span id="boton-login" class="boton">click aquí</span></p>
         </form>

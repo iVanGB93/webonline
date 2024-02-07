@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from users.models import Profile
 from sync.models import EstadoConexion
 from sync.actions import UpdateThreadUsuario
 from .actions import check_user
@@ -61,7 +62,10 @@ def register(request):
             user = User(username=username, email=email)
             user.set_password(password)
             user.save()
-            new_user = authenticate(request, username=user.username, password=password)        
+            new_user = authenticate(request, username=user.username, password=password)
+            profile = Profile.objects.get(usuario=user)
+            profile.subnet = request.POST['subnet']
+            profile.save()
             UpdateThreadUsuario({'usuario':user.username, 'email': user.email, 'password': password}).start()
             login(request, new_user)
             return redirect('web:index')

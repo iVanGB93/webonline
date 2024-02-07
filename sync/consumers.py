@@ -9,6 +9,7 @@ from users.models import Profile, Notificacion
 from .models import EstadoConexion
 from sorteo.actions import crear_participacion
 
+
 class SyncWSConsumer(WebsocketConsumer):
     def connect(self):
         #self.room_name
@@ -63,9 +64,12 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def check_usuario(self, data):
         respuesta = {'estado': False}
-        usuario = data.get('usuario', 'key not found')
         if self.usuario_existe(data):
             respuesta['estado'] = True
+            usuario = data['usuario']
+            user = User.objects.get(username=usuario)
+            respuesta['username'] = user.username
+            respuesta['email'] = user.email
             respuesta['mensaje'] = f'El usuario { usuario } esta registrado.'
             self.responder(respuesta)
 
@@ -154,8 +158,8 @@ class SyncWSConsumer(WebsocketConsumer):
     
     def coger_perfil(self, data):
         respuesta = {'estado': False}
-        usuario = data['usuario']
         if self.usuario_existe(data):
+            usuario = data['usuario']
             usuario_local = User.objects.get(username=usuario)
             if Profile.objects.filter(usuario=usuario_local).exists:
                 perfil = Profile.objects.get(usuario=usuario_local)
@@ -390,6 +394,40 @@ class SyncWSConsumer(WebsocketConsumer):
     def dataError(self, data):
         response = {'estado': False, 'data': 'Nothing to work with...'}
         self.responder(response)
+    
+    def get_user_info(self, data):
+        response = {'estado': False}
+        if self.usuario_existe(data):
+            user = User.objects.get(username=data['usuario'])
+            if not user.check_password(data['password']):
+                response['mensaje'] = "Contraseña incorrecta"
+                self.responder(response)
+            else:
+                response['username'] = user.username
+                response['email'] = user.email
+                profile = Profile.objects.get(usuario=user)
+                response['coins'] = profile.coins
+                services = EstadoServicio.objects.filter(usuario=user)
+                for s in services:
+                    response['internet'] = s.internet                                 
+                    response['int_horas'] = s.int_horas
+                    response['int_time'] = str(s.int_time)
+                    response['int_tipo'] = s.int_tipo
+                    response['int_duracion'] = s.int_duracion
+                    response['int_velocidad'] = s.int_velocidad
+                    response['int_auto'] = s.int_auto                  
+                    response['jc'] = s.jc
+                    response['jc_time'] = str(s.jc_time)
+                    response['jc_auto'] = s.jc_auto
+                    response['emby'] = s.emby       
+                    response['emby_id'] = s.emby_id
+                    response['emby_time'] = str(s.emby_time)
+                    response['emby_auto'] = s.emby_auto
+                    response['ftp'] = s.ftp
+                    response['ftp_auto'] = s.ftp_auto
+                    response['ftp_time'] = str(s.ftp_time)
+                response['estado'] = True
+                self.responder(response)
 
     acciones = {
         'saludo': saludo,
@@ -412,7 +450,8 @@ class SyncWSConsumer(WebsocketConsumer):
         'crear_notificacion': crear_notificacion,
         'sync_publicacion': sync_publicacion,
         'actionError': actionError,
-        'dataError': dataError
+        'dataError': dataError,
+        'get_user_info': get_user_info,
     }  
 
     def receive(self, text_data):

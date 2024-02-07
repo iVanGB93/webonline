@@ -121,8 +121,8 @@ def internet(request):
         contra = request.POST['contra']        
         if usuario.check_password(contra):
             result = comprar_internet(usuario, tipo, contra, duracion, horas, velocidad)
-            if result['correcto']:        
-                content['icon'] = 'success'                    
+            if result['correcto']:      
+                content['icon'] = 'success'             
             content['mensaje'] = result['mensaje']
             return render(request, 'portal/internet.html', content)
         else:
@@ -134,7 +134,8 @@ def internet(request):
 @login_required(login_url='/users/login/')
 def jovenclub(request):
     usuario = request.user
-    content = {'icon': 'error'} 
+    jcPrice = config('JC_PRICE')
+    content = {'icon': 'error', 'jcPrice': jcPrice} 
     if request.method == 'POST':
         contra = request.POST['contra']
         if usuario.check_password(contra):
@@ -226,8 +227,9 @@ def operaciones(request):
 
 @login_required(login_url='/users/login/')
 def cambiar_auto(request, id):
-    conexion = EstadoConexion.objects.get(id=1)
     usuario = request.user
+    perfil = Profile.objects.get(usuario=usuario)
+    conexion = EstadoConexion.objects.get(servidor=perfil.subnet)
     servicio = EstadoServicio.objects.get(usuario=usuario)
     content = {'servicio': servicio, 'icon': 'success'}
     if conexion.online:
@@ -284,24 +286,17 @@ def cambiar_auto(request, id):
     
 @login_required(login_url='/users/login/')
 def sync_servicio(request, id):
-    conexion = EstadoConexion.objects.get(id=1)
+    usuario = request.user
+    perfil = Profile.objects.get(usuario=usuario)
+    conexion = EstadoConexion.objects.get(servidor=perfil.subnet)
     content = {'icon': 'error'}
     if conexion.online:
-        usuario = request.user
         servicio = EstadoServicio.objects.get(usuario=usuario)
-        serializer = ServiciosSerializer(servicio)
-        data=serializer.data
-        data['usuario'] = str(usuario)    
-        respuesta = actualizacion_remota('check_servicio', data)
-        if respuesta['estado']:
-            servicio.sync = True
-            servicio.save()
-            content['mensaje'] = respuesta['mensaje']
-            content['icon'] = 'success'
-            return render(request, f'portal/{ id }.html', content)
-        else:
-            content['id'] = id
-            return render(request, 'portal/sync_servicio.html', content)
+        servicio.sync = False
+        servicio.save()
+        content['mensaje'] = 'Servicios actualizados, si continua el problema contacte un admin.'
+        content['icon'] = 'success'
+        return render(request, f'portal/{ id }.html', content)
     else:
         content['mensaje'] = "El servidor no tiene acceso a internet en este momento, intente más tarde."
         return render(request, f'portal/{ id }.html', content)
@@ -324,23 +319,18 @@ def guardar_servicio(request):
 
 @login_required(login_url='/users/login/')
 def sync_perfil(request):    
-    usuario = User.objects.get(username=request.user)
-    conexion = EstadoConexion.objects.get(id=1)
+    usuario = request.user
+    profile = Profile.objects.get(usuario=usuario)
+    conexion = EstadoConexion.objects.get(servidor=profile.subnet)
     sorteos = SorteoDetalle.objects.all()
     content = {'sorteos': sorteos, 'conexion': conexion, 'icon': 'error'}
     if request.method == 'POST':
         if conexion.online:
-            profile = Profile.objects.get(usuario=usuario)        
-            data = {'usuario': usuario.username, 'coins': profile.coins}
-            respuesta = actualizacion_remota('check_perfil', data)        
-            if respuesta['estado']:
-                profile.sync = True
-                profile.save()
-                content['mensaje'] = respuesta['mensaje']
-                content['icon'] = 'success'
-                return render(request, 'portal/dashboard.html', content)
-            else:
-                return render(request, 'portal/sync_perfil.html', content)
+            profile.sync = False
+            profile.save()
+            content['mensaje'] = 'Perfil actualizado, si continua el problema contacte un admin.'
+            content['icon'] = 'success'
+            return render(request, 'portal/dashboard.html', content)
         else:
             content['mensaje'] = "El servidor no tiene acceso a internet en este momento, intente más tarde."
             return render(request, 'portal/dashboard.html', content)

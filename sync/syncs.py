@@ -1,10 +1,8 @@
-from decouple import config
+from .models import EstadoConexion
 import asyncio
 import websockets
 import json
 
-
-client = config('CLIENT')
 
 def get_or_create_eventloop():
     try:
@@ -16,7 +14,8 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
 
 def actualizacion_remota(accion, data):
-    recibe = get_or_create_eventloop().run_until_complete(conectar(client, accion, data))
+    conexion = EstadoConexion.objects.get(servidor='loca_iVan')
+    recibe = get_or_create_eventloop().run_until_complete(conectar(conexion.ip_cliente, accion, data))
     return recibe
 
 async def conectar(url, accion, data):

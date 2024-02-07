@@ -13,9 +13,7 @@ emailAlerts = config('EMAIL_ALERTS', cast=lambda x: x.split(','))
 def crearProfile(sender, instance, **kwargs):
     usuario = instance.username
     usuario = User.objects.get(username=usuario)
-    if Profile.objects.filter(usuario=usuario).exists():
-        pass
-    else:
+    if not Profile.objects.filter(usuario=usuario).exists():
         profile = Profile(usuario=usuario)
         profile.sync = True
         profile.save()
@@ -26,14 +24,12 @@ def crearProfile(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Profile)
 def actualizar_profile(sender, instance, **kwargs):
-    if config('APP_MODE') == 'online':
-        if instance.sync == False:
-            data = {'usuario': instance.usuario.username, 'coins': instance.coins}
-            UpdateThreadPerfil(data).start()            
+    if instance.sync == False:
+        data = {'usuario': instance.usuario.username, 'coins': instance.coins}
+        UpdateThreadPerfil(data).start()            
 
 @receiver(post_save, sender=Notificacion)
 def actualizar_notificacion(sender, instance, **kwargs):
-    if config('APP_MODE') == 'online':
-        if instance.sync == False:
-            data = {'id': instance.id, 'usuario': instance.usuario.username, 'tipo': instance.tipo, 'contenido': instance.contenido}
-            UpdateThreadNotificacion(data).start()
+    if instance.sync == False:
+        data = {'id': instance.id, 'usuario': instance.usuario.username, 'tipo': instance.tipo, 'contenido': instance.contenido}
+        UpdateThreadNotificacion(data).start()

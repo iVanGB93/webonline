@@ -71,18 +71,41 @@ class WSConsumer(WebsocketConsumer):
             respuesta['accion'] = 'nuevas'
             respuesta['estado'] = True
             self.responder(respuesta)
+    
+    def actionError(self, data):
+        response = {'estado': False, 'data': 'Nothing to do...'}
+        self.responder(response)
+    
+    def dataError(self, data):
+        response = {'estado': False, 'data': 'Nothing to work with...'}
+        self.responder(response)
 
     acciones = {
         'saludo': saludo,
         'notificaciones': notificaciones,
         'notificaciones_nuevas': notificaciones_nuevas,
+        'actionError': actionError,
+        'dataError': dataError,
     }
 
     def receive(self, text_data):
-        data = json.loads(text_data)
-        accion = data['accion']
-        data = data['data']
-        self.acciones[accion](self, data)
+        if text_data:
+            try:
+                data = json.loads(text_data)
+                if isinstance(data, dict):
+                    accion = data.get('accion', 'actionError')
+                    data = data.get('data', 'dataError')
+                    intentedAction = self.acciones.get(accion, 'notpossible')
+                    if intentedAction != 'notpossible':
+                        self.acciones[accion](self, data)
+                    else:
+                        self.responder({'message':'not possible'})
+                else:
+                    self.responder({'message':'invalid message'})
+            except json.JSONDecodeError as e:
+                self.responder({'message':'json format error'})
+        else:
+            self.responder({'message':'empty message'})
     
     def responder(self, data):
         data = json.dumps(data)
