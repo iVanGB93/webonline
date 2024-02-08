@@ -13,8 +13,27 @@ from django.core.mail import EmailMessage
 
 from .syncs import actualizacion_remota
 from users.actions import create_user
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 emailAlerts = config('EMAIL_ALERTS', cast=lambda x: x.split(','))
+
+class DynamicEmailSending(threading.Thread):
+    def __init__(self, data):
+        self.data = data
+        threading.Thread.__init__(self)
+    
+    def run(self):
+        to = self.data['to']
+        message = Mail(from_email='admin@qbared.com', to_emails=to)
+        message.template_id = self.data['template_id']
+        message.dynamic_template_data = self.data['dynamicdata']
+        try:
+            sg = SendGridAPIClient('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')
+            sg.send(message)
+        except Exception as e:
+            email = EmailMessage(f'Falló al enviar email dinamico', f'El email para { to }, de la plantilla { message.template_id } con la data { message.dynamic_template_data } no se pudo enviar. MENSAJE: SALTO EL TRY', None, emailAlerts)    
+            EmailSending(email).start()
 
 class EmailSending(threading.Thread):
     def __init__(self, email):

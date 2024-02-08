@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from decouple import config
 
+
 server_name = config('NOMBRE_SERVIDOR')
 
 def index(request):
