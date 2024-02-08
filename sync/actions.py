@@ -29,7 +29,8 @@ class DynamicEmailSending(threading.Thread):
         message.template_id = self.data['template_id']
         message.dynamic_template_data = self.data['dynamicdata']
         try:
-            sg = SendGridAPIClient('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')
+            api_key = config('EMAIL_API_KEY')
+            sg = SendGridAPIClient(api_key)
             sg.send(message)
         except Exception as e:
             email = EmailMessage(f'Falló al enviar email dinamico', f'El email para { to }, de la plantilla { message.template_id } con la data { message.dynamic_template_data } no se pudo enviar. MENSAJE: SALTO EL TRY', None, emailAlerts)    
