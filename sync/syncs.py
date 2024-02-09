@@ -14,7 +14,7 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
 
 def actualizacion_remota(accion, data):
-    conexion = EstadoConexion.objects.get(servidor='loca_iVan')
+    conexion = EstadoConexion.objects.get(servidor='local_iVan')
     recibe = get_or_create_eventloop().run_until_complete(conectar(conexion.ip_cliente, accion, data))
     return recibe
 

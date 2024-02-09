@@ -7,7 +7,5 @@ from decouple import config
 
 @receiver(post_save, sender=Sorteo)
 def syncParticipacion(sender, instance, **kwargs):
-    online = config('APP_MODE')
-    if online == 'online':
-        if instance.sync == False:            
-            UpdateThreadSorteo({'id':instance.id, 'usuario': instance.usuario.username, 'code': instance.code, 'servicio': instance.servicio}).start()
+    if instance.sync == False:            
+        UpdateThreadSorteo({'id':instance.id, 'usuario': instance.usuario.username, 'code': instance.code, 'servicio': instance.servicio}).start()
