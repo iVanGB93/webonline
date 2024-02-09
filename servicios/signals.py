@@ -5,7 +5,6 @@ from users.models import Profile
 from sync.models import EstadoConexion
 from django.contrib.auth.models import  User
 from servicios.api.serializers import ServiciosSerializer
-from django.core.mail import EmailMessage
 from sync.actions import EmailSending
 from decouple import config
 import requests
@@ -39,8 +38,8 @@ def actualizar_servicios(sender, instance, **kwargs):
                 instance.save()
             else:
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al subir el servicio', f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: { mensaje }', None, emailAlerts)
-                EmailSending(email).start()
+                data = {'subjet': f'Falló al subir el servicio', 'content': f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con { profile.subnet }. MENSAJE: { mensaje }', 'to': emailAlerts}
+                EmailSending(data).start()
         except:
-            email = EmailMessage(f'Falló al subir el servicio', f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con internet. MENSAJE: FALLO EL TRY', None, emailAlerts)
-            EmailSending(email).start()
+            data = {'subjet': f'Falló al subir el servicio', 'content': f'El servicio del usuario {instance.usuario.username} no se pudo sincronizar con { profile.subnet }. MENSAJE: FALLO EL TRY', 'to': emailAlerts}
+            EmailSending(data).start()

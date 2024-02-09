@@ -3,7 +3,6 @@ from .models import Recarga, Oper, EstadoServicio
 from django.contrib.auth.models import User
 from users.models import Profile
 from sync.models import EstadoConexion
-from django.core.mail import EmailMessage
 from sync.actions import EmailSending
 from decouple import config
 import requests
@@ -164,8 +163,8 @@ def recargar(code, usuario):
                 if respuesta.status_code == 200:
                     result['correcto'] = True
                     if not respuesta['estado']:
-                        email = EmailMessage(f'{ usuario.username } ha recargado desde internet', f'El usuario { usuario.username } recargo su cuenta con { cantidad } coins. Recarga: { code }.', None, emailAlerts)    
-                        EmailSending(email).start()                   
+                        data = {'subjet': f'{ usuario.username } ha recargado desde internet', 'content': f'El usuario { usuario.username } recargo su cuenta con { cantidad } coins. Recarga: { code }.', 'to': emailAlerts}    
+                        EmailSending(data).start()                   
                     else:
                         profile.sync = False             
                         profile.save()

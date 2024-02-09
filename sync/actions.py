@@ -8,15 +8,21 @@ from forum.models import Publicacion
 from decouple import config
 import threading
 import requests
-
-from django.core.mail import EmailMessage
-
-from .syncs import actualizacion_remota
-from users.actions import create_user
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+from django.core.mail import send_mail
+
+from .syncs import actualizacion_remota
+from users.actions import create_user
+
+
 emailAlerts = config('EMAIL_ALERTS', cast=lambda x: x.split(','))
+
+def email_backup(subject, message):
+    from_email = 'admin@qbared.com'
+    to_email = ['ivanguachbeltran@gmail.com']
+    send_mail(subject, message, from_email, to_email, fail_silently=False)
 
 class DynamicEmailSending(threading.Thread):
     def __init__(self, data):
@@ -25,7 +31,7 @@ class DynamicEmailSending(threading.Thread):
     
     def run(self):
         to = self.data['to']
-        message = Mail(from_email='admin@qbared.com', to_emails=to)
+        message = Mail(from_email='QbaRed <admin@qbared.com>', to_emails=to)
         message.template_id = self.data['template_id']
         message.dynamic_template_data = self.data['dynamicdata']
         try:
@@ -33,16 +39,25 @@ class DynamicEmailSending(threading.Thread):
             sg = SendGridAPIClient(api_key)
             sg.send(message)
         except Exception as e:
-            email = EmailMessage(f'Falló al enviar email dinamico', f'El email para { to }, de la plantilla { message.template_id } con la data { message.dynamic_template_data } no se pudo enviar. MENSAJE: SALTO EL TRY', None, emailAlerts)    
-            EmailSending(email).start()
+            data = {'subjet': f'Falló al enviar email dinamico', 'content': f'El email para { to }, de la plantilla { message.template_id } con la data { message.dynamic_template_data } no se pudo enviar. MENSAJE: SALTO EL TRY por { str(e) }', 'to': emailAlerts}    
+            EmailSending(data).start()
 
 class EmailSending(threading.Thread):
-    def __init__(self, email):
-        self.email = email
+    def __init__(self, data):
+        self.data = data
         threading.Thread.__init__(self)
     
     def run(self):
-        self.email.send(fail_silently=False)
+        to = self.data['to']
+        content = self.data['content']
+        subjet = self.data['subjet']
+        message = Mail(from_email='QbaRed <admin@qbared.com>', to_emails=to, subject=subjet, html_content=f'<strong>{ content }</strong>')
+        try:
+            api_key = config('EMAIL_API_KEY')
+            sg = SendGridAPIClient(api_key)
+            sg.send(message)
+        except Exception as e:
+            send_mail('Fallo al enviar email', f'Este es el email backup, porque no se pudo enviar el email {content} a {str(to)} EXCEPTION: { str(e)}')
 
 """ class UpdateThreadServicio(threading.Thread):
     def __init__(self, data):
@@ -97,11 +112,11 @@ class UpdateThreadPerfil(threading.Thread):
                 perfil.save()
             else:
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
-                EmailSending(email).start()
+                data = {'subject': f'Falló al guardar el perfil { perfil.id }', 'content': f'El perfil del usuario {perfil.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', 'to': emailAlerts}   
+                EmailSending(data).start()
         except:
-            email = EmailMessage(f'Falló al guardar el perfil', f'El perfil del usuario {usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', None, emailAlerts)    
-            EmailSending(email).start()
+            data = {'subject': f'Falló al guardar el perfil { perfil.id }', 'content': f'El perfil del usuario {usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', 'to': emailAlerts}  
+            EmailSending(data).start()
 
 class UpdateThreadNotificacion(threading.Thread):
     def __init__(self, data):
@@ -123,11 +138,11 @@ class UpdateThreadNotificacion(threading.Thread):
                 notificacion.save()
             else:
                 mensaje = respuesta['mensaje']
-                email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', None, emailAlerts)    
-                EmailSending(email).start()
+                data = {'subject': f'Falló al guardar una notificacion { notificacion.id }', 'content': f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: { mensaje }', 'to': emailAlerts}    
+                EmailSending(data).start()
         except:
-            email = EmailMessage(f'Falló al guardar una notificacion', f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', None, emailAlerts)    
-            EmailSending(email).start()
+            data = {'subject': f'Falló al guardar una notificacion { notificacion.id }', 'content': f'La notificacion { notificacion.contenido } del usuario {notificacion.usuario.username} no se pudo sincronizar con la local. MENSAJE: SALTO EL TRY', 'to': emailAlerts}    
+            EmailSending(data).start()
 
 """ class UpdateThreadRecarga(threading.Thread):
     def __init__(self, data):
@@ -162,8 +177,8 @@ class UpdateThreadUsuario(threading.Thread):
         respuesta =  create_user(usuario, self.data['email'], self.data['password'])
         if not respuesta['state']:
             mensaje = respuesta['message']
-            email = EmailMessage(f'Fallo creando un nuevo usuario', f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)
-            EmailSending(email).start()
+            data = {'subject': 'Falló al crear un nuevo usuario', 'content': f'Crear usuario {usuario}, no se pudo sincronizar con local. MENSAJE: { mensaje }', 'to': emailAlerts}
+            EmailSending(data).start()
 
 class UpdateThreadSorteo(threading.Thread):
     def __init__(self, data):
@@ -179,8 +194,8 @@ class UpdateThreadSorteo(threading.Thread):
             participacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar la participacion', f'La participacion del usuario { usuario } no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)    
-            EmailSending(email).start()
+            data = {'subject': f'Falló al guardar la participacion { participacion.id }', 'content': f'La participacion del usuario { usuario } no se pudo sincronizar con local. MENSAJE: { mensaje }', 'to': emailAlerts}    
+            EmailSending(data).start()
 
 class UpdateThreadForum(threading.Thread):
     def __init__(self, data):
@@ -197,5 +212,5 @@ class UpdateThreadForum(threading.Thread):
             publicacion.save()
         else:
             mensaje = respuesta['mensaje']
-            email = EmailMessage(f'Falló al guardar la publicacion', f'La publicacion del usuario { usuario }, titulo: { titulo }, no se pudo sincronizar con local. MENSAJE: { mensaje }', None, emailAlerts)    
-            EmailSending(email).start()
+            data = {'subject': f'Falló al guardar la publicacion { publicacion.id }', 'content': f'La publicacion del usuario { usuario }, titulo: { titulo }, no se pudo sincronizar con local. MENSAJE: { mensaje }', 'to': emailAlerts}    
+            EmailSending(data).start()
