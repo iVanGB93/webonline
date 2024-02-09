@@ -91,6 +91,9 @@ class SyncWSConsumer(WebsocketConsumer):
         new_user.set_password(password)
         new_user.save()
         respuesta['mensaje'] = f'Usuario { usuario } creado con éxito.'
+        profile = Profile.objects.get(usuario=new_user)
+        profile.subnet = data['subnet']
+        profile.save()
         respuesta['estado'] = True
         self.responder(respuesta)
 
