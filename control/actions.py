@@ -52,7 +52,7 @@ def get_total_spent(year, month):
     total_spent = 0
     exists = False
     for a in all:
-        if a.note == 'compra de horas':
+        if a.note == 'compra de horas' and a.month.month == month.month:
             exists = True
             internet_spent = a
         else:
@@ -61,7 +61,7 @@ def get_total_spent(year, month):
     if not exists:
         internet_spent = Spent(month=month, service='internet', note='compra de horas', spent=internet_spent_value)
     else:
-        internet_spent = Spent.objects.get(note='compra de horas')
+        internet_spent = Spent.objects.get(note='compra de horas', month=month)
         internet_spent.spent = internet_spent_value
     internet_spent.save()
     total_spent = total_spent + internet_spent_value
