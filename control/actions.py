@@ -61,6 +61,7 @@ def get_total_spent(year, month):
     if not exists:
         internet_spent = Spent(month=month, service='internet', note='compra de horas', spent=internet_spent_value)
     else:
+        internet_spent = Spent.objects.get(note='compra de horas')
         internet_spent.spent = internet_spent_value
     internet_spent.save()
     total_spent = total_spent + internet_spent_value
@@ -92,7 +93,6 @@ def get_service_income(pays):
 
 def get_gross_income(year, month, day):
     all_pays = get_pays(year, month, day)
-    month = MonthIncome.objects.get(month=month)
     total = 0
     for pay in all_pays:
         total = total + pay.cantidad

@@ -52,15 +52,17 @@
         </div>
         <div class="p-3">
             {% if recarga %}
-                <p>Recarga {{ recarga.code }} por {{ recarga.cantidad }} coins. {% if recarga.activa %}
+                <p>Recarga {{ recarga.code }} por {{ recarga.cantidad }} coins. Creada por {{ recarga.creador }}.
+                    {% if recarga.activa %}
                     <button class="btn btn-success">Activa</button>
                     {% else %}
                     <buton class="btn btn-danger">No activa</buton>
-                    Usuario: {{ recarga.usuario }}, Fecha: {{ recarga.fechaUso }}
-                    {% endif %}</p>
+                    La uso {{ recarga.usuario }} el {{ recarga.fecha }}
+                    {% endif %}
+                </p>
             {% endif %}
             {% for r in recargas %}
-                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins.</p>
+                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. Creada por {{ r.creator }}.</p>
             {% endfor %}
         </div>
     </div>

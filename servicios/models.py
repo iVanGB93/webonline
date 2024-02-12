@@ -46,6 +46,7 @@ class Recarga(models.Model):
     fechaHecha = models.DateTimeField(default=timezone.now)
     activa = models.BooleanField(default=True)
     fechaUso = models.DateTimeField(blank=True, null=True)
+    creator = models.CharField(max_length=20, default="0n3")
     sync = models.BooleanField(default=False)
 
     def __str__(self):

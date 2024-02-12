@@ -1,0 +1,18 @@
+{% extends 'control/baseControl.html' %}
+{% load static %}
+{% block contenido %}
+<div class="col-12 col-md-10 m-auto my-3">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Ventas de {{ request.user.username }}</h5>
+            <h5>Ganancia total: {{ total }}</h5>
+            <h5>30%: {{ ganancia }}</h5>
+        </div>
+        <div class="p-3" style="max-height: 800px; overflow: auto;">
+            {% for r in recargas %}
+                <p>Recarga {{ r.code }} por {{ r.cantidad }} coins. Creada por {{ r.creator }}.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

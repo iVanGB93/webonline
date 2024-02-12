@@ -4,6 +4,14 @@
 <div class="col-12 col-md-10 m-auto my-3"> 
     <div class="card">
         <div class="card-header bg-dark text-white">
+            <h5>Conexion a internet: {% if servidor.online %}OK{% else %}OFF{% endif %}</h5>
+            <h5>Conexion a mikrotik: {% if servidor.internet %}OK{% else %}OFF{% endif %}</h5>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-md-10 m-auto my-3"> 
+    <div class="card">
+        <div class="card-header bg-dark text-white">
             <h5>Buscar usuario:</h5>
         </div>
         <div class="card-body m-auto my-3">

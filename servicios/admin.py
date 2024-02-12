@@ -32,11 +32,11 @@ class OpersAdminConfig(admin.ModelAdmin):
 class RecargasAdminConfig(admin.ModelAdmin):
     model = Recarga
     search_fields = ['usuario__username', 'code']
-    list_filter = ('cantidad', 'fechaHecha', 'sync')
+    list_filter = ('cantidad', 'fechaHecha', 'sync', 'creator')
     ordering = ('-fechaHecha',)
     list_display = ('code', 'usuario', 'cantidad', 'activa', 'fechaHecha', 'fechaUso', 'sync')
     fieldsets = (
-        (None, {'fields': ('code', 'sync', 'usuario', 'cantidad', 'activa', 'fechaHecha', 'fechaUso')}),        
+        (None, {'fields': ('code', 'sync', 'usuario', 'cantidad', 'creator', 'activa', 'fechaHecha', 'fechaUso')}),        
     )
 
 

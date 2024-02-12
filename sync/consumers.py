@@ -144,6 +144,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def cambio_perfil(self, data):
         respuesta = {'estado': False}
+        print(data)
         usuario = data['usuario']
         if self.usuario_existe(data):
             usuario_local = User.objects.get(username=usuario)
@@ -288,6 +289,7 @@ class SyncWSConsumer(WebsocketConsumer):
        
     def usar_recarga(self, data):
         respuesta = {'estado': False}
+        print(data)
         code = data['code']
         usuario = data['usuario']
         if Recarga.objects.filter(code=code).exists():
@@ -298,8 +300,10 @@ class SyncWSConsumer(WebsocketConsumer):
                 respuesta['code'] = recarga.code
                 respuesta['cantidad'] = recarga.cantidad
                 respuesta['activa'] = recarga.activa
-                respuesta['usuario'] = recarga.usuario
+                respuesta['usuario'] = recarga.usuario.username
+                respuesta['creator'] = recarga.creator
                 respuesta['fecha'] = str(recarga.fechaUso)
+                print(respuesta)
                 self.responder(respuesta)
             else:
                 if recarga.activa:
@@ -321,7 +325,7 @@ class SyncWSConsumer(WebsocketConsumer):
 
     def crear_recarga(self, data):
         respuesta = {'estado': False}
-        recarga = Recarga(code=data['code'], cantidad=data['cantidad'], fechaHecha=data['fechaHecha'])
+        recarga = Recarga(code=data['code'], cantidad=data['cantidad'], fechaHecha=data['fechaHecha'], creator=data['creator'])
         recarga.sync = True
         recarga.save()
         respuesta['estado'] = True

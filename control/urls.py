@@ -23,4 +23,5 @@ urlpatterns = [
     path('finanzas/<str:id>/', views.finanza_detalles, name='finanza_detalles'),
     path('gasto-nuevo/', views.crear_gasto, name='crear_gasto'),
     path('cerrar-mes/', views.cerrar_mes, name='cerrar_mes'),
+    path('ventas/', views.venta_recargas, name='venta_recargas'),
 ]

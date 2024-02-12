@@ -21,9 +21,9 @@ class MonthIncome(models.Model):
     month = models.CharField(max_length=20, choices=months)
     year = models.IntegerField(default=timezone.now().year)
     days = models.IntegerField()
-    gross_income = models.IntegerField()
-    total_spent = models.IntegerField()
-    income = models.IntegerField()
+    gross_income = models.IntegerField(default=0)
+    total_spent = models.IntegerField(default=0)
+    income = models.IntegerField(default=0)
     closed = models.BooleanField(default=False)
     sync = models.BooleanField(default=False)
 

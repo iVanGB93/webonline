@@ -8,6 +8,7 @@ from django.utils import timezone
 from servicios.models import EstadoServicio, Recarga, Oper
 from users.models import Profile, Notificacion
 from sorteo.models import Sorteo, SorteoDetalle
+from sync.models import EstadoConexion
 from .models import MonthIncome, Spent
 from . import actions
 import datetime
@@ -15,8 +16,9 @@ import datetime
 import time
 
 @login_required(login_url='/users/login/')
-def control(request):    
-    content = {}
+def control(request):
+    servidor = EstadoConexion.objects.get(servidor=config("NOMBRE_SERVIDOR"))
+    content = {'servidor': servidor}
     if request.method == 'POST':
         username = request.POST['usuario']
         busqueda = User.objects.filter(username__icontains=username)
@@ -63,13 +65,13 @@ def control_usuarios(request):
 
 @login_required(login_url='/users/login/')
 def control_perfiles(request):
-    perfiles = Profile.objects.all()
+    perfiles = Profile.objects.filter(sync=False)
     content = {'perfiles': perfiles}
     return render(request, 'control/control_perfiles.html', content)
 
 @login_required(login_url='/users/login/')
 def control_servicios(request):
-    servicios = EstadoServicio.objects.all()
+    servicios = EstadoServicio.objects.filter(sync=False)
     content = {'servicios': servicios}
     return render(request, 'control/control_servicios.html', content)
 
@@ -100,7 +102,8 @@ def crear_eliminar_usuario(request, id):
     content = {'usuarios': usuarios}
     if request.method == 'POST':
         if request.POST['respuesta'] == 'crear':
-            data = {'usuario': usuario.username, 'email': usuario.email, 'password': usuario.password}
+            profile = Profile.objects.get(usuario=usuario)
+            data = {'usuario': usuario.username, 'email': usuario.email, 'password': usuario.password, 'subnet': profile.subnet}
             resultado = actualizacion_remota('nuevo_usuario', data)
             content['mensaje'] = resultado['mensaje']
             return render(request, 'control/control_usuarios.html', content)            
@@ -114,17 +117,17 @@ def crear_eliminar_usuario(request, id):
 
 @login_required(login_url='/users/login/')
 def control_perfil(request, id):
-    perfiles = Profile.objects.all()
-    content = {'perfiles': perfiles,}
+    perfiles = Profile.objects.filter(sync=False)
+    content = {'perfiles': perfiles}
     if request.method == 'POST':
         usuario = User.objects.get(id=id)   
         profile = Profile.objects.get(usuario=usuario)
-        data = {'usuario': usuario.username, 'coins': profile.coins}
+        data = {'usuario': usuario.username, 'coins': profile.coins, 'subnet': profile.subnet}
         respuesta = actualizacion_remota('check_perfil', data)        
         if respuesta['estado']: 
             profile.sync = True
             profile.save()
-            content['perfiles'] = Profile.objects.all()
+            content['perfiles'] = Profile.objects.filter(sync=False)      
             content['mensaje'] = respuesta['mensaje']
             return render(request, 'control/control_perfiles.html', content)
         else:
@@ -139,15 +142,15 @@ def control_perfil(request, id):
 @login_required(login_url='/users/login/')
 def actualizar_perfil(request, id):
     usuario = User.objects.get(id=id)
-    perfiles = Profile.objects.all()
+    perfiles = Profile.objects.filter(sync=False)
     content = {'perfiles': perfiles}
     if request.method == 'POST':
         profile = Profile.objects.get(usuario=usuario)
         if request.POST['respuesta'] == 'local':
-            data = {'usuario': usuario.username, 'coins': profile.coins}
+            data = {'usuario': usuario.username, 'coins': profile.coins, 'subnet': profile.subnet}
             respuesta = actualizacion_remota('cambio_perfil', data)            
             if respuesta['estado']:
-                content['perfiles'] = Profile.objects.all()    
+                content['perfiles'] = Profile.objects.filter(sync=False)    
             content['mensaje'] = respuesta['mensaje']
             return render(request, 'control/control_perfiles.html', content)            
         elif request.POST['respuesta'] == 'remoto':
@@ -155,9 +158,10 @@ def actualizar_perfil(request, id):
             respuesta = actualizacion_remota('coger_perfil', data)
             if respuesta['estado']:
                 profile.coins = respuesta['coins']
+                profile.subnet = config("NOMBRE_SERVIDOR")
                 profile.sync = True
                 profile.save()
-                content['perfiles'] = Profile.objects.all()      
+                content['perfiles'] = Profile.objects.filter(sync=False)      
             content['mensaje'] = respuesta['mensaje']
             return render(request, 'control/control_perfiles.html', content)
     else:
@@ -167,7 +171,7 @@ def actualizar_perfil(request, id):
 @login_required(login_url='/users/login/')
 def control_servicio(request, id):
     usuario = User.objects.get(id=id)
-    servicios = EstadoServicio.objects.all()
+    servicios = EstadoServicio.objects.filter(sync=False)
     servicio = EstadoServicio.objects.get(usuario=usuario)
     content = {'servicios': servicios}
     if request.method == 'POST':                   
@@ -181,7 +185,7 @@ def control_servicio(request, id):
             return render(request, 'control/actualizar_servicio.html', content)
         servicio.sync = True
         servicio.save()
-        content['servicios'] = EstadoServicio.objects.all()
+        content['servicios'] = EstadoServicio.objects.filter(sync=False)
         content['mensaje'] = mensaje
         return render(request, 'control/control_servicios.html', content)
     else:
@@ -191,7 +195,7 @@ def control_servicio(request, id):
 @login_required(login_url='/users/login/')
 def actualizar_servicio(request, id):
     usuario = User.objects.get(id=id)
-    servicios = EstadoServicio.objects.all()
+    servicios = EstadoServicio.objects.filter(sync=False)
     content = {'servicios': servicios}
     if request.method == 'POST':
         servicio = EstadoServicio.objects.get(usuario=usuario)
@@ -207,7 +211,7 @@ def actualizar_servicio(request, id):
             if respuesta['estado']:
                 servicio.sync = True
                 servicio.save()
-                content['servicios'] = EstadoServicio.objects.all()
+                content['servicios'] = EstadoServicio.objects.filter(sync=False)
             content['mensaje'] = respuesta['mensaje']
             return render(request, 'control/control_servicios.html', content)
         elif request.POST['respuesta'] == 'remoto':
@@ -251,11 +255,13 @@ def control_recargas(request):
                 content = {'recarga': recarga}
                 return render(request, 'control/control_recargas.html', content)
             else:            
-                data = {'usuario': str(request.user), 'check': True, 'code': code}
+                data = {'usuario': request.user.username, 'check': True, 'code': code}
                 respuesta = actualizacion_remota('usar_recarga', data)
                 if respuesta['estado']:
-                    recarga = {'mensaje': respuesta['mensaje'], 'code': respuesta['code'], 'cantidad': respuesta['cantidad'], 'activa': respuesta['activa'], 'usuario': respuesta['usuario'], 'fecha': respuesta['fecha'], 'icon': 'success'}
-                    return render(request, 'control/control_recargas.html', recarga)
+                    recarga = {'mensaje': respuesta['mensaje'], 'code': respuesta['code'], 'cantidad': respuesta['cantidad'], 'activa': respuesta['activa'], 'usuario': respuesta['usuario'], 'fecha': respuesta['fecha'], 'creador': respuesta['creator'], 'icon': 'success'}
+                    mensaje = respuesta['mensaje']
+                    content = {'mensaje': mensaje, 'recarga': recarga}
+                    return render(request, 'control/control_recargas.html', content)
                 else:
                     mensaje = respuesta['mensaje']
                     content = {'mensaje': mensaje}
@@ -265,9 +271,9 @@ def control_recargas(request):
             cantidad = request.POST['cantidad']
             recargas = []
             for _ in range(int(numero)):
-                recarga = Recarga(cantidad=cantidad)      
-                recargas.append(recarga)     
-                recarga.save()      
+                recarga = Recarga(cantidad=cantidad, creator=request.user.username)      
+                recargas.append(recarga) 
+                recarga.save()
             mensaje = 'Recargas guardadas'
             content = {'recargas': recargas, 'mensaje': mensaje, 'icon': 'success'}
             return render(request, 'control/control_recargas.html', content)
@@ -473,3 +479,16 @@ def cerrar_mes(request):
         else:
             return redirect('control:control_finanzas')
     return render(request, 'control/cerrar_mes.html')
+
+def venta_recargas(request):
+    seller = request.user.username
+    content = {'seller': seller}
+    if User.objects.get(username=seller):
+        recargas = Recarga.objects.filter(activa=False, creator=seller)
+        content['recargas'] = recargas
+        total = 0
+        for r in recargas:
+            total = total + r.cantidad
+        content['total'] = total
+        content['ganancia'] = total * 30/100
+    return render(request, 'control/control_ventas.html', content)

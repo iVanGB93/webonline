@@ -86,6 +86,7 @@
                             </button>
                         </a>
                     </li>
+                    {% if request.user.username == 'iVan' or request.user.username == '0n3' %}
                     <li class="my-1">
                         <a href="{% url 'control:control_sorteos' %}">
                             <button class="form-control btn btn-info">
@@ -93,17 +94,25 @@
                             </button>
                         </a>
                     </li>
-                    <li class="my-1">
+                    <!-- <li class="my-1">
                         <a href="{% url 'control:control_avanzado' %}">
                             <button class="form-control btn btn-info">
                                 Avanzado
                             </button>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="my-1">
                         <a href="{% url 'control:control_finanzas' %}">
                             <button class="form-control btn btn-info">
                                 Finanzas
+                            </button>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="my-1">
+                        <a href="{% url 'control:venta_recargas' %}">
+                            <button class="form-control btn btn-info">
+                                Ventas
                             </button>
                         </a>
                     </li>
