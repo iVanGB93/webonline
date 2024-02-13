@@ -1,4 +1,4 @@
-from users.api.views import ProfileView, UserView, EmailCheckView, UserCheckView, CreateUserView
+from users.api.views import ProfileView, UserView, EmailCheckView, UserCheckView, CreateUserView, NotificationView
 from django.urls import path, include
 
 app_name='users-api'
@@ -11,4 +11,5 @@ urlpatterns = [
     path('user/<user>/', UserCheckView.as_view(), name="user_check"),
     path('email/<email>/', EmailCheckView.as_view(), name="email_check"),
     path('newuser/', CreateUserView.as_view(), name="new_user"),
+    path('notification/<str:user>/', NotificationView.as_view(), name="notification"),
 ]

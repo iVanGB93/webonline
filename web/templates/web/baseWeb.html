@@ -9,9 +9,7 @@
 
 {% block header %}
 <header class="header">
-
     <a href="{% url 'web:index' %}" class="logo"> <i class="fab fa-quinscape"></i> QbaRed </a>
-
     <nav class="barra">
         {% if local %}
         <a href="https://login.qbared.com" class="active">Internet</a>
@@ -26,7 +24,6 @@
         <a href="{% url 'chat:index' %}">Chat</a>
         {% endif %}
     </nav>
-
     <div class="icons">
         <div id="menu-btn" class="fas fa-bars"></div>
         {% if user.is_authenticated %}    
@@ -42,7 +39,6 @@
         <a id="login-icon" class="fas fa-user"></a>
         {% endif %}
     </div>
-
 </header>
 {% endblock %}
 
@@ -53,23 +49,24 @@
             {% if mensaje %}
             <div class="alert alert-danger text-center" role="alert">
                 {{ mensaje }}
-            </div>                
+            </div>
             {% endif %}
             {% csrf_token %}
             <input type="text" placeholder="usuario" required name="username" class="box">
             <input type="password" placeholder="contraseña" required name="password" class="box">
-            <input type="submit" value="entrar" class="boton">            
-            <p>olvidaste la contraseña ?<a href="{% url 'reset_password' %}"> click aquí</a></p>
-            <p>no tienes cuenta?<span id="boton-registro" class="boton">crear una</span></p>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner-login" style='display: none'></span>
+            <input type="submit" value="entrar" class="boton" id="button-login">            
+            <p id="reset-password">olvidaste la contraseña ?<a href="{% url 'reset_password' %}"><span class="boton">click aquí</a></span></p>
+            <p id="create-account">no tienes cuenta?<span id="boton-registro" class="boton">crear una</span></p>
         </form>
         <form id="register-form" style="display: none;" action="{% url 'users:register' %}" method="post">
             <h3></h3>
             {% csrf_token %}
             <input type="text" placeholder="usuario" required name="username" class="box">
             <input type="email" placeholder="email" required name="email" class="box">
-            <input type="email" placeholder="repetir email" required name="emailConfirm" class="box">
             <input type="password" placeholder="contraseña" required name="password" class="box">
             <input type="password" placeholder="repetir contraseña" required name="passwordConfirm" class="box">
+            {% if not local %}
             <div class="form-floating">
                 <select id="zona" class="box" placeholder="A que zona pertenece?" name="subnet">
                     <option selected value="local_iVan">Centro Habana</option>
@@ -77,32 +74,12 @@
                 </select>
                 <label for="zona">A que zona pertenece?</label>
             </div>
-            <input type="submit" value="registrarme" class="boton">        
-            <p>ya tienes cuenta?<span id="boton-login" class="boton">click aquí</span></p>
+            {% endif %}
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner-register" style='display: none'></span>
+            <input type="submit" value="registrarme" class="boton" id="button-register">        
+            <p id="go-login">ya tienes cuenta?<span id="boton-login" class="boton">click aquí</span></p>
         </form>
     </div>
-    {% if mensaje %}
-    {{ mensaje|json_script:"mensaje" }}
-    {{ icon|json_script:"icon" }}
-    <script>
-        var mensaje = JSON.parse(document.getElementById('mensaje').textContent);
-        var icon = JSON.parse(document.getElementById('icon').textContent);
-        var resultado = 'Upss!';
-        var botonColor = '#d33';
-        if (icon === 'success') {
-            var resultado = 'Listo!';
-            var botonColor = '#007000';
-        }
-        window.onload = function(){
-            Swal.fire({
-                title: resultado,
-                text: mensaje,
-                icon: icon,
-                confirmButtonColor: botonColor,
-            }) 
-        }             
-    </script>
-    {% endif %}
     {% block contenido %}
     {% endblock %}
 {% endblock %}
@@ -141,6 +118,21 @@
       delay:400,
       duration:800
   });
+</script>
+<script>
+    const login_form = document.getElementById("login-form");
+    login_form.addEventListener("submit", (e) => {
+        document.getElementById('spinner-login').style.display = 'inline-block';
+        document.getElementById('button-login').style.display='none';
+        document.getElementById('reset-password').style.display='none';
+        document.getElementById('create-account').style.display='none';
+    });
+    const register_form = document.getElementById("register-form");
+    register_form.addEventListener("submit", (e) => {
+        document.getElementById('spinner-register').style.display = 'inline-block';
+        document.getElementById('button-register').style.display='none';
+        document.getElementById('go-login').style.display='none';
+    });
 </script>
 {% block scriptWeb %}
 {% endblock %}

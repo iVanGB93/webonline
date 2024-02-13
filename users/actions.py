@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from users.models import Profile
 from sync.models import EstadoConexion
+from decouple import config
 import requests
 import json
 
@@ -9,16 +10,24 @@ def check_user(user, email):
     response = {'state': False}
     servers = EstadoConexion.objects.all()
     for server in servers:
-        url = f'http://{ server.ip_cliente }/api/users/user/{ user }/'
-        data = json.dumps({'user': user, 'email': email})
-        conexion = requests.get(url, data)
-        if conexion.status_code != 200:
-            response['message'] = 'Registro deshabilitado, intente más tarde.'
-            return response
-        if conexion.json()['message'] == 'user or email not found':
-            response['state'] = True
+        if config('NOMBRE_SERVIDOR') == 'core_ONLINE':
+            ip = server.ip_cliente
         else:
-            response['message'] = conexion.data.message
+            ip = server.ip_online
+        url = f'http://{ ip }/api/users/user/{ user }/'
+        data = json.dumps({'user': user, 'email': email})
+        try:
+            conexion = requests.get(url, data)
+            if conexion.status_code != 200:
+                response['message'] = 'Registro deshabilitado, intente más tarde.'
+                return response
+            if conexion.json()['message'] == 'user or email not found':
+                response['state'] = True
+            else:
+                response['message'] =  conexion.json()['message']
+                return response
+        except:
+            response['message'] = 'Servidor local sin conexion, intente mas tarde.'
             return response
     return response
     
@@ -26,8 +35,11 @@ def check_email(email):
     servers = EstadoConexion.objects.all()
     for server in servers:
         url = f'http://{ server.ip_cliente }/api/users/email/{ email }/'
-        conexion = requests.get(url)
-        if conexion.status_code == 404:
+        try:
+            conexion = requests.get(url)
+            if conexion.status_code == 404:
+                return False
+        except:
             return False
     return True
 

@@ -16,15 +16,16 @@ def crearProfile(sender, instance, **kwargs):
         profile = Profile(usuario=usuario)
         profile.sync = True
         profile.save()
-        data = {'subjet': 'Usuario nuevo', 'content': f'El usuario { usuario.username } se ha registrado en { profile.subnet }.', 'to': emailAlerts}
-        EmailSending(data).start()
-        data = {'to': usuario.email, 'template_id': 'd-e48acff5ca9f407b88de9fc53f6c83a8', 'dynamicdata': {'first_name': usuario.username}}
-        DynamicEmailSending(data).start()
+        if config('NOMBRE_SERVIDOR') == 'core_ONLINE':
+            data = {'subjet': 'Usuario nuevo', 'content': f'El usuario { usuario.username } se ha registrado en { profile.subnet }.', 'to': emailAlerts}
+            EmailSending(data).start()
+            data = {'to': usuario.email, 'template_id': 'd-e48acff5ca9f407b88de9fc53f6c83a8', 'dynamicdata': {'first_name': usuario.username}}
+            DynamicEmailSending(data).start()
 
 @receiver(post_save, sender=Profile)
 def actualizar_profile(sender, instance, **kwargs):
     if instance.sync == False:
-        data = {'usuario': instance.usuario.username, 'coins': instance.coins}
+        data = {'usuario': instance.usuario.username, 'coins': instance.coins, 'subnet': instance.subnet}
         UpdateThreadPerfil(data).start()            
 
 @receiver(post_save, sender=Notificacion)

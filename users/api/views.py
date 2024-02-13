@@ -2,11 +2,10 @@ from users.models import Profile, Notificacion
 from django.contrib.auth.models import User
 from .serializers import ProfileSerializer, UserSerializer
 from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-
+from django.utils import timezone
 
 class ProfileView(APIView):
 
@@ -19,6 +18,19 @@ class ProfileView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def put(self, request, **kwargs):
+        respuesta = {'estado': False}
+        user = self.kwargs.get('pk')
+        usuario = User.objects.get(username=user)
+        profile = Profile.objects.get(usuario=usuario)
+        profile.coins = request.data['coins']
+        profile.subnet = request.data['subnet']
+        profile.sync = True
+        profile.save()
+        respuesta['estado'] = True
+        respuesta['mensaje'] = 'Perfil actualizado con exito'
+        return Response(status=status.HTTP_200_OK, data=respuesta)
 
 class UserView(APIView):
 
@@ -48,17 +60,18 @@ class UserCheckView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, queryset=None, **kwargs):
         user = self.kwargs.get('user')
+        print("CHECHIKN")
         if User.objects.filter(username=user).exists():
             data = {'message': 'Nombre de usuario en uso'}
+            print("sta")
             return Response(status=status.HTTP_200_OK, data=data)
-        else:
-            if request.data.get('email'):
-                email = request.data['email']
-                if User.objects.filter(email=email).exists():
-                    data = {'message': 'Email en uso'}
-                    return Response(status=status.HTTP_200_OK, data=data)
-            data = {'message': 'user or email not found'}
-            return Response(status=status.HTTP_200_OK, data=data)
+        if request.data.get('email'):
+            email = request.data['email']
+            if User.objects.filter(email=email).exists():
+                data = {'message': 'Email en uso'}
+                return Response(status=status.HTTP_200_OK, data=data)
+        data = {'message': 'user or email not found'}
+        return Response(status=status.HTTP_200_OK, data=data)
         
 class EmailCheckView(APIView):
     permission_classes = [AllowAny]
@@ -80,3 +93,16 @@ class CreateUserView(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class NotificationView(APIView):
+
+    def put(self, request, **kwargs):
+        respuesta = {'estado': False}
+        user = self.kwargs.get('user')
+        usuario = User.objects.get(username=user)
+        data = request.data
+        notificacion = Notificacion(usuario=usuario, tipo=data['tipo'], fecha=timezone.now(), contenido=data['contenido'], sync=True)
+        notificacion.save()
+        respuesta['mensaje'] = 'Notificación guardada con éxito.'
+        respuesta['estado'] = True
+        return Response(status=status.HTTP_200_OK, data=respuesta)

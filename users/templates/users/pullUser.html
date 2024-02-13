@@ -1,0 +1,27 @@
+{% extends "users/baseUsers.html" %}
+{% load static %}
+{% block title %} - Save User{% endblock %}
+{% block contenido %} 
+<div class="card-header">
+    <h3><a href="{% url 'web:index' %}">QbaRed</a></h3> 
+    <a href="{% url 'web:index' %}">Salir <i class="fas fa-sign-out-alt"></i></a>    
+</div> 
+<div class="card-body">  
+    <h4 class="text-center text-white">Crear usuario en server local:</h4>   
+    <form id="myform" action="{% url 'users:pullUser' user %}"  method="post">        
+        {% csrf_token %}
+        <p class="text-white">Su usuario se encuentra online para crearlo en la local solo ingrese su contraseña.</p>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" style="background: transparent; color: white;" placeholder="Contraseña" required>
+            <label for="password">Contraseña:</label>
+        </div>
+        <button id="boton" class="form-control btn btn-outline-warning" type="submit">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="spinner" style='display: none;'></span>
+            Crear
+        </button>
+    </form>
+</div>
+<div class="enlaces">
+    <p>no tienes cuenta? <a href="{% url 'users:register' %}">crear una</a></p>           
+</div>
+{% endblock contenido %}
