@@ -38,3 +38,14 @@ class Spent(models.Model):
 
     def __str__(self):
         return str(self.month) + " - " + str(self.service) + " - " + str(self.note) + " - " + str(self.spent)
+
+class CoinSold(models.Model):
+    seller = models.CharField(max_length=30)
+    month = models.IntegerField(default=timezone.now().month)
+    year = models.IntegerField(default=timezone.now().year)
+    total = models.IntegerField(default=0)
+    seller_profit = models.IntegerField(default=0)
+    admin_share = models.IntegerField(default=0)
+
+    def __str__(self):
+        return "Ventas de " + self.seller + ", Fecha: " + str(self.month) + "/" + str(self.year) + ". Total: " + str(self.total)

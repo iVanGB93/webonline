@@ -15,20 +15,8 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav m-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="navtop-link" href="{% url 'forum:index' 'Noticia' %}">Noticias</a>
+                        <a class="navtop-link" href="{% url 'web:index' %}">Salir</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="navtop-link" href="{% url 'sorteo:index' %}">Sorteo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="navtop-link" href="{% url 'portal:dashboard' %}">Portal</a>
-                    </li>  
-                    <li class="nav-item m-auto iconos">
-                        <img id="boton_notificaciones" class="img-fluid rounded" style="width: 30px; height: 30px; cursor: pointer;" src="{{ user.profile.imagen.url }}" alt="imagen_de_perfil">
-                          <span id="notificaciones_nuevas" class="bot-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
-                          </span>
-                        </img>                
-                    </li>               
                 </ul>        
             </div>
         </div>

@@ -9,7 +9,7 @@ from servicios.models import EstadoServicio, Recarga, Oper
 from users.models import Profile, Notificacion
 from sorteo.models import Sorteo, SorteoDetalle
 from sync.models import EstadoConexion
-from .models import MonthIncome, Spent
+from .models import MonthIncome, Spent, CoinSold
 from . import actions
 import datetime
 
@@ -422,7 +422,8 @@ def control_finanzas(request):
     monthIncome.save()
     spents = Spent.objects.filter(month=monthIncome)
     months = MonthIncome.objects.all()
-    content = {'monthIncome': monthIncome, 'day': day, 'months': months, 'spents': spents}
+    coinSolds = CoinSold.objects.filter(month=month, year=year)
+    content = {'monthIncome': monthIncome, 'day': day, 'months': months, 'spents': spents, 'coinSolds': coinSolds}
     return render(request, 'control/control_finanzas.html', content)
     
 def finanza_detalles(request, id):
@@ -468,7 +469,6 @@ def crear_gasto(request):
 
 def cerrar_mes(request):
     if request.method == 'POST':
-        print(request.POST)
         if request.POST.get('cerrar'):
             month = timezone.now().month
             year = timezone.now().year
@@ -481,14 +481,37 @@ def cerrar_mes(request):
     return render(request, 'control/cerrar_mes.html')
 
 def venta_recargas(request):
-    seller = request.user.username
+    if request.method == 'POST':
+        seller = request.POST['usuario']
+    else:
+        seller = request.user.username
     content = {'seller': seller}
-    if User.objects.get(username=seller):
-        recargas = Recarga.objects.filter(activa=False, creator=seller)
+    if User.objects.filter(username=seller).exists():
+        month = timezone.now().month
+        year = timezone.now().year
+        day = timezone.now().day
+        start = datetime.date(year, month, 1)
+        end = datetime.date(year, month, day)
+        recargas = Recarga.objects.filter(fechaUso__range=[start, end], activa=False, creator=seller)
         content['recargas'] = recargas
         total = 0
         for r in recargas:
             total = total + r.cantidad
         content['total'] = total
-        content['ganancia'] = total * 30/100
+        seller_profit = total * 30/100
+        content['ganancia'] = seller_profit
+        if CoinSold.objects.filter(seller=seller, month=month, year=year).exists():
+            ventas = CoinSold.objects.get(seller=seller, month=month, year=year)
+        else:
+            ventas = CoinSold(seller=seller, month=month, year=year)
+        ventas.total = total
+        ventas.seller_profit = seller_profit
+        ventas.admin_share = total * 10/100
+        ventas.save()
+        if total == 0:
+            content['icon'] = 'error'
+            content['mensaje'] = f'{ seller } no ha vendido nada.'
+    else:
+        content['icon'] = 'error'
+        content['mensaje'] = 'Usuario no existe.'
     return render(request, 'control/control_ventas.html', content)

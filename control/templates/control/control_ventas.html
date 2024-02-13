@@ -4,9 +4,21 @@
 <div class="col-12 col-md-10 m-auto my-3">
     <div class="card">
         <div class="card-header bg-dark text-white">
-            <h5>Ventas de {{ request.user.username }}</h5>
+            <h5>Ventas de {{ seller }}</h5>
             <h5>Ganancia total: {{ total }}</h5>
             <h5>30%: {{ ganancia }}</h5>
+            {% if request.user.username == 'iVan' or request.user.username == '0n3' %}
+            <form action="{% url 'control:venta_recargas' %}" method="post" style="max-width: 300px; margin: auto; color: black;">
+                {% csrf_token%}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingUsuario" required name="usuario" placeholder="nombre de usuario">
+                    <label for="floatingUsuario">nombre de usuario</label>
+                </div>                
+                <button type="submit" class="form-control btn btn-info">
+                    Buscar
+                </button>
+            </form>
+            {% endif %}
         </div>
         <div class="p-3" style="max-height: 800px; overflow: auto;">
             {% for r in recargas %}
