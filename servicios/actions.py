@@ -1,7 +1,7 @@
 from django.utils import timezone
 from .models import Recarga, Oper, EstadoServicio
 from django.contrib.auth.models import User
-from users.models import Profile
+from users.models import Profile, Notificacion
 from sync.models import EstadoConexion
 from sync.actions import EmailSending
 from decouple import config
@@ -151,7 +151,7 @@ def recargar(code, usuario):
         result['mensaje'] = 'Escriba 8 dígitos.'
         return result
     if Recarga.objects.filter(code=code).exists():
-        recarga = Recarga.objects.get(code=code)        
+        recarga = Recarga.objects.get(code=code)   
         if recarga.activa:
             cantidad = recarga.cantidad                   
             profile.coins = profile.coins + cantidad
@@ -164,23 +164,25 @@ def recargar(code, usuario):
                     result['correcto'] = True
                     if not respuesta['estado']:
                         data = {'subjet': f'{ usuario.username } ha recargado desde internet', 'content': f'El usuario { usuario.username } recargo su cuenta con { cantidad } coins. Recarga: { code }.', 'to': emailAlerts}    
-                        EmailSending(data).start()                   
-                    else:
-                        profile.sync = False             
-                        profile.save()
-                        recarga.activa = False
-                        recarga.fechaUso = timezone.now()
-                        recarga.usuario = usuario
-                        recarga.save()
-                        oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
-                        oper.save()
-                        result['mensaje'] = 'Cuenta Recargada con éxito'
-                        return result
+                        EmailSending(data).start()
+                    profile.sync = False           
+                    profile.save()
+                    recarga.activa = False
+                    recarga.fechaUso = timezone.now()
+                    recarga.usuario = usuario
+                    recarga.save()
+                    oper = Oper(tipo='RECARGA', usuario=usuario, codRec=code, cantidad=cantidad)
+                    oper.save()
+                    result['mensaje'] = 'Cuenta Recargada con éxito'
+                    return result
+                else:
+                    result['mensaje'] = respuesta
+                    return result
             except:
                 result['mensaje'] = 'Problemas de conexion con el servidor local, intente mas tarde'
                 return result
         else:
-            result['mensaje'] = 'Recarga usada'
+            result['mensaje'] = 'Esta recarga ya fue usada'
             return result
     else:
         result['mensaje'] = 'Recarga incorrecta'
@@ -214,7 +216,13 @@ def transferir(desde, hacia, cantidad):
                 oper = Oper(usuario=recibe, tipo="RECIBO", cantidad=cantidad, haciaDesde=desde)
                 oper.save()
                 oper2 = Oper(usuario=envia, tipo="ENVIO", cantidad=cantidad, haciaDesde=hacia)
-                oper2.save()    
+                oper2.save()   
+                contenido = f"Usted transfirió { cantidad } coins a { recibe.username }"
+                notificacion = Notificacion(usuario=envia, tipo="ENVIO", contenido=contenido)
+                notificacion.save() 
+                contenido = f"Usted recibió { cantidad } coins de { envia.username }"
+                notificacion = Notificacion(usuario=recibe, tipo="RECIBO", contenido=contenido)
+                notificacion.save() 
                 result['mensaje']= 'Transferencia realizada con éxito'
                 result['correcto'] = True
                 return result
