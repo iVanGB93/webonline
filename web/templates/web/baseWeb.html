@@ -21,7 +21,7 @@
         <a href="#about">Sobre nosotros</a>
         {% if user.is_staff %}
         <a href="{% url 'control:control' %}">Control</a>
-        <a href="{% url 'chat:index' %}">Chat</a>
+        <!-- <a href="{% url 'chat:index' %}">Chat</a> -->
         {% endif %}
     </nav>
     <div class="icons">

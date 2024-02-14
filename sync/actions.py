@@ -188,6 +188,8 @@ class UpdateThreadSorteo(threading.Thread):
     def run(self):
         usuario = self.data['usuario']
         participacion = Sorteo.objects.get(id=self.data['id'])
+        profile = Profile.objects.get(usuario=usuario)
+        self.data['server'] = profile.subnet
         respuesta = actualizacion_remota('crear_sorteo', self.data)
         if respuesta['estado']:
             participacion.sync = True
@@ -206,6 +208,8 @@ class UpdateThreadForum(threading.Thread):
         usuario = self.data['usuario']
         titulo = self.data['titulo']
         publicacion = Publicacion.objects.get(id=self.data['id'])
+        profile = Profile.objects.get(usuario=usuario)
+        self.data['server'] = profile.subnet
         respuesta = actualizacion_remota('sync_publicacion', self.data)
         if respuesta['estado']:
             publicacion.sync = True

@@ -34,7 +34,11 @@ def check_user(user, email):
 def check_email(email):
     servers = EstadoConexion.objects.all()
     for server in servers:
-        url = f'http://{ server.ip_cliente }/api/users/email/{ email }/'
+        if config('NOMBRE_SERVIDOR') == 'core_ONLINE':
+            ip = server.ip_cliente
+        else:
+            ip = server.ip_online
+        url = f'http://{ ip }/api/users/email/{ email }/'
         try:
             conexion = requests.get(url)
             if conexion.status_code == 404:

@@ -43,12 +43,16 @@ def entrar(request):
 def register(request):
     if request.user.is_authenticated:
         return redirect ('web:index')
-    content = {'icon': 'error'}
+    content = {'icon': 'error', 'local': False}
+    server_name = config('NOMBRE_SERVIDOR')
+    if server_name != 'core_ONLINE':
+        content['local'] = True
     if request.method == 'POST':
-        if config('NOMBRE_SERVIDOR') == 'core_ONLINE':
-            conexion = EstadoConexion.objects.get(servidor=request.POST['subnet'])
+        if server_name == 'core_ONLINE':
+            subnet = request.POST['subnet']
         else:
-            conexion = EstadoConexion.objects.get(servidor=config('NOMBRE_SERVIDOR'))
+            subnet = server_name
+        conexion = EstadoConexion.objects.get(servidor=subnet)
         if not conexion.online:
             content['mensaje'] = "Registro deshabilitado, intente más tarde."
             return render(request, 'users/register.html', content)
@@ -75,10 +79,7 @@ def register(request):
             user.save()
             new_user = authenticate(request, username=user.username, password=password)
             profile = Profile.objects.get(usuario=user)
-            if config('NOMBRE_SERVIDOR') == 'core_ONLINE':
-                profile.subnet = request.POST['subnet']
-            else:
-                profile.subnet = config('NOMBRE_SERVIDOR')
+            profile.subnet = subnet
             profile.save()
             UpdateThreadUsuario({'usuario':user.username, 'email': user.email, 'password': password, 'subnet': profile.subnet}).start()
             login(request, new_user)
@@ -87,7 +88,7 @@ def register(request):
             content['mensaje'] = remoteUser['message']
             return render(request, 'users/register.html', content)                          
     else:
-        return render(request, 'users/register.html')
+        return render(request, 'users/register.html', content)
     
 def salir(request):
     logout(request)
