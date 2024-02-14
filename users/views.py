@@ -35,9 +35,8 @@ def entrar(request):
                     content['mensaje'] = "Su usuario no se encuentra en la local."
                     send_username = username
                     return redirect('users:pullUser', user=send_username)
-            else:
-                content['mensaje'] = "Usuario no existe"
-                return render(request, 'users/login.html', content)
+            content['mensaje'] = "Usuario no existe"
+            return render(request, 'users/login.html', content)
     else:
         return render(request, 'users/login.html')
 
